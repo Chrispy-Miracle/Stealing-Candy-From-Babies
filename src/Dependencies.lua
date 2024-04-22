@@ -7,8 +7,13 @@ require 'src/Util'
 
 require 'src/StateMachine'
 
+require 'src/Animation'
+
 require 'src/states/BaseState'
 require 'src/states/StartState'
+
+require 'src/entity_defs'
+require 'src/Entity'
 
 
 gFonts = {
