@@ -17,6 +17,8 @@ function love.load()
         ['start'] = function() return StartState() end
     }
 
+    gStateMachine:change('start')
+
     love.keyboard.keysPressed = {}
 end
 
@@ -32,12 +34,13 @@ function love.keypressed(key)
     love.keyboard.keysPressed[key] = true
 end
 
-function love.keyboard.wadPressed(key)
+function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
 end
 
 function love.update(dt)
-    -- gStateMachine:update(dt)
+    Timer.update(dt)
+    gStateMachine:update(dt)
 
     love.keyboard.keysPressed = {}
 end
@@ -45,6 +48,6 @@ end
 
 function love.draw()
     push:start()
-    -- gStateMachine:render()
+    gStateMachine:render()
     push:finish()
 end
