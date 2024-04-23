@@ -11,8 +11,6 @@ function StartState:init()
         y = VIRTUAL_HEIGHT - 32
     }
 
-    self.baby:changeAnimation('crawl-left')
-
     --man
     self.man = Entity {
         type = 'player',
@@ -23,6 +21,8 @@ function StartState:init()
         y = VIRTUAL_HEIGHT - 64
     }
 
+    -- start animations
+    self.baby:changeAnimation('crawl-left')
     self.man:changeAnimation('walk-right')
 
     --balloon
@@ -34,6 +34,9 @@ function StartState:init()
     -- for fading in and out titles
     self.titleOpacity = {valA = 0, valB = 0, valC = 0}
     self.animationComplete = false
+
+
+    -- Baby Balloon and Man Animation: --
 
     -- baby crawls into scene with balloon
     Timer.every(.4, function() 
@@ -48,60 +51,54 @@ function StartState:init()
     end)
 
     -- Move baby and balloon to left (towards man)
-    Timer.tween(4, {
+    Timer.tween(5, {
         [self.baby] = {x = VIRTUAL_WIDTH / 3},
         [self.balloonPosition] = {x = VIRTUAL_WIDTH / 3 - BABY_BALLOON_OFFSET_X}        
     })
 
     -- move man to right (towards baby)
-    Timer.tween(6, {
+    Timer.tween(5, {
         [self.man] = {x = VIRTUAL_WIDTH / 3 - 30}
-    }):finish(function ()
-        self.man:changeAnimation('idle')
-    end)
-    
-    -- Fade in titles
-    Timer.tween(2, {
-        [self.titleOpacity] = {valA = 1, valB = 1}
     })
-    -- fade out all but "(balloons too!)" title
+    --once the man and baby meet in middle
     :finish(function ()
-        Timer.tween(5, {
-            [self.titleOpacity] = {valA = 0}
-        })
-        -- fade "balloons too" title slowly
-        Timer.after(6,function ()
-            Timer.tween(5, {
-                [self.titleOpacity] = {valB = 0}
-            })
+        -- wait half a sec then man steals balloon from baby
+        Timer.after(1, function ()
+            -- make it look like he grabbed it
+            self.man:changeAnimation('idle')
 
-            -- man steals balloon from baby
-            Timer.tween(.5, {
+            -- slide balloon up to man's hand
+            Timer.tween(.6, {
                 [self.balloonPosition] = {y = self.balloonPosition.y - 16}
             })
 
-            -- man jumps over baby with balloon
-            :finish(function ()
-                Timer.tween(1, {
-                    [self.man] = {x = VIRTUAL_WIDTH / 2 - 32, y = 16},
-                    [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 + BABY_BALLOON_OFFSET_X - 34, y = 18}
-                })
+            :finish(function () 
+                -- man jumps over baby with balloon
+                Timer.tween(1.5, {
+                    [self.man] = {x = VIRTUAL_WIDTH / 2, y = 16},
+                    [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 + 11, y = 24}
+                }) 
+
                 -- man walks aways on fading title with balloon
                 :finish(function ()
                     -- animate man walking with balloon
                     self.man:changeAnimation('walk-right')
+                    
+                    -- shift balloon to stay with man
                     Timer.every(.4, function ()
                         if self.man.currentAnimation:getCurrentFrame() == 1 then
-                            self.balloonPosition.y = self.balloonPosition.y + 4
+                            self.balloonPosition.x = self.balloonPosition.x + 3
                         else
-                            self.balloonPosition.y = self.balloonPosition.y - 4
+                            self.balloonPosition.x = self.balloonPosition.x - 3
                         end
                     end)
+
                     -- tween man and balloon position to right of screen
                     Timer.tween(3, {
                         [self.man] = {x = VIRTUAL_WIDTH},
-                        [self.balloonPosition] = {x = VIRTUAL_WIDTH + BABY_BALLOON_OFFSET_X - 2}
+                        [self.balloonPosition] = {x = VIRTUAL_WIDTH + 11}
                     })
+
                     -- fade in "Press Enter to Play" title
                     :finish(function ()
                         self.animationComplete = true
@@ -111,6 +108,25 @@ function StartState:init()
                     end)
                 end)
             end)
+        end)
+    end)
+
+    
+    -- Fade in titles
+    Timer.tween(2, {
+        [self.titleOpacity] = {valA = 1, valB = 1}
+    })
+    -- fade out all but "(balloons too!)" title
+    :finish(function ()
+        Timer.tween(6, {
+            [self.titleOpacity] = {valA = 0}
+        })
+
+        -- fade "balloons too" title slowly
+        Timer.after(6,function ()
+            Timer.tween(5, {
+                [self.titleOpacity] = {valB = 0}
+            })
         end)
     end)
 end

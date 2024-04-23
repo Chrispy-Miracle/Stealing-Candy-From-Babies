@@ -26,7 +26,7 @@ gTextures = {
     -- ['background']
     ['bad-baby'] = love.graphics.newImage('graphics/Bad-Baby2.png'),
     ['bad-balloon'] = love.graphics.newImage('graphics/bad-balloon.png'),
-    ['bad-man'] = love.graphics.newImage('graphics/Bad-Man.png')
+    ['bad-man'] = love.graphics.newImage('graphics/Bad-Man3.png')
 }
 
 

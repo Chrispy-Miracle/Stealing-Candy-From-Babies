@@ -5,7 +5,7 @@ ENTITY_DEFS = {
         width = 32,
         animations = {
             ['idle'] = {
-                frames = {1},
+                frames = {3},
                 texture = 'bad-man'
             },
             ['walk-right'] = {
