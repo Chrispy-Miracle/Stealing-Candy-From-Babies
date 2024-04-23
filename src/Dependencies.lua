@@ -5,16 +5,20 @@ Timer = require 'lib/knife.timer'
 require 'src/constants'
 require 'src/Util'
 
+-- state machine
 require 'src/StateMachine'
-
-require 'src/Animation'
 
 require 'src/states/BaseState'
 require 'src/states/StartState'
 require 'src/states/PlayState'
 
+require 'src/states/playerStates/PlayerIdleState'
+require 'src/states/playerStates/PlayerWalkState'
+
 require 'src/entity_defs'
 require 'src/Entity'
+
+require 'src/Animation'
 
 
 gFonts = {
