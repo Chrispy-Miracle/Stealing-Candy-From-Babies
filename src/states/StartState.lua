@@ -28,7 +28,7 @@ function StartState:init()
     --balloon
     self.balloonPosition = {
         x = self.baby.x - BABY_BALLOON_OFFSET_X, 
-        y = VIRTUAL_HEIGHT  - BABY_BALLOON_OFFSET_Y
+        y = self.baby.y - BABY_BALLOON_OFFSET_Y
     }
 
     -- for fading in and out titles
@@ -153,6 +153,8 @@ function StartState:update(dt)
     self.man:update(dt)
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+        Timer.clear()
+        gSounds['walking']:stop()
         gStateMachine:change('play')
     end
 end
@@ -182,7 +184,7 @@ function StartState:render()
     end
 
     -- draw balloon
-    love.graphics.draw(gTextures['bad-balloon'], gFrames['bad-balloon'][1], 
+    love.graphics.draw(gTextures['balloons'], gFrames['balloons'][math.random(#OBJECT_DEFS['balloon'].frames)], 
         self.balloonPosition.x, 
         self.balloonPosition.y)
     
