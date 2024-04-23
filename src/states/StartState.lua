@@ -56,16 +56,20 @@ function StartState:init()
         [self.balloonPosition] = {x = VIRTUAL_WIDTH / 3 - BABY_BALLOON_OFFSET_X}        
     })
 
+    gSounds['walking']:setLooping(true)
+    gSounds['walking']:play()
     -- move man to right (towards baby)
     Timer.tween(5, {
         [self.man] = {x = VIRTUAL_WIDTH / 3 - 30}
     })
     --once the man and baby meet in middle
     :finish(function ()
+        gSounds['walking']:stop()
         -- wait half a sec then man steals balloon from baby
         Timer.after(1, function ()
             -- make it look like he grabbed it
             self.man:changeAnimation('idle')
+            gSounds['steal']:play()
 
             -- slide balloon up to man's hand
             Timer.tween(.6, {
@@ -74,6 +78,7 @@ function StartState:init()
 
             :finish(function () 
                 -- man jumps over baby with balloon
+                gSounds['jump']:play()
                 Timer.tween(1.5, {
                     [self.man] = {x = VIRTUAL_WIDTH / 2, y = 16},
                     [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 + 11, y = 24}
@@ -83,6 +88,7 @@ function StartState:init()
                 :finish(function ()
                     -- animate man walking with balloon
                     self.man:changeAnimation('walk-right')
+                    gSounds['walking']:play()
                     
                     -- shift balloon to stay with man
                     Timer.every(.4, function ()
@@ -105,6 +111,7 @@ function StartState:init()
                         Timer.tween(2, {
                             [self.titleOpacity] = {valC = 1}
                         })
+                        gSounds['walking']:stop()
                     end)
                 end)
             end)
@@ -139,9 +146,15 @@ function StartState:update(dt)
 
     self.baby:update(dt)
 
-    -- if self.man.x < VIRTUAL_WIDTH / 3 - 30 then
-        self.man:update(dt)
-    -- end
+    if self.man.x > VIRTUAL_WIDTH then
+        self.man:changeAnimation('idle')
+    end
+
+    self.man:update(dt)
+
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+        gStateMachine:change('play')
+    end
 end
 
 
