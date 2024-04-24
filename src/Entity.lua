@@ -1,17 +1,17 @@
 Entity = Class{}
 
 function Entity:init(def)
-    self.type = def.type
+    self.type = def.entity_def.type
 
-    self.animations = self:createAnimations(def.animations)
+    self.animations = self:createAnimations(def.entity_def.animations)
 
     self.x = def.x
     self.y = def.y
 
-    self.height = def.height
-    self.width = def.width 
+    self.height = def.entity_def.height
+    self.width = def.entity_def.width 
 
-    self.walkSpeed = def.walkSpeed
+    self.walkSpeed = def.entity_def.walkSpeed
 
 end
 

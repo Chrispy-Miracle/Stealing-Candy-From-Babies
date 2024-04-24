@@ -4,9 +4,7 @@ function PlayState:init()
     -- player
     self.player = Entity {
         type = 'player',
-        animations = ENTITY_DEFS['player'].animations,
-        width = ENTITY_DEFS['player'].width,
-        height = ENTITY_DEFS['player'].height,
+        entity_def = ENTITY_DEFS['player'],
         x = - 16,
         y = VIRTUAL_HEIGHT - 70
     }
@@ -43,12 +41,13 @@ function PlayState:init()
             -- make baby
             local baby = Entity {
                 type = 'baby',
-                animations = ENTITY_DEFS['baby'].animations,
-                width = ENTITY_DEFS['baby'].width,
-                height = ENTITY_DEFS['baby'].height,
+                entity_def = ENTITY_DEFS['baby'],
+                -- animations = ENTITY_DEFS['baby'].animations,
+                -- width = ENTITY_DEFS['baby'].width,
+                -- height = ENTITY_DEFS['baby'].height,
                 x = VIRTUAL_WIDTH - 10,
                 y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
-                walkSpeed = ENTITY_DEFS['baby'].walkSpeed
+                -- walkSpeed = ENTITY_DEFS['baby'].walkSpeed
             }
             baby:changeAnimation('crawl-left')
 
@@ -88,6 +87,21 @@ function PlayState:init()
             table.insert(self.babies, baby)
         end
     end)
+
+    self.moms = {}
+
+    Timer.every(1, function ()
+        if math.random(4) == 1 then
+            local mom = Entity {
+                type = 'mom',
+                entity_def = ENTITY_DEFS['mom'],
+                x = VIRTUAL_WIDTH,
+                y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8)
+            }
+            mom:changeAnimation('walk-left')
+            table.insert(self.moms, mom)
+        end
+    end)
 end
 
 
@@ -110,10 +124,20 @@ function PlayState:update(dt)
             -- remove babies no longer on screen
             table.remove(self.babies, k)
         end
-            
-
     end
 
+        -- update moms
+        for k, mom in pairs(self.moms) do
+            -- ensure moms still on screen
+            if mom.x > -mom.width then
+                mom.x = mom.x - mom.walkSpeed * dt
+                mom:update(dt)
+
+            else
+                -- remove moms no longer on screen
+                table.remove(self.moms, k)
+            end
+        end
 end
 
 function PlayState:render()
@@ -144,5 +168,10 @@ function PlayState:render()
             -- draw babies in front of player
             baby:render()
         end
+    end
+
+    for k, mom in pairs(self.moms) do
+        mom:render()
+
     end
 end

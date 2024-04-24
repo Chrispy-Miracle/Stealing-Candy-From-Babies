@@ -4,9 +4,10 @@ function StartState:init()
     --baby
     self.baby = Entity {
         type = 'baby',
-        animations = ENTITY_DEFS['baby'].animations,
-        width = ENTITY_DEFS['baby'].width,
-        height = ENTITY_DEFS['baby'].height,
+        entity_def = ENTITY_DEFS['baby'],
+        -- animations = ENTITY_DEFS['baby'].animations,
+        -- width = ENTITY_DEFS['baby'].width,
+        -- height = ENTITY_DEFS['baby'].height,
         x = VIRTUAL_WIDTH - 10,
         y = VIRTUAL_HEIGHT - 32
     }
@@ -14,9 +15,10 @@ function StartState:init()
     --man
     self.man = Entity {
         type = 'player',
-        animations = ENTITY_DEFS['player'].animations,
-        width = ENTITY_DEFS['player'].width,
-        height = ENTITY_DEFS['player'].height,
+        entity_def = ENTITY_DEFS['player'],
+        -- animations = ENTITY_DEFS['player'].animations,
+        -- width = ENTITY_DEFS['player'].width,
+        -- height = ENTITY_DEFS['player'].height,
         x = -32,
         y = VIRTUAL_HEIGHT - 64
     }

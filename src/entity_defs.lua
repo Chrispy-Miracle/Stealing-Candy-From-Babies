@@ -32,5 +32,22 @@ ENTITY_DEFS = {
                 texture = 'bad-baby'
             }
         }
+    },
+    ['mom'] = {
+        type = 'mom',
+        height = 64,
+        width = 32,
+        walkSpeed = 40,
+        animations = {
+            ['idle'] = {
+                frames = {1},
+                texture = 'bad-mom'
+            },
+            ['walk-left'] = {
+                frames = {1, 2},
+                interval = 0.4,
+                texture = 'bad-mom'
+            }
+        }
     }
 }
