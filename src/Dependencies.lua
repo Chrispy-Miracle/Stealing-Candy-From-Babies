@@ -4,6 +4,8 @@ Class = require 'lib/class'
 Timer = require 'lib/knife.timer'
 
 -- global
+require 'src/entity_defs'
+require 'src/game_object_defs'
 require 'src/constants'
 require 'src/Util'
 
@@ -18,12 +20,10 @@ require 'src/states/PlayState'
 require 'src/states/playerStates/PlayerIdleState'
 require 'src/states/playerStates/PlayerWalkState'
 
--- entities and defs
-require 'src/entity_defs'
+-- entities
 require 'src/Entity'
 
--- objects and defs
-require 'src/game_object_defs'
+-- objects
 require 'src/GameObject'
 
 -- helper classes

@@ -9,6 +9,7 @@ function PlayState:init()
         y = VIRTUAL_HEIGHT - 70
     }
     self.player.direction = 'right'
+    self.player.items = {}
     
 
     -- player's state machine
@@ -42,12 +43,8 @@ function PlayState:init()
             local baby = Entity {
                 type = 'baby',
                 entity_def = ENTITY_DEFS['baby'],
-                -- animations = ENTITY_DEFS['baby'].animations,
-                -- width = ENTITY_DEFS['baby'].width,
-                -- height = ENTITY_DEFS['baby'].height,
                 x = VIRTUAL_WIDTH - 10,
                 y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
-                -- walkSpeed = ENTITY_DEFS['baby'].walkSpeed
             }
             baby:changeAnimation('crawl-left')
 
@@ -58,8 +55,8 @@ function PlayState:init()
                 baby.hasBalloon = true
                 local balloon = GameObject {
                     object_def = OBJECT_DEFS['balloon'],
-                    x = baby.x - BABY_BALLOON_OFFSET_X,
-                    y = baby.y - BABY_BALLOON_OFFSET_Y,
+                    x = baby.x + BABY_BALLOON_OFFSET_X,
+                    y = baby.y + BABY_BALLOON_OFFSET_Y,
                     isCarried = true,
                     carrier = baby,
                     carrier_offset_x = BABY_BALLOON_OFFSET_X,
@@ -73,8 +70,8 @@ function PlayState:init()
                 baby.hasLollipop = true
                 local lollipop = GameObject {
                     object_def = OBJECT_DEFS['lollipop'],
-                    x = baby.x - BABY_LOLLIPOP_OFFSET_X,
-                    y = baby.y - BABY_LOLLIPOP_OFFSET_Y,
+                    x = baby.x + BABY_LOLLIPOP_OFFSET_X,
+                    y = baby.y + BABY_LOLLIPOP_OFFSET_Y,
                     isCarried = true,
                     carrier = baby,
                     carrier_offset_x = BABY_LOLLIPOP_OFFSET_X,
@@ -106,10 +103,12 @@ end
 
 
 function PlayState:update(dt)
-    local playerHandPosition = {x= self.player.x, y = self.player.y}
+    local playerHandPosition = {x = self.player.x + self.player.width, y = self.player.y + self.player.height / 2}
     
     -- update player state machine
     self.player.stateMachine:update(dt)
+
+
 
     -- update babies
     for k, baby in pairs(self.babies) do
@@ -122,18 +121,25 @@ function PlayState:update(dt)
             -- update baby's items
             for k, item in pairs(baby.items) do
 
+                -- Steal items from baby
+                if playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 and
+                love.keyboard.isDown('space') then
+                    gSounds['steal']:play()
+                    item.x = playerHandPosition.x
+                    item.y = playerHandPosition.y
 
-                if playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 then
-                -- and playerHandPosition.y > item.y + 32 
-                -- and playerHandPosition.y < item.y + item.width + 32 then
-                    item.carrier = self.player
                     if item.type == 'balloon' then
                         item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
                         item.carrier_offset_y = PLAYER_BALLOON_OFFSET_Y
+                        
                     elseif item.type == 'lollipop' then
                         item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
                         item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y 
-                    end                      
+                    end 
+                    table.remove(baby.items, k)
+                    
+                    table.insert(self.player.items, item)  
+                    item.carrier = self.player                 
                 end
                     
                 item:update(dt)
@@ -142,6 +148,11 @@ function PlayState:update(dt)
             -- remove babies no longer on screen
             table.remove(self.babies, k)
         end
+    end
+
+
+    for k, item in pairs(self.player.items) do
+        item:update(dt)
     end
 
         -- update moms
@@ -188,6 +199,10 @@ function PlayState:render()
     
     -- draw player
     self.player.stateMachine:render()
+
+    for k, item in pairs(self.player.items) do
+        item:render()
+    end
 
    
     for k, baby in pairs(self.babies) do

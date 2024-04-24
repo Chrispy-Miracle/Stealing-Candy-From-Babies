@@ -1,6 +1,7 @@
 GameObject = Class{}
 
 function GameObject:init(def)
+    self.type = def.object_def.type
     self.texture = def.object_def.texture
     self.frame = math.random(#def.object_def.frames)
     self.height = def.object_def.height
@@ -19,14 +20,14 @@ function GameObject:init(def)
     end
 end
 
-function GameObject:update()
+function GameObject:update(dt)
     -- update object position in relation to carrier
     if self.isCarried then
-        self.x = self.carrier.x - self.carrier_offset_x
-        self.y = self.carrier.y - self.carrier_offset_y
+            self.x = self.carrier.x + self.carrier_offset_x
+            self.y = self.carrier.y + self.carrier_offset_y
     end
 end
 
-function GameObject:render()
+function GameObject:render()                                                                 
     love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.frame], self.x, self.y)
 end

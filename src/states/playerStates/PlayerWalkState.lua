@@ -43,6 +43,7 @@ function PlayerWalkState:update(dt)
 
     self.player:update(dt)
 
+
 end
 
 function PlayerWalkState:render()

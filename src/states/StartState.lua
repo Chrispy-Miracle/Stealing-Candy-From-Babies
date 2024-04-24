@@ -29,8 +29,8 @@ function StartState:init()
 
     --balloon
     self.balloonPosition = {
-        x = self.baby.x - BABY_BALLOON_OFFSET_X, 
-        y = self.baby.y - BABY_BALLOON_OFFSET_Y
+        x = self.baby.x + BABY_BALLOON_OFFSET_X, 
+        y = self.baby.y + BABY_BALLOON_OFFSET_Y
     }
 
     -- for fading in and out titles
@@ -43,7 +43,7 @@ function StartState:init()
     -- Move baby and balloon to left (towards man)
     Timer.tween(5, {
         [self.baby] = {x = VIRTUAL_WIDTH / 3},
-        [self.balloonPosition] = {x = VIRTUAL_WIDTH / 3 - BABY_BALLOON_OFFSET_X}        
+        [self.balloonPosition] = {x = VIRTUAL_WIDTH / 3 + BABY_BALLOON_OFFSET_X}        
     })
 
     gSounds['walking']:setLooping(true)
