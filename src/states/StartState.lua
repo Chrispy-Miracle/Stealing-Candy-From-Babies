@@ -38,18 +38,6 @@ function StartState:init()
 
     -- Baby Balloon and Man Animation: --
 
-    -- baby crawls into scene with balloon
-    Timer.every(.4, function() 
-        -- animate balloon to go with baby until they reach destination 
-        if self.baby.x > VIRTUAL_WIDTH / 3 then
-            if self.baby.currentAnimation:getCurrentFrame() == 1 then
-                self.balloonPosition.y = self.balloonPosition.y + 4
-            else
-                self.balloonPosition.y = self.balloonPosition.y - 4
-            end
-        end
-    end)
-
     -- Move baby and balloon to left (towards man)
     Timer.tween(5, {
         [self.baby] = {x = VIRTUAL_WIDTH / 3},
@@ -60,7 +48,7 @@ function StartState:init()
     gSounds['walking']:play()
     -- move man to right (towards baby)
     Timer.tween(5, {
-        [self.man] = {x = VIRTUAL_WIDTH / 3 - 30}
+        [self.man] = {x = VIRTUAL_WIDTH / 3 - 29}
     })
     --once the man and baby meet in middle
     :finish(function ()
@@ -80,8 +68,8 @@ function StartState:init()
                 -- man jumps over baby with balloon
                 gSounds['jump']:play()
                 Timer.tween(1.5, {
-                    [self.man] = {x = VIRTUAL_WIDTH / 2, y = 16},
-                    [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 + 11, y = 24}
+                    [self.man] = {x = VIRTUAL_WIDTH / 2 - 36, y = 16},
+                    [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 + 11 - 36, y = 24}
                 }) 
 
                 -- man walks aways on fading title with balloon
@@ -139,19 +127,21 @@ function StartState:init()
 end
 
 
-function StartState:update(dt) 
+function StartState:update(dt)
+    -- change animation to idle when baby and man get to their destinations
     if self.baby.x == VIRTUAL_WIDTH / 3 then
         self.baby:changeAnimation('idle')
     end
-
-    self.baby:update(dt)
 
     if self.man.x > VIRTUAL_WIDTH then
         self.man:changeAnimation('idle')
     end
 
+    -- update entities
+    self.baby:update(dt)
     self.man:update(dt)
 
+    -- change to play state
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         Timer.clear()
         gSounds['walking']:stop()
@@ -161,7 +151,7 @@ end
 
 
 function StartState:render()
-    -- draw Title
+    -- draw Titles
     love.graphics.setFont(gFonts['small-title'])
     love.graphics.setColor(184/255, 149/255, 208/255, self.titleOpacity.valA)
     love.graphics.printf('It\'s Just Like', 0, 4, VIRTUAL_WIDTH, 'center')

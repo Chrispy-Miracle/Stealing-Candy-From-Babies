@@ -12,6 +12,7 @@ function PlayState:init()
     }
     self.player.direction = 'right'
     
+
     -- player's state machine
     self.player.stateMachine = StateMachine{
         ['idle'] = function () return PlayerIdleState(self.player) end,
@@ -19,40 +20,45 @@ function PlayState:init()
     }
     self.player.stateMachine:change('idle')
 
-    -- walk player onto scene
+
+    -- this animation walks player onto scene
     self.player:changeAnimation('walk-' .. self.player.direction)
     gSounds['walking']:play()
     Timer.tween(2, {
         [self.player] = {x = 16}
     })
-    -- stop player
+    -- stop player (Ready to Play!)
     :finish(function() 
         self.player.stateMachine:change('idle')
     end)
 
+
+    -- table to hold spawned babies
     self.babies = {}
-    -- baby spawner
+
+    -- BABY SPAWNER
     Timer.every(1, function ()
+        -- every second, 1 in 3 odds to spawn baby
         if math.random(3) == 1 then
+            -- make baby
             local baby = Entity {
                 type = 'baby',
                 animations = ENTITY_DEFS['baby'].animations,
                 width = ENTITY_DEFS['baby'].width,
                 height = ENTITY_DEFS['baby'].height,
                 x = VIRTUAL_WIDTH - 10,
-                y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2),
+                y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
                 walkSpeed = ENTITY_DEFS['baby'].walkSpeed
             }
-            baby.items = {}
             baby:changeAnimation('crawl-left')
+
+            -- table for items baby is holding
+            baby.items = {}
+            -- 1 in 3 three chance baby gets a balloon
             if math.random(3) == 1 then
                 baby.hasBalloon = true
                 local balloon = GameObject {
-                    type = 'balloon',
-                    texture = OBJECT_DEFS['balloon'].texture,
-                    frame = math.random(#OBJECT_DEFS['balloon'].frames),
-                    height = OBJECT_DEFS['balloon'].height,
-                    width = OBJECT_DEFS['balloon'].width,
+                    object_def = OBJECT_DEFS['balloon'],
                     x = baby.x - BABY_BALLOON_OFFSET_X,
                     y = baby.y - BABY_BALLOON_OFFSET_Y,
                     isCarried = true,
@@ -60,7 +66,23 @@ function PlayState:init()
                     carrier_offset_x = BABY_BALLOON_OFFSET_X,
                     carrier_offset_y = BABY_BALLOON_OFFSET_Y
                 }
+
                 table.insert(baby.items, balloon)
+            end 
+            -- 1 in 3 chance baby gets a lollipop
+            if not baby.hasBalloon and math.random(3) == 1 then
+                baby.hasLollipop = true
+                local lollipop = GameObject {
+                    object_def = OBJECT_DEFS['lollipop'],
+                    x = baby.x - BABY_LOLLIPOP_OFFSET_X,
+                    y = baby.y - BABY_LOLLIPOP_OFFSET_Y,
+                    isCarried = true,
+                    carrier = baby,
+                    carrier_offset_x = BABY_LOLLIPOP_OFFSET_X,
+                    carrier_offset_y = BABY_LOLLIPOP_OFFSET_Y
+                }
+
+                table.insert(baby.items, lollipop)
             end 
 
             table.insert(self.babies, baby)
@@ -70,18 +92,22 @@ end
 
 
 function PlayState:update(dt)
-
+    -- update player state machine
     self.player.stateMachine:update(dt)
 
+    -- update babies
     for k, baby in pairs(self.babies) do
+        -- ensure babies still on screen
         if baby.x > -baby.width then
             baby.x = baby.x - baby.walkSpeed * dt
             baby:update(dt)
 
+            -- update baby's items
             for k, item in pairs(baby.items) do
                 item:update(dt)
             end
         else
+            -- remove babies no longer on screen
             table.remove(self.babies, k)
         end
             
@@ -91,30 +117,31 @@ function PlayState:update(dt)
 end
 
 function PlayState:render()
+    -- draw background
     love.graphics.draw(gTextures['background'], gFrames['background'][1], 0, 0)
     
-    
-
     for k, baby in pairs(self.babies) do
-        
         if baby.y + baby.height < self.player.y + self.player.height then 
+            -- draw babies items behind player
             for k, item in pairs(baby.items) do
                 item:render()
             end
-
+            -- draw babies behind player
             baby:render()
         end
     end
     
+    -- draw player
     self.player.stateMachine:render()
 
+   
     for k, baby in pairs(self.babies) do
-        
+        -- draw babies' items in front of player
         if baby.y + baby.height > self.player.y + self.player.height then 
             for k, item in pairs(baby.items) do
                 item:render()
             end
-
+            -- draw babies in front of player
             baby:render()
         end
     end

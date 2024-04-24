@@ -10,6 +10,7 @@ function Entity:init(def)
 
     self.height = def.height
     self.width = def.width 
+
     self.walkSpeed = def.walkSpeed
 
 end
@@ -43,5 +44,5 @@ end
 function Entity:render()
     local anim = self.currentAnimation
     love.graphics.draw(gTextures[anim.texture], 
-    gFrames[anim.texture][anim:getCurrentFrame()], self.x, self.y)
+        gFrames[anim.texture][anim:getCurrentFrame()], self.x, self.y)
 end

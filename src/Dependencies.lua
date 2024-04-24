@@ -1,7 +1,9 @@
+-- libraries
 push = require 'lib/push'
 Class = require 'lib/class'
 Timer = require 'lib/knife.timer'
 
+-- global
 require 'src/constants'
 require 'src/Util'
 
@@ -12,15 +14,19 @@ require 'src/states/BaseState'
 require 'src/states/StartState'
 require 'src/states/PlayState'
 
+-- player states
 require 'src/states/playerStates/PlayerIdleState'
 require 'src/states/playerStates/PlayerWalkState'
 
+-- entities and defs
 require 'src/entity_defs'
 require 'src/Entity'
 
+-- objects and defs
 require 'src/game_object_defs'
 require 'src/GameObject'
 
+-- helper classes
 require 'src/Animation'
 
 
@@ -34,6 +40,7 @@ gTextures = {
     ['background'] = love.graphics.newImage('graphics/background.png'),
     ['bad-baby'] = love.graphics.newImage('graphics/Bad-Baby2.png'),
     ['balloons'] = love.graphics.newImage('graphics/balloons.png'),
+    ['lollipops'] = love.graphics.newImage('graphics/lollipops.png'),
     ['bad-man'] = love.graphics.newImage('graphics/Bad-Man3.png')
 }
 
@@ -42,6 +49,7 @@ gFrames = {
     ['background'] = GenerateQuads(gTextures['background'], 256, 144),
     ['bad-baby'] = GenerateQuads(gTextures['bad-baby'], 32, 32),
     ['balloons'] = GenerateQuads(gTextures['balloons'], 32, 32),
+    ['lollipops'] = GenerateQuads(gTextures['lollipops'], 16, 32),
     ['bad-man'] = GenerateQuads(gTextures['bad-man'], 32, 64)
 }
 
