@@ -90,8 +90,8 @@ function PlayState:init()
 
     self.moms = {}
 
-    Timer.every(1, function ()
-        if math.random(4) == 1 then
+    Timer.every(2, function ()
+        if math.random(6) == 1 then
             local mom = Entity {
                 type = 'mom',
                 entity_def = ENTITY_DEFS['mom'],
@@ -106,11 +106,14 @@ end
 
 
 function PlayState:update(dt)
+    local playerHandPosition = {x= self.player.x, y = self.player.y}
+    
     -- update player state machine
     self.player.stateMachine:update(dt)
 
     -- update babies
     for k, baby in pairs(self.babies) do
+
         -- ensure babies still on screen
         if baby.x > -baby.width then
             baby.x = baby.x - baby.walkSpeed * dt
@@ -118,6 +121,21 @@ function PlayState:update(dt)
 
             -- update baby's items
             for k, item in pairs(baby.items) do
+
+
+                if playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 then
+                -- and playerHandPosition.y > item.y + 32 
+                -- and playerHandPosition.y < item.y + item.width + 32 then
+                    item.carrier = self.player
+                    if item.type == 'balloon' then
+                        item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
+                        item.carrier_offset_y = PLAYER_BALLOON_OFFSET_Y
+                    elseif item.type == 'lollipop' then
+                        item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
+                        item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y 
+                    end                      
+                end
+                    
                 item:update(dt)
             end
         else
@@ -144,8 +162,13 @@ function PlayState:render()
     -- draw background
     love.graphics.draw(gTextures['background'], gFrames['background'][1], 0, 0)
     
+    
+    
+    local playerY = self.player.y + self.player.height
+
     for k, baby in pairs(self.babies) do
-        if baby.y + baby.height < self.player.y + self.player.height then 
+        local babyY = baby.y + baby.height
+        if  babyY < playerY then 
             -- draw babies items behind player
             for k, item in pairs(baby.items) do
                 item:render()
@@ -154,6 +177,14 @@ function PlayState:render()
             baby:render()
         end
     end
+
+    for k, mom in pairs(self.moms) do
+        local momY = mom.y + mom.height
+        if  momY < playerY then
+            mom:render()
+        end
+    end
+    
     
     -- draw player
     self.player.stateMachine:render()
@@ -171,7 +202,9 @@ function PlayState:render()
     end
 
     for k, mom in pairs(self.moms) do
-        mom:render()
+        if mom.y + mom.height > self.player.y + self.player.height then
+            mom:render()
+        end
 
     end
 end
