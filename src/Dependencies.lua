@@ -15,6 +15,7 @@ require 'src/StateMachine'
 require 'src/states/BaseState'
 require 'src/states/StartState'
 require 'src/states/PlayState'
+require 'src/states/GameOverState'
 
 -- player states
 require 'src/states/playerStates/PlayerIdleState'
@@ -31,6 +32,7 @@ require 'src/Animation'
 
 
 gFonts = {
+    ['small'] = love.graphics.newFont('fonts/ArcadeAlternate.ttf', 10),
     ['small-title'] = love.graphics.newFont('fonts/ArcadeAlternate.ttf', 16),
     ['title'] = love.graphics.newFont('fonts/ArcadeAlternate.ttf', 32)
 }

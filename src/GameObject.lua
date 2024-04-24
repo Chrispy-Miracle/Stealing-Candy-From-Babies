@@ -17,7 +17,14 @@ function GameObject:init(def)
         -- used to position item with carrier
         self.carrier_offset_x = def.carrier_offset_x
         self.carrier_offset_y = def.carrier_offset_y
+
+    --     if #self.carrier.items > 3 and self.type == 'balloon' then
+    --         self.balloonAngle =  2.5-- math.rad(math.deg(math.random(-30,30)))
+    --     else
+    --         self.balloonAngle = 0
+    --     end
     end
+
 end
 
 function GameObject:update(dt)
@@ -28,6 +35,10 @@ function GameObject:update(dt)
     end
 end
 
-function GameObject:render()                                                                 
-    love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.frame], self.x, self.y)
+function GameObject:render()   
+    -- if self.carrier.type == 'player' and self.type == 'balloon' then                     
+    --     love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.frame], self.x, self.y, self.balloonAngle, 1, 1, self.width / 2, self.height / 2)
+    -- else
+        love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.frame], self.x, self.y)
+    -- end
 end

@@ -103,12 +103,14 @@ end
 
 
 function PlayState:update(dt)
-    local playerHandPosition = {x = self.player.x + self.player.width, y = self.player.y + self.player.height / 2}
+    if self.player.health <= 0 then
+        gStateMachine:change('game-over')
+    end
+
+    local playerHandPosition = {x = self.player.x + self.player.width / 2, y = self.player.y + self.player.height / 2}
     
     -- update player state machine
     self.player.stateMachine:update(dt)
-
-
 
     -- update babies
     for k, baby in pairs(self.babies) do
@@ -121,31 +123,16 @@ function PlayState:update(dt)
             -- update baby's items
             for k, item in pairs(baby.items) do
 
-                -- Steal items from baby
+                -- unless the item gets stolen!
                 if playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 and
-                love.keyboard.isDown('space') then
-                    gSounds['steal']:play()
-                    item.x = playerHandPosition.x
-                    item.y = playerHandPosition.y
-
-                    if item.type == 'balloon' then
-                        item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
-                        item.carrier_offset_y = PLAYER_BALLOON_OFFSET_Y
-                        
-                    elseif item.type == 'lollipop' then
-                        item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
-                        item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y 
-                    end 
-                    table.remove(baby.items, k)
-                    
-                    table.insert(self.player.items, item)  
-                    item.carrier = self.player                 
+                love.keyboard.wasPressed('space') then
+                    self.player:stealItem(baby, item, k)
                 end
                     
                 item:update(dt)
             end
         else
-            -- remove babies no longer on screen
+            -- remove babies no longer on screen (along with their items!)
             table.remove(self.babies, k)
         end
     end
@@ -172,6 +159,21 @@ end
 function PlayState:render()
     -- draw background
     love.graphics.draw(gTextures['background'], gFrames['background'][1], 0, 0)
+
+    love.graphics.setFont(gFonts['small'])
+   
+    love.graphics.print('Sugar Rush: ', 4, 2)
+    love.graphics.setColor(0,0,0, 255)
+    love.graphics.rectangle('fill', 63, 3, self.player.maxHealth, 8)
+    love.graphics.setColor(255, 255, 255, 255)
+
+    if self.player.hasLollipop then
+        love.graphics.setColor(math.random(1, 255)/255, math.random(1, 255)/255, math.random(1, 255)/255, 255)
+    elseif self.player.health < 20 then
+        love.graphics.setColor(255, 0, 0, 255)
+    end 
+    love.graphics.rectangle('fill', 64, 4, self.player.health, 6)
+    love.graphics.setColor(255, 255, 255, 255)
     
     
     
