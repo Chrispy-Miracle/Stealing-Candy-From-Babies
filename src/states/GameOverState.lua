@@ -4,6 +4,9 @@ function GameOverState:init()
 end
 
 function GameOverState:update()
+    if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') then
+        gStateMachine:change('start')
+    end
 end
 
 function GameOverState:render()

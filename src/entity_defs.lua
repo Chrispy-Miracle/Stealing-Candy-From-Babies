@@ -51,5 +51,18 @@ ENTITY_DEFS = {
                 texture = 'bad-mom'
             }
         }
+    },
+    ['stork'] = {
+        type = 'stork',
+        height = 32,
+        width = 64,
+        walkSpeed = 60,
+        animations = {
+            ['fly'] = {
+                frames = {1, 2},
+                interval = 0.2,
+                texture = 'bad-stork'
+            }
+        }
     }
 }

@@ -43,6 +43,12 @@ function PlayState:init()
     self.moms = {}
     self:spawnMoms()
 
+    self.onGroundTimers = {}
+    
+    
+    self.storks = {}
+    self.storksSpawned = false
+
 end
 
 
@@ -52,17 +58,23 @@ function PlayState:update(dt)
     if self.player.health <= 0 then
         gStateMachine:change('game-over')
     end
-
-    self.backgroundScrollX = (self.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
     
+
     if self.player.isFloating then
         local scrollGravity = self.player.balloonsCarried * 10
         self.backgroundScrollY = (self.backgroundScrollY - scrollGravity * dt) % BACKGROUND_Y_LOOP_POINT
         self.backgroundScrollX = 0
-        self.background = 2
+        Timer.after(2.4, function () self.background = 2 end)
+        if not self.storksSpawned then
+           Timer.clear(self.onGroundTimers) 
+           self:spawnStorks()
+           self.storksSpawned = true
+        end
     else
+        self.backgroundScrollX = (self.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
         self.backgroundScrollY = 0
     end
+
 
     local playerHandPosition = {x = self.player.x + self.player.width / 2, y = self.player.y + self.player.height / 2}
     
@@ -100,32 +112,52 @@ function PlayState:update(dt)
         item:update(dt)
     end
 
-    -- update moms
-    for k, mom in pairs(self.moms) do
-        -- ensure moms still on screen
-        if mom.x > -mom.width then
-            mom.x = mom.x - mom.walkSpeed * dt
-            mom:update(dt)
-
+    for k, stork in pairs(self.storks) do
+        if stork.x > -stork.width then
+            stork.x = stork.x - stork.walkSpeed * dt
+            stork:update(dt)
         else
-            -- remove moms no longer on screen
-            table.remove(self.moms, k)
+            table.remove(self.storks, k)
         end
     end
+
+
+    -- update moms
+
+    self:updateMoms(dt)
+    -- for k, mom in pairs(self.moms) do
+    --     -- ensure moms still on screen
+    --     if mom.x > -mom.width then
+    --         mom.x = mom.x - mom.walkSpeed * dt
+    --         mom:update(dt)
+
+    --     else
+    --         -- remove moms no longer on screen
+    --         table.remove(self.moms, k)
+    --     end
+    -- end
 end
 
-function PlayState:render()
+function PlayState:render() 
     -- draw background
-    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], math.floor(-self.backgroundScrollX), math.floor(-self.backgroundScrollY))
-    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], math.floor(-self.backgroundScrollX + BACKGROUND_X_LOOP_POINT), math.floor(-self.backgroundScrollY))
-    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], math.floor(-self.backgroundScrollX), math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT))
+    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
+        math.floor(-self.backgroundScrollX), 
+        math.floor(-self.backgroundScrollY) - 144)
+
+    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
+        math.floor(-self.backgroundScrollX + BACKGROUND_X_LOOP_POINT), 
+        math.floor(-self.backgroundScrollY) - 144)
+
+    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
+        math.floor(-self.backgroundScrollX), 
+        math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT) - 144) 
 
 
 
     love.graphics.setFont(gFonts['small'])
     love.graphics.print('Sugar Rush: ', 4, 2)
     love.graphics.setColor(0,0,0, 255)
-    love.graphics.rectangle('fill', 63, 3, self.player.maxHealth, 8)
+    love.graphics.rectangle('fill', 63, 3, self.player.maxHealth + 2, 8)
     love.graphics.setColor(255, 255, 255, 255)
 
     if self.player.hasLollipop then
@@ -185,6 +217,10 @@ function PlayState:render()
         end
 
     end
+
+    for k, stork in pairs(self.storks) do
+        stork:render()
+    end
 end
 
 
@@ -199,6 +235,36 @@ function PlayState:spawnMoms()
             }
             mom:changeAnimation('walk-left')
             table.insert(self.moms, mom)
+        end
+    end)
+    :group(self.onGroundTimers)
+end
+
+function PlayState:updateMoms(dt)
+    for k, mom in pairs(self.moms) do
+        -- ensure moms still on screen
+        if mom.x > -mom.width then
+            mom.x = mom.x - mom.walkSpeed * dt
+            mom:update(dt)
+
+        else
+            -- remove moms no longer on screen
+            table.remove(self.moms, k)
+        end
+    end
+end
+
+function PlayState:spawnStorks()
+    Timer.every(2, function ()
+        if math.random(3) == 1 then
+            local stork = Entity {
+                type = 'stork',
+                entity_def = ENTITY_DEFS['stork'],
+                x = VIRTUAL_WIDTH,
+                y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS['stork'].height)
+            }
+            stork:changeAnimation('fly')
+            table.insert(self.storks, stork)
         end
     end)
 end
@@ -253,4 +319,5 @@ function PlayState:spawnBabies()
             table.insert(self.babies, baby)
         end
     end)
+    :group(self.onGroundTimers)
 end
