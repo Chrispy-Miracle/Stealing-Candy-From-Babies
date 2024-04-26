@@ -49,7 +49,7 @@ gTextures = {
 
 
 gFrames = {
-    ['background'] = GenerateQuads(gTextures['background'], 256, 144),
+    ['background'] = GenerateQuads(gTextures['background'], 272, 144),
     ['bad-baby'] = GenerateQuads(gTextures['bad-baby'], 32, 32),
     ['balloons'] = GenerateQuads(gTextures['balloons'], 32, 32),
     ['lollipops'] = GenerateQuads(gTextures['lollipops'], 16, 32),

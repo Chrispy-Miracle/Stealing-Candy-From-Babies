@@ -21,6 +21,11 @@ function Entity:init(def)
         Timer.every(1, function () self.health = self.health - 1 end)
     end
 
+    self.balloonsCarried = 0
+    self.gravity = 0
+    -- self.antiGravity = 0
+
+
 end
 
 function Entity:createAnimations(animations)
@@ -53,6 +58,7 @@ function Entity:stealItem(baby, item, itemKey)
     if item.type == 'balloon' then
         item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
         item.carrier_offset_y = PLAYER_BALLOON_OFFSET_Y
+        self.balloonsCarried = self.balloonsCarried + 1
         
     elseif item.type == 'lollipop' then
         self.hasLollipop = true
@@ -79,6 +85,25 @@ end
 
 
 function Entity:update(dt)
+    if self.balloonsCarried > 3 then
+        self.gravity = self.balloonsCarried * 10
+        self.isFloating = true
+
+        if self.y > -self.height then
+            self.y = self.y - self.gravity * dt
+        else 
+            self.y = VIRTUAL_HEIGHT
+            -- Timer.tween(1.5, {
+            --     [self] = {y = VIRTUAL_HEIGHT / 3}
+            -- })
+            self.gravity = 0
+        end
+
+    else
+        self.isFloating = false
+    end
+ 
+
 
     if self.currentAnimation then
         self.currentAnimation:update(dt)

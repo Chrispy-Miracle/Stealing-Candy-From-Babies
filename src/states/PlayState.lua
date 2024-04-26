@@ -1,6 +1,10 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
+    self.background = 1 -- can be changed for extra backgrounds
+    self.backgroundScrollX = 0
+    self.backgroundScrollY = 0
+
     -- player
     self.player = Entity {
         type = 'player',
@@ -11,7 +15,6 @@ function PlayState:init()
     self.player.direction = 'right'
     self.player.items = {}
     
-
     -- player's state machine
     self.player.stateMachine = StateMachine{
         ['idle'] = function () return PlayerIdleState(self.player) end,
@@ -34,77 +37,31 @@ function PlayState:init()
 
     -- table to hold spawned babies
     self.babies = {}
+    self:spawnBabies()
 
-    -- BABY SPAWNER
-    Timer.every(1, function ()
-        -- every second, 1 in 3 odds to spawn baby
-        if math.random(3) == 1 then
-            -- make baby
-            local baby = Entity {
-                type = 'baby',
-                entity_def = ENTITY_DEFS['baby'],
-                x = VIRTUAL_WIDTH - 10,
-                y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
-            }
-            baby:changeAnimation('crawl-left')
-
-            -- table for items baby is holding
-            baby.items = {}
-            -- 1 in 3 three chance baby gets a balloon
-            if math.random(3) == 1 then
-                baby.hasBalloon = true
-                local balloon = GameObject {
-                    object_def = OBJECT_DEFS['balloon'],
-                    x = baby.x + BABY_BALLOON_OFFSET_X,
-                    y = baby.y + BABY_BALLOON_OFFSET_Y,
-                    isCarried = true,
-                    carrier = baby,
-                    carrier_offset_x = BABY_BALLOON_OFFSET_X,
-                    carrier_offset_y = BABY_BALLOON_OFFSET_Y
-                }
-
-                table.insert(baby.items, balloon)
-            end 
-            -- 1 in 3 chance baby gets a lollipop
-            if not baby.hasBalloon and math.random(3) == 1 then
-                baby.hasLollipop = true
-                local lollipop = GameObject {
-                    object_def = OBJECT_DEFS['lollipop'],
-                    x = baby.x + BABY_LOLLIPOP_OFFSET_X,
-                    y = baby.y + BABY_LOLLIPOP_OFFSET_Y,
-                    isCarried = true,
-                    carrier = baby,
-                    carrier_offset_x = BABY_LOLLIPOP_OFFSET_X,
-                    carrier_offset_y = BABY_LOLLIPOP_OFFSET_Y
-                }
-
-                table.insert(baby.items, lollipop)
-            end 
-
-            table.insert(self.babies, baby)
-        end
-    end)
-
+    -- table for spawned moms
     self.moms = {}
+    self:spawnMoms()
 
-    Timer.every(2, function ()
-        if math.random(6) == 1 then
-            local mom = Entity {
-                type = 'mom',
-                entity_def = ENTITY_DEFS['mom'],
-                x = VIRTUAL_WIDTH,
-                y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8)
-            }
-            mom:changeAnimation('walk-left')
-            table.insert(self.moms, mom)
-        end
-    end)
 end
+
+
 
 
 function PlayState:update(dt)
     if self.player.health <= 0 then
         gStateMachine:change('game-over')
+    end
+
+    self.backgroundScrollX = (self.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
+    
+    if self.player.isFloating then
+        local scrollGravity = self.player.balloonsCarried * 10
+        self.backgroundScrollY = (self.backgroundScrollY - scrollGravity * dt) % BACKGROUND_Y_LOOP_POINT
+        self.backgroundScrollX = 0
+        self.background = 2
+    else
+        self.backgroundScrollY = 0
     end
 
     local playerHandPosition = {x = self.player.x + self.player.width / 2, y = self.player.y + self.player.height / 2}
@@ -138,30 +95,34 @@ function PlayState:update(dt)
     end
 
 
+    -- update player's items
     for k, item in pairs(self.player.items) do
         item:update(dt)
     end
 
-        -- update moms
-        for k, mom in pairs(self.moms) do
-            -- ensure moms still on screen
-            if mom.x > -mom.width then
-                mom.x = mom.x - mom.walkSpeed * dt
-                mom:update(dt)
+    -- update moms
+    for k, mom in pairs(self.moms) do
+        -- ensure moms still on screen
+        if mom.x > -mom.width then
+            mom.x = mom.x - mom.walkSpeed * dt
+            mom:update(dt)
 
-            else
-                -- remove moms no longer on screen
-                table.remove(self.moms, k)
-            end
+        else
+            -- remove moms no longer on screen
+            table.remove(self.moms, k)
         end
+    end
 end
 
 function PlayState:render()
     -- draw background
-    love.graphics.draw(gTextures['background'], gFrames['background'][1], 0, 0)
+    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], math.floor(-self.backgroundScrollX), math.floor(-self.backgroundScrollY))
+    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], math.floor(-self.backgroundScrollX + BACKGROUND_X_LOOP_POINT), math.floor(-self.backgroundScrollY))
+    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], math.floor(-self.backgroundScrollX), math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT))
+
+
 
     love.graphics.setFont(gFonts['small'])
-   
     love.graphics.print('Sugar Rush: ', 4, 2)
     love.graphics.setColor(0,0,0, 255)
     love.graphics.rectangle('fill', 63, 3, self.player.maxHealth, 8)
@@ -224,4 +185,72 @@ function PlayState:render()
         end
 
     end
+end
+
+
+function PlayState:spawnMoms()
+    Timer.every(2, function ()
+        if math.random(6) == 1 then
+            local mom = Entity {
+                type = 'mom',
+                entity_def = ENTITY_DEFS['mom'],
+                x = VIRTUAL_WIDTH,
+                y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8)
+            }
+            mom:changeAnimation('walk-left')
+            table.insert(self.moms, mom)
+        end
+    end)
+end
+
+
+function PlayState:spawnBabies()
+    Timer.every(1, function ()
+        -- every second, 1 in 3 odds to spawn baby
+        if math.random(3) == 1 then
+            -- make baby
+            local baby = Entity {
+                type = 'baby',
+                entity_def = ENTITY_DEFS['baby'],
+                x = VIRTUAL_WIDTH - 10,
+                y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
+            }
+            baby:changeAnimation('crawl-left')
+
+            -- table for items baby is holding
+            baby.items = {}
+            -- 1 in 3 three chance baby gets a balloon
+            if math.random(3) == 1 then
+                baby.hasBalloon = true
+                local balloon = GameObject {
+                    object_def = OBJECT_DEFS['balloon'],
+                    x = baby.x + BABY_BALLOON_OFFSET_X,
+                    y = baby.y + BABY_BALLOON_OFFSET_Y,
+                    isCarried = true,
+                    carrier = baby,
+                    carrier_offset_x = BABY_BALLOON_OFFSET_X,
+                    carrier_offset_y = BABY_BALLOON_OFFSET_Y
+                }
+
+                table.insert(baby.items, balloon)
+            end 
+            -- 1 in 3 chance baby gets a lollipop
+            if not baby.hasBalloon and math.random(3) == 1 then
+                baby.hasLollipop = true
+                local lollipop = GameObject {
+                    object_def = OBJECT_DEFS['lollipop'],
+                    x = baby.x + BABY_LOLLIPOP_OFFSET_X,
+                    y = baby.y + BABY_LOLLIPOP_OFFSET_Y,
+                    isCarried = true,
+                    carrier = baby,
+                    carrier_offset_x = BABY_LOLLIPOP_OFFSET_X,
+                    carrier_offset_y = BABY_LOLLIPOP_OFFSET_Y
+                }
+
+                table.insert(baby.items, lollipop)
+            end 
+
+            table.insert(self.babies, baby)
+        end
+    end)
 end
