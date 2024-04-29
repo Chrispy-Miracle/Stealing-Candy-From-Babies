@@ -22,11 +22,8 @@ function GameObject:init(def)
 
         self.x = self.carrier.x +  self.carrier_offset_x
         self.y = self.carrier.y + self.carrier_offset_y
-        self.numBalloonsCarried = 0
 
-        -- if self.type == 'balloon'then
-        --     self.balloonAngle = math.rad(math.random(-4, 4) * 7)
-        -- end
+        self.numBalloonsCarried = 0
     end
 
 end

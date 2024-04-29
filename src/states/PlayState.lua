@@ -10,10 +10,10 @@ function PlayState:init()
         type = 'player',
         entity_def = ENTITY_DEFS['player'],
         x = - 16,
-        y = VIRTUAL_HEIGHT - 70
+        y = VIRTUAL_HEIGHT - 70,
+        direction = 'right',
     }
-    self.player.direction = 'right'
-    self.player.items = {}
+    
     
     -- player's state machine
     self.player.stateMachine = StateMachine{
@@ -26,7 +26,7 @@ function PlayState:init()
     -- this animation walks player onto scene
     self.player:changeAnimation('walk-' .. self.player.direction)
     gSounds['walking']:play()
-    Timer.tween(2, {
+    Timer.tween(1, {
         [self.player] = {x = 16}
     })
     -- stop player (Ready to Play!)
@@ -35,23 +35,23 @@ function PlayState:init()
     end)
 
 
+
     -- table to hold spawned babies
     self.babies = {}
     self:spawnBabies()
 
     -- table for spawned moms
     self.moms = {}
-    self:spawnMoms()
+    -- self:spawnMoms()
 
+    -- this must be below the spawn baby and mom calls
     self.onGroundTimers = {}
-    
-    
+
+    -- table for storks
     self.storks = {}
     self.storksSpawned = false
 
 end
-
-
 
 
 function PlayState:update(dt)
@@ -66,11 +66,11 @@ function PlayState:update(dt)
         self.backgroundScrollX = 0
         Timer.after(2.4, function () self.background = 2 end)
         if not self.storksSpawned then
-           Timer.clear(self.onGroundTimers) 
+            Timer.clear(self.onGroundTimers)
            self:spawnStorks()
            self.storksSpawned = true
         end
-    else
+   else
         self.backgroundScrollX = (self.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
         self.backgroundScrollY = 0
     end
@@ -96,6 +96,7 @@ function PlayState:update(dt)
                 if playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 and
                 love.keyboard.wasPressed('space') then
                     self.player:stealItem(baby, item, k)
+                    self:spawnMom()
                 end
                     
                 item:update(dt)
@@ -121,21 +122,8 @@ function PlayState:update(dt)
         end
     end
 
-
     -- update moms
-
     self:updateMoms(dt)
-    -- for k, mom in pairs(self.moms) do
-    --     -- ensure moms still on screen
-    --     if mom.x > -mom.width then
-    --         mom.x = mom.x - mom.walkSpeed * dt
-    --         mom:update(dt)
-
-    --     else
-    --         -- remove moms no longer on screen
-    --         table.remove(self.moms, k)
-    --     end
-    -- end
 end
 
 function PlayState:render() 
@@ -153,15 +141,16 @@ function PlayState:render()
         math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT) - 144) 
 
 
-
+    -- draw health (sugar-rush) bar
     love.graphics.setFont(gFonts['small'])
     love.graphics.print('Sugar Rush: ', 4, 2)
     love.graphics.setColor(0,0,0, 255)
     love.graphics.rectangle('fill', 63, 3, self.player.maxHealth + 2, 8)
     love.graphics.setColor(255, 255, 255, 255)
-
+    -- make bar flash if gaining health
     if self.player.hasLollipop then
         love.graphics.setColor(math.random(1, 255)/255, math.random(1, 255)/255, math.random(1, 255)/255, 255)
+    -- make bar red if low health
     elseif self.player.health < 20 then
         love.graphics.setColor(255, 0, 0, 255)
     end 
@@ -169,9 +158,10 @@ function PlayState:render()
     love.graphics.setColor(255, 255, 255, 255)
     
     
-    
+    -- used to render NPCs behind or in front of player
     local playerY = self.player.y + self.player.height
 
+    -- draw babies
     for k, baby in pairs(self.babies) do
         local babyY = baby.y + baby.height
         if  babyY < playerY then 
@@ -184,34 +174,37 @@ function PlayState:render()
         end
     end
 
+    -- draw moms
     for k, mom in pairs(self.moms) do
         local momY = mom.y + mom.height
+        -- moms behind player
         if  momY < playerY then
             mom:render()
+            -- mom's items
             for k, item in pairs(mom.items) do
                 item:render()
             end
         end
     end
     
-
-   for k, item in pairs(self.player.items) do
+    -- draw player's balloons behind player
+    for k, item in pairs(self.player.items) do
         if item.type == 'balloon' then
             item:render()
         end 
     end 
+
     -- draw player
     self.player.stateMachine:render()
 
+    -- draw player's lollipops in front of player
     for k, item in pairs(self.player.items) do
         if item.type == 'lollipop' then
             item:render()
         end 
     end
 
-   
-
-   
+   -- babies
     for k, baby in pairs(self.babies) do
         -- draw babies' items in front of player
         if baby.y + baby.height > self.player.y + self.player.height then 
@@ -223,49 +216,51 @@ function PlayState:render()
         end
     end
 
+    -- moms
     for k, mom in pairs(self.moms) do
+        -- moms in front of player
         if mom.y + mom.height > self.player.y + self.player.height then
             mom:render()
+            -- mom's items
             for k, item in pairs(mom.items) do
                 item:render()
             end
         end
-
     end
 
+    -- storks
     for k, stork in pairs(self.storks) do
         stork:render()
     end
 end
 
 
-function PlayState:spawnMoms()
-    Timer.every(2, function ()
-        if math.random(6) == 1 then
-            local mom = Entity {
-                type = 'mom',
-                entity_def = ENTITY_DEFS['mom'],
-                x = VIRTUAL_WIDTH,
-                y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8)
-            }
-            mom.items = {}
-            local purse = GameObject {
-                type = 'bad-bag',
-                object_def = OBJECT_DEFS['bad-bag'],
-                x =  mom.x + MOM_BAG_OFFSET_X,
-                y = mom.y + MOM_BAG_OFFSET_Y,
-                isCarried = true,
-                carrier = mom,
-                carrier_offset_x = MOM_BAG_OFFSET_X,
-                carrier_offset_y = MOM_BAG_OFFSET_Y
-            }
-            
-            table.insert(mom.items, purse)
-            mom:changeAnimation('walk-left')
-            table.insert(self.moms, mom)
-        end
-    end)
-    :group(self.onGroundTimers)
+function PlayState:spawnMom()
+    local mom = Entity {
+        type = 'mom',
+        entity_def = ENTITY_DEFS['mom'],
+        x = VIRTUAL_WIDTH,
+        y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8)
+    }
+    mom.items = {}
+    local purse = GameObject {
+        type = 'bad-bag',
+        object_def = OBJECT_DEFS['bad-bag'],
+        x =  mom.x + MOM_BAG_OFFSET_X,
+        y = mom.y + MOM_BAG_OFFSET_Y,
+        isCarried = true,
+        carrier = mom,
+        carrier_offset_x = MOM_BAG_OFFSET_X,
+        carrier_offset_y = MOM_BAG_OFFSET_Y
+    }
+    
+    table.insert(mom.items, purse)
+    mom:changeAnimation('walk-left')
+    Timer.tween(1, {
+        [mom] ={x = self.player.x, y = self.player.y}
+    })
+    table.insert(self.moms, mom)
+
 end
 
 function PlayState:updateMoms(dt)
@@ -315,8 +310,6 @@ function PlayState:spawnBabies()
             }
             baby:changeAnimation('crawl-left')
 
-            -- table for items baby is holding
-            baby.items = {}
             -- 1 in 3 three chance baby gets a balloon
             if math.random(3) == 1 then
                 baby.hasBalloon = true
@@ -329,9 +322,9 @@ function PlayState:spawnBabies()
                     carrier_offset_x = BABY_BALLOON_OFFSET_X,
                     carrier_offset_y = BABY_BALLOON_OFFSET_Y
                 }
-
                 table.insert(baby.items, balloon)
             end 
+
             -- 1 in 3 chance baby gets a lollipop
             if not baby.hasBalloon and math.random(3) == 1 then
                 baby.hasLollipop = true

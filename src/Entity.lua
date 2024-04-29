@@ -12,21 +12,23 @@ function Entity:init(def)
     self.width = def.entity_def.width 
 
     self.walkSpeed = def.entity_def.walkSpeed
+    self.direction = def.direction
 
     -- health (or sugar buzz)
     self.health = def.entity_def.startingHealth
     self.maxHealth = def.entity_def.maxHealth
 
+    -- constantly crashing from sugar buzz!
     if self.type == 'player' then
         Timer.every(1, function () self.health = self.health - 1 end)
     end
 
+    self.items = {}
     self.balloonsCarried = 0
+
     self.gravity = 0
-    -- self.antiGravity = 0
-
-
 end
+
 
 function Entity:createAnimations(animations)
     local animationsReturned = {}
@@ -42,6 +44,7 @@ function Entity:createAnimations(animations)
     return animationsReturned
 end
 
+
 function Entity:changeAnimation(name)
     self.currentAnimation = self.animations[name]
 end
@@ -49,11 +52,7 @@ end
 
 function Entity:stealItem(baby, item, itemKey)
                     
-    local playerHandPosition = {x = self.x + self.width, y = self.y + self.height / 2}
-
     gSounds['steal']:play()
-    -- item.x = playerHandPosition.x
-    -- item.y = playerHandPosition.y
 
     if item.type == 'balloon' then
         item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
@@ -79,7 +78,7 @@ function Entity:stealItem(baby, item, itemKey)
     table.remove(baby.items, itemKey)
     
     table.insert(self.items, item)  
-    item.carrier = self              
+    item.carrier = self  
 end
 
 
@@ -93,9 +92,6 @@ function Entity:update(dt)
             self.y = self.y - self.gravity * dt
         else 
             self.y = VIRTUAL_HEIGHT
-            -- Timer.tween(1.5, {
-            --     [self] = {y = VIRTUAL_HEIGHT / 3}
-            -- })
             self.gravity = 0
         end
 
