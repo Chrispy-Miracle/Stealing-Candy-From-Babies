@@ -3,7 +3,13 @@ GameObject = Class{}
 function GameObject:init(def)
     self.type = def.object_def.type
     self.texture = def.object_def.texture
-    self.frame = math.random(#def.object_def.frames)
+    
+    if self.type == 'bad-bag' then
+        self.frame = 1
+    else
+        self.frame = math.random(#def.object_def.frames)
+    end
+
     self.height = def.object_def.height
     self.width = def.object_def.width
     self.x = def.x

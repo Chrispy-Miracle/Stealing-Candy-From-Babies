@@ -18,12 +18,13 @@ function PlayState:init()
     -- player's state machine
     self.player.stateMachine = StateMachine{
         ['idle'] = function () return PlayerIdleState(self.player) end,
-        ['walk-state'] = function () return PlayerWalkState(self.player) end
+        ['walk-state'] = function () return PlayerWalkState(self) end
     }
     self.player.stateMachine:change('idle')
 
 
     -- this animation walks player onto scene
+    self.player.isWalking = true
     self.player:changeAnimation('walk-' .. self.player.direction)
     gSounds['walking']:play()
     Timer.tween(1, {
@@ -31,6 +32,7 @@ function PlayState:init()
     })
     -- stop player (Ready to Play!)
     :finish(function() 
+        self.player.isWalking = false
         self.player.stateMachine:change('idle')
     end)
 
@@ -70,9 +72,6 @@ function PlayState:update(dt)
            self:spawnStorks()
            self.storksSpawned = true
         end
-   else
-        self.backgroundScrollX = (self.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-        self.backgroundScrollY = 0
     end
 
 
@@ -175,17 +174,17 @@ function PlayState:render()
     end
 
     -- draw moms
-    for k, mom in pairs(self.moms) do
-        local momY = mom.y + mom.height
-        -- moms behind player
-        if  momY < playerY then
-            mom:render()
-            -- mom's items
-            for k, item in pairs(mom.items) do
-                item:render()
-            end
-        end
-    end
+    -- for k, mom in pairs(self.moms) do
+    --     local momY = mom.y + mom.height
+    --     -- moms behind player
+    --     if  momY < playerY then
+    --         mom:render()
+    --         -- mom's items
+    --         for k, item in pairs(mom.items) do
+    --             item:render()
+    --         end
+    --     end
+    -- end
     
     -- draw player's balloons behind player
     for k, item in pairs(self.player.items) do
@@ -219,13 +218,13 @@ function PlayState:render()
     -- moms
     for k, mom in pairs(self.moms) do
         -- moms in front of player
-        if mom.y + mom.height > self.player.y + self.player.height then
+        -- if mom.y + mom.height > self.player.y + self.player.height then
             mom:render()
             -- mom's items
             for k, item in pairs(mom.items) do
                 item:render()
             end
-        end
+        -- end
     end
 
     -- storks
@@ -242,7 +241,7 @@ function PlayState:spawnMom()
         x = VIRTUAL_WIDTH,
         y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8)
     }
-    mom.items = {}
+    -- mom.items = {}
     local purse = GameObject {
         type = 'bad-bag',
         object_def = OBJECT_DEFS['bad-bag'],
@@ -257,8 +256,24 @@ function PlayState:spawnMom()
     table.insert(mom.items, purse)
     mom:changeAnimation('walk-left')
     Timer.tween(1, {
-        [mom] ={x = self.player.x, y = self.player.y}
+        [mom] ={x = self.player.x + self.player.width, y = self.player.y}
     })
+    :finish(function () 
+        Timer.every(.3, function ()
+            if mom.items[1].frame == 1 then
+                mom.items[1].frame = 2 
+                if mom.items[1].x < self.player.x + self.player.width then
+                    gSounds['hit']:play()
+                    self.player.health =  self.player.health - 5
+                end
+            else
+                mom.items[1].frame = 1 
+            end
+
+
+            
+        end):limit(4)
+    end)
     table.insert(self.moms, mom)
 
 end

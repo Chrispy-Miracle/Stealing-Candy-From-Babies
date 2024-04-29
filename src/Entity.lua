@@ -50,7 +50,7 @@ function Entity:changeAnimation(name)
 end
 
 
-function Entity:stealItem(baby, item, itemKey)
+function Entity:stealItem(prevOwner, item, itemKey)
                     
     gSounds['steal']:play()
 
@@ -75,7 +75,7 @@ function Entity:stealItem(baby, item, itemKey)
         end)
         
     end 
-    table.remove(baby.items, itemKey)
+    table.remove(prevOwner.items, itemKey)
     
     table.insert(self.items, item)  
     item.carrier = self  
