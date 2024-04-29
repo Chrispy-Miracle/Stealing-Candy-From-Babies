@@ -52,8 +52,8 @@ function Entity:stealItem(baby, item, itemKey)
     local playerHandPosition = {x = self.x + self.width, y = self.y + self.height / 2}
 
     gSounds['steal']:play()
-    item.x = playerHandPosition.x
-    item.y = playerHandPosition.y
+    -- item.x = playerHandPosition.x
+    -- item.y = playerHandPosition.y
 
     if item.type == 'balloon' then
         item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
@@ -72,7 +72,7 @@ function Entity:stealItem(baby, item, itemKey)
         :limit(15)
         :finish(function () 
             self.hasLollipop = false
-            table.remove(self.items) 
+            table.remove(self.items, k) 
         end)
         
     end 

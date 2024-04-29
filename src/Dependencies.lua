@@ -46,6 +46,8 @@ gTextures = {
     ['bad-man'] = love.graphics.newImage('graphics/Bad-Man3.png'),
     ['bad-mom'] = love.graphics.newImage('graphics/Bad-Mom.png'),
     ['bad-stork'] = love.graphics.newImage('graphics/bad-stork.png'),
+    ['bad-balloon'] = love.graphics.newImage('graphics/bad-balloon.png'),
+    ['bad-bag'] = love.graphics.newImage('graphics/bad-bag.png')
 
 }
 
@@ -57,7 +59,8 @@ gFrames = {
     ['lollipops'] = GenerateQuads(gTextures['lollipops'], 16, 32),
     ['bad-man'] = GenerateQuads(gTextures['bad-man'], 32, 64),
     ['bad-mom'] = GenerateQuads(gTextures['bad-mom'], 32, 64),
-    ['bad-stork'] = GenerateQuads(gTextures['bad-stork'], 64, 32)
+    ['bad-stork'] = GenerateQuads(gTextures['bad-stork'], 64, 32),
+    ['bad-bag'] = GenerateQuads(gTextures['bad-bag'], 32, 32)
 }
 
 

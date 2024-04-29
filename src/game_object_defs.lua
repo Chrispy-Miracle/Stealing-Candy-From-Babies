@@ -12,5 +12,12 @@ OBJECT_DEFS = {
         frames = {1, 2, 3, 4, 5, 6, 7, 8},
         height = 32, 
         widht = 32
+    },
+    ['bad-bag'] = {
+        type = 'bad-bag',
+        texture = 'bad-bag',
+        frames = {1, 2},
+        height = 32,
+        width = 32
     }
 }

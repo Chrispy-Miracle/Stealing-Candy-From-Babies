@@ -188,16 +188,28 @@ function PlayState:render()
         local momY = mom.y + mom.height
         if  momY < playerY then
             mom:render()
+            for k, item in pairs(mom.items) do
+                item:render()
+            end
         end
     end
     
-    
+
+   for k, item in pairs(self.player.items) do
+        if item.type == 'balloon' then
+            item:render()
+        end 
+    end 
     -- draw player
     self.player.stateMachine:render()
 
     for k, item in pairs(self.player.items) do
-        item:render()
+        if item.type == 'lollipop' then
+            item:render()
+        end 
     end
+
+   
 
    
     for k, baby in pairs(self.babies) do
@@ -214,6 +226,9 @@ function PlayState:render()
     for k, mom in pairs(self.moms) do
         if mom.y + mom.height > self.player.y + self.player.height then
             mom:render()
+            for k, item in pairs(mom.items) do
+                item:render()
+            end
         end
 
     end
@@ -233,6 +248,19 @@ function PlayState:spawnMoms()
                 x = VIRTUAL_WIDTH,
                 y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8)
             }
+            mom.items = {}
+            local purse = GameObject {
+                type = 'bad-bag',
+                object_def = OBJECT_DEFS['bad-bag'],
+                x =  mom.x + MOM_BAG_OFFSET_X,
+                y = mom.y + MOM_BAG_OFFSET_Y,
+                isCarried = true,
+                carrier = mom,
+                carrier_offset_x = MOM_BAG_OFFSET_X,
+                carrier_offset_y = MOM_BAG_OFFSET_Y
+            }
+            
+            table.insert(mom.items, purse)
             mom:changeAnimation('walk-left')
             table.insert(self.moms, mom)
         end
@@ -246,6 +274,10 @@ function PlayState:updateMoms(dt)
         if mom.x > -mom.width then
             mom.x = mom.x - mom.walkSpeed * dt
             mom:update(dt)
+
+            for k, item in pairs(mom.items) do
+                item:update(dt)
+            end
 
         else
             -- remove moms no longer on screen
