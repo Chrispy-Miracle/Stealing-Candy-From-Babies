@@ -61,17 +61,35 @@ function PlayState:update(dt)
         gStateMachine:change('game-over')
     end
     
-
+    -- after player has enough balloons, then they start floating away
     if self.player.isFloating then
         local scrollGravity = self.player.balloonsCarried * 10
         self.backgroundScrollY = (self.backgroundScrollY - scrollGravity * dt) % BACKGROUND_Y_LOOP_POINT
         self.backgroundScrollX = 0
         Timer.after(2.4, function () self.background = 2 end)
         if not self.storksSpawned then
-            Timer.clear(self.onGroundTimers)
+        --     Timer.clear(self.onGroundTimers)
            self:spawnStorks()
            self.storksSpawned = true
         end
+
+        -- check for stork beaks hitting balloons
+        
+        -- TODO!! fix this right up
+        for k, stork in pairs(self.storks) do
+            -- check each balloon
+            for k, balloon in pairs(self.player.items) do
+                if stork.x < balloon.x + balloon.width + 5 and 
+                    stork.x > balloon.x + balloon.width - 5 and
+                    stork.y < balloon.y + 10 and 
+                    stork.y > balloon.y then
+                    table.remove(self.player.items, k)
+                    gSounds['hit']:play()
+                    self.player.balloonsCarried = self.player.balloonsCarried - 1
+                end
+            end
+        end
+
     end
 
 
@@ -314,19 +332,37 @@ end
 
 function PlayState:spawnBabies()
     Timer.every(1, function ()
-        -- every second, 1 in 3 odds to spawn baby
-        if math.random(3) == 1 then
-            -- make baby
-            local baby = Entity {
-                type = 'baby',
-                entity_def = ENTITY_DEFS['baby'],
-                x = VIRTUAL_WIDTH - 10,
-                y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
-            }
-            baby:changeAnimation('crawl-left')
-
-            -- 1 in 3 three chance baby gets a balloon
+        local baby
+        if not self.player.isFloating then
+            -- every second, 1 in 3 odds to spawn baby
             if math.random(3) == 1 then
+                -- make baby
+                baby = Entity {
+                    type = 'baby',
+                    entity_def = ENTITY_DEFS['baby'],
+                    x = VIRTUAL_WIDTH - 10,
+                    y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
+                }
+                baby:changeAnimation('crawl-left')
+            end
+        elseif self.player.isFloating then
+            --maybe make a stork (as the baby!)
+            if math.random(3) == 1 then
+                baby = Entity {
+                    type = 'stork',
+                    entity_def = ENTITY_DEFS['stork'],
+                    x = VIRTUAL_WIDTH,
+                    y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS['stork'].height)
+                }
+                baby:changeAnimation('fly')
+                table.insert(self.babies, baby)
+            end
+        end
+
+        if baby then
+        
+            -- 1 in 3 three chance baby gets a balloon
+            if math.random(2) == 1 then
                 baby.hasBalloon = true
                 local balloon = GameObject {
                     object_def = OBJECT_DEFS['balloon'],

@@ -6,8 +6,10 @@ function PlayerWalkState:init(playState)
     
     -- start walking sound and animation
     self.player.isWalking = true
-    gSounds['walking']:play()
-    self.player:changeAnimation('walk-' .. self.player.direction)
+    if not self.player.isFloating then
+        gSounds['walking']:play()
+        self.player:changeAnimation('walk-' .. self.player.direction)
+    end
 
 end
 
@@ -15,14 +17,18 @@ function PlayerWalkState:update(dt)
     -- check each direction button, and update player position if pressed
     if love.keyboard.isDown('right') then
         self.player.x = self.player.x + PLAYER_WALK_SPEED * dt
-        self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-        self.playState.backgroundScrollY = 0
+        if not self.player.isFloating then
+            self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
+            self.playState.backgroundScrollY = 0
+        end
     end
 
     if love.keyboard.isDown('left') then
         self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
-        self.playState.backgroundScrollX = (self.playState.backgroundScrollX - BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-        self.playState.backgroundScrollY = 0
+        if not self.player.isFloating then
+            self.playState.backgroundScrollX = (self.playState.backgroundScrollX - BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
+            self.playState.backgroundScrollY = 0
+        end
     end
 
     if love.keyboard.isDown('up') then
