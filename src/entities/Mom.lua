@@ -44,21 +44,7 @@ function Mom:init(def)
 end
 
 function Mom:update(dt)
-    
-
-    -- ensure moms still on screen
-    if self.x > -self.width then
-        self.x = self.x - self.walkSpeed * dt
-        Entity.update(self, dt)
-
-        for k, item in pairs(self.items) do
-            item:update(dt)
-        end
-
-    else
-        -- remove moms no longer on screen
-        table.remove(self.playState.moms, k)
-    end
+    Entity.update(self, dt   )
 end
 
 function Mom:render()

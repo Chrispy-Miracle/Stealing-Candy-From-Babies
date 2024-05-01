@@ -6,14 +6,17 @@ function PlayerWalkState:init(playState)
     
     -- start walking sound and animation
     self.player.isWalking = true
-    if not self.player.isFloating then
-        gSounds['walking']:play()
-        self.player:changeAnimation('walk-' .. self.player.direction)
-    end
+    gSounds['walking']:play()
+    self.player:changeAnimation('walk-' .. self.player.direction)
 
 end
 
 function PlayerWalkState:update(dt)
+    --change to floating state
+    if self.player.balloonsCarried > 3 then
+        self.player.stateMachine:change('float-state')
+    end
+
     -- check each direction button, and update player position if pressed
     if love.keyboard.isDown('right') then
         self.player.x = self.player.x + PLAYER_WALK_SPEED * dt
@@ -41,7 +44,7 @@ function PlayerWalkState:update(dt)
     if love.keyboard.isDown('down') then
         -- confine y-axis movement
         if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
-        self.player.y = self.player.y + (PLAYER_WALK_SPEED / 2) * dt
+            self.player.y = self.player.y + (PLAYER_WALK_SPEED / 2) * dt
         end
     end
 
@@ -54,9 +57,8 @@ function PlayerWalkState:update(dt)
     end
 
     self.player:update(dt)
-
-
 end
+
 
 function PlayerWalkState:render()
     self.player:render()

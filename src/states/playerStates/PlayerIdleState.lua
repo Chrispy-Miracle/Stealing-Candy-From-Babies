@@ -15,7 +15,11 @@ function PlayerIdleState:update(dt)
         or love.keyboard.isDown('up') or love.keyboard.isDown('down') then
         self.player.isWalking = true
         self.player.stateMachine:change('walk-state')
+    end
 
+    --change to floating state
+    if self.player.balloonsCarried > 3 then
+        self.player.stateMachine:change('float-state')
     end
 
     self.player:update(dt)

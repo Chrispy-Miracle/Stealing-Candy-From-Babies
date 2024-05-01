@@ -21,12 +21,13 @@ require 'src/states/GameOverState'
 require 'src/states/playerStates/PlayerIdleState'
 require 'src/states/playerStates/PlayerWalkState'
 require 'src/states/playerStates/PlayerFloatingState'
+require 'src/states/playerStates/PlayerFallState'
 
 -- entities
-require 'src/Entity'
-require 'src/Player'
-require 'src/Baby'
-require 'src/Mom'
+require 'src/entities/Entity'
+require 'src/entities/Player'
+require 'src/entities/Baby'
+require 'src/entities/Mom'
 
 -- objects
 require 'src/GameObject'

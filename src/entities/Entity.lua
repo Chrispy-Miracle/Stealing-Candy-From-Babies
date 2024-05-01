@@ -15,24 +15,8 @@ function Entity:init(def)
     self.walkSpeed = def.entity_def.walkSpeed
     self.direction = def.direction
 
-    -- PLAYER
-    -- health (or sugar buzz)
-    self.health = def.entity_def.startingHealth
-    self.maxHealth = def.entity_def.maxHealth
-
-    -- constantly crashing from sugar buzz!
-    if self.type == 'player' then
-        Timer.every(1, function () self.health = self.health - 1 end)
-    end
-    --
-
     self.items = {}
-    
-    -- PLAYER
-    self.balloonsCarried = 0
-    self.gravity = 0
-    self.isFalling = false
-
+    self.dead = false
 end
 
 
@@ -68,7 +52,9 @@ function Entity:stealItem(prevOwner, item, itemKey)
     elseif item.type == 'lollipop' then
         self.hasLollipop = true
         item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
-        item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y 
+        item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y
+
+        -- this animates health bar going up 1 point every .2 seconds
         Timer.every(.2, function () 
             if self.health < self.maxHealth then
                 self.health = self.health + 1
@@ -77,9 +63,13 @@ function Entity:stealItem(prevOwner, item, itemKey)
         :limit(15)
         :finish(function () 
             self.hasLollipop = false
-            table.remove(self.items, k) 
+            -- remove lollipop from items
+            -- if self.items[itemKey].type == 'lollipop' then
+                table.remove(self.items, k)
+            -- else
+            --     table.remove(self.items, itemKey - 1) 
+            -- end
         end)
-        
     end 
     table.remove(prevOwner.items, itemKey)
     
@@ -90,25 +80,22 @@ end
 
 
 function Entity:update(dt)
-    --PLAYER
-    if self.balloonsCarried > 3 then
-        self.isFloating = true
 
-        --change to falling state TODO !
-    elseif self.isFloating and self.balloonsCarried <= 3 then
-        self.isFalling = true
-        self.gravity = 40 - self.balloonsCarried * 10
-        self.y = self.y + self.gravity * dt
-        if self.y > VIRTUAL_HEIGHT then
-            self.y = -self.height
+    if self.type ~= 'player' then
+        -- update NPCs that are still on screen
+        if self.x > -self.width then
+            self.x = self.x - self.walkSpeed * dt
+            -- update player's items
+            for k, item in pairs(self.items) do
+                item:update(dt)
+            end
+        else
+            -- flag as dead for removal in playstate if no longer on screen
+            self.dead = true
         end
-    else
-        self.isFloating = false
     end
-    --
+
  
-
-
     if self.currentAnimation then
         self.currentAnimation:update(dt)
     end
