@@ -2,6 +2,7 @@ Entity = Class{}
 
 function Entity:init(def)
     self.type = def.entity_def.type
+    self.playState = def.playState
 
     self.animations = self:createAnimations(def.entity_def.animations)
 
@@ -14,6 +15,7 @@ function Entity:init(def)
     self.walkSpeed = def.entity_def.walkSpeed
     self.direction = def.direction
 
+    -- PLAYER
     -- health (or sugar buzz)
     self.health = def.entity_def.startingHealth
     self.maxHealth = def.entity_def.maxHealth
@@ -22,11 +24,15 @@ function Entity:init(def)
     if self.type == 'player' then
         Timer.every(1, function () self.health = self.health - 1 end)
     end
+    --
 
     self.items = {}
+    
+    -- PLAYER
     self.balloonsCarried = 0
-
     self.gravity = 0
+    self.isFalling = false
+
 end
 
 
@@ -84,20 +90,22 @@ end
 
 
 function Entity:update(dt)
+    --PLAYER
     if self.balloonsCarried > 3 then
-        self.gravity = self.balloonsCarried * 10
         self.isFloating = true
 
-        if self.y > -self.height then
-            self.y = self.y - self.gravity * dt
-        else 
-            self.y = VIRTUAL_HEIGHT
-            self.gravity = 0
+        --change to falling state TODO !
+    elseif self.isFloating and self.balloonsCarried <= 3 then
+        self.isFalling = true
+        self.gravity = 40 - self.balloonsCarried * 10
+        self.y = self.y + self.gravity * dt
+        if self.y > VIRTUAL_HEIGHT then
+            self.y = -self.height
         end
-
     else
         self.isFloating = false
     end
+    --
  
 
 
