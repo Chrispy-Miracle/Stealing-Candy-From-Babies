@@ -62,6 +62,7 @@ function Baby:update(dt)
                 }
                 table.insert(self.playState.moms, mom)
             else
+                -- update item if not stolen
                 item:update(dt)
             end
         end
@@ -73,7 +74,5 @@ function Baby:update(dt)
 end
 
 function Baby:render()
-    if not self.dead then
-        Entity.render(self)
-    end
+    Entity.render(self)
 end

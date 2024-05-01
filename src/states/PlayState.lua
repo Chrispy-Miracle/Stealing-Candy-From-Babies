@@ -45,13 +45,10 @@ function PlayState:init()
     -- table for spawned babies
     self.babies = {}
     self:spawnBabies()
-
-    -- table for storks (the slow ones)
-    -- self.storks = {}
 end
 
 
-function PlayState:spawnBabies()
+function PlayState:spawnBabies()  --(or storks!)
     Timer.every(1, function ()
         local baby
         if not self.player.isFloating then
@@ -67,8 +64,10 @@ function PlayState:spawnBabies()
                 }
                 baby:changeAnimation('crawl-left')
             end
+
+        -- if player is floating try to make a stork 
         elseif self.player.isFloating then
-            --maybe make a stork (as the baby!)
+            -- 1 in 3 chance
             if math.random(3) == 1 then
                 baby = Baby {
                     type = 'stork',
@@ -78,30 +77,11 @@ function PlayState:spawnBabies()
                     y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS['stork'].height)
                 }
                 baby:changeAnimation('fly')
-                
             end
         end
         table.insert(self.babies, baby)
     end)
 end
-
--- This is called once and makes "the slow storks"
--- function PlayState:spawnStorks()
---     Timer.every(2, function ()
---         if math.random(3) == 1 then
---             local stork = Entity {
---                 type = 'stork',
---                 playstate = self,
---                 entity_def = ENTITY_DEFS['stork'],
---                 x = VIRTUAL_WIDTH,
---                 y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS['stork'].height)
---             }
---             stork:changeAnimation('fly')
---             table.insert(self.storks, stork)
---         end
---     end)
---     self.storksSpawned = true
--- end
 
 
 function PlayState:update(dt)
@@ -126,15 +106,6 @@ function PlayState:update(dt)
     for k, item in pairs(self.player.items) do
         item:update(dt)
     end
-
-    -- -- update storks (the slow ones)
-    -- for k, stork in pairs(self.storks) do
-    --     if not stork.dead then
-    --         stork:update(dt)
-    --     else
-    --         table.remove(self.storks, k)
-    --     end
-    -- end
 
     -- update moms
     for k, mom in pairs(self.moms) do
@@ -209,11 +180,6 @@ function PlayState:render()
             end
         -- end
     end
-
-    -- -- storks
-    -- for k, stork in pairs(self.storks) do
-    --     stork:render()
-    -- end
 end
 
 

@@ -48,11 +48,24 @@ function Entity:stealItem(prevOwner, item, itemKey)
         item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
         item.carrier_offset_y = PLAYER_BALLOON_OFFSET_Y
         self.balloonsCarried = self.balloonsCarried + 1
+
+        -- take out of previous carrier's items
+        table.remove(prevOwner.items, itemKey)
+        -- put into player's items
+        item.carrier = self
+        table.insert(self.items, item) 
         
     elseif item.type == 'lollipop' then
         self.hasLollipop = true
         item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
         item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y
+
+        -- take out of previous carrier's items
+        table.remove(prevOwner.items, itemKey)
+        -- put into player's items
+        item.carrier = self
+        table.insert(self.items, item)  
+        
 
         -- this animates health bar going up 1 point every .2 seconds
         Timer.every(.2, function () 
@@ -64,17 +77,14 @@ function Entity:stealItem(prevOwner, item, itemKey)
         :finish(function () 
             self.hasLollipop = false
             -- remove lollipop from items
-            -- if self.items[itemKey].type == 'lollipop' then
-                table.remove(self.items, k)
-            -- else
-            --     table.remove(self.items, itemKey - 1) 
-            -- end
+            if self.items[#self.items].type == 'lollipop' then
+                table.remove(self.items, #self.items)
+            else
+                table.remove(self.items, #self.items - 1) 
+            end
         end)
     end 
-    table.remove(prevOwner.items, itemKey)
-    
-    table.insert(self.items, item)  
-    item.carrier = self  
+  
 end
 
 

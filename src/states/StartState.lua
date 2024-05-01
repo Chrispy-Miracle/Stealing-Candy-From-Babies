@@ -5,9 +5,6 @@ function StartState:init()
     self.baby = Entity {
         type = 'baby',
         entity_def = ENTITY_DEFS['baby'],
-        -- animations = ENTITY_DEFS['baby'].animations,
-        -- width = ENTITY_DEFS['baby'].width,
-        -- height = ENTITY_DEFS['baby'].height,
         x = VIRTUAL_WIDTH - 10,
         y = VIRTUAL_HEIGHT - 32
     }
@@ -16,9 +13,6 @@ function StartState:init()
     self.man = Entity {
         type = 'player',
         entity_def = ENTITY_DEFS['player'],
-        -- animations = ENTITY_DEFS['player'].animations,
-        -- width = ENTITY_DEFS['player'].width,
-        -- height = ENTITY_DEFS['player'].height,
         x = -32,
         y = VIRTUAL_HEIGHT - 64
     }
@@ -115,12 +109,12 @@ function StartState:init()
     })
     -- fade out all but "(balloons too!)" title
     :finish(function ()
-        Timer.tween(6, {
+        Timer.tween(7, {
             [self.titleOpacity] = {valA = 0}
         })
 
         -- fade "balloons too" title slowly
-        Timer.after(6,function ()
+        Timer.after(6.5,function ()
             Timer.tween(5, {
                 [self.titleOpacity] = {valB = 0}
             })
