@@ -85,6 +85,24 @@ function PlayState:spawnBabies()
     end)
 end
 
+-- This is called once and makes "the slow storks"
+-- function PlayState:spawnStorks()
+--     Timer.every(2, function ()
+--         if math.random(3) == 1 then
+--             local stork = Entity {
+--                 type = 'stork',
+--                 playstate = self,
+--                 entity_def = ENTITY_DEFS['stork'],
+--                 x = VIRTUAL_WIDTH,
+--                 y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS['stork'].height)
+--             }
+--             stork:changeAnimation('fly')
+--             table.insert(self.storks, stork)
+--         end
+--     end)
+--     self.storksSpawned = true
+-- end
+
 
 function PlayState:update(dt)
     -- if no health, game over
@@ -94,7 +112,7 @@ function PlayState:update(dt)
 
     -- update player state machine
     self.player.stateMachine:update(dt)
-
+    
     -- update babies
     for k, baby in pairs(self.babies) do
         if not baby.dead then
@@ -110,13 +128,12 @@ function PlayState:update(dt)
     end
 
     -- -- update storks (the slow ones)
-    -- for k, stork in pairs(self.player.stateMachine.storks) do
-    --     -- if stork.x > -stork.width then
-    --         -- stork.x = stork.x - stork.walkSpeed * dt
+    -- for k, stork in pairs(self.storks) do
+    --     if not stork.dead then
     --         stork:update(dt)
-    -- --     else
-    -- --         table.remove(self.storks, k)
-    -- --     end
+    --     else
+    --         table.remove(self.storks, k)
+    --     end
     -- end
 
     -- update moms
@@ -194,7 +211,7 @@ function PlayState:render()
     end
 
     -- -- storks
-    -- for k, stork in pairs(self.player.stateMachine.storks) do
+    -- for k, stork in pairs(self.storks) do
     --     stork:render()
     -- end
 end

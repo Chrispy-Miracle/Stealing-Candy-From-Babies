@@ -2,7 +2,7 @@ Baby = Class{__includes = Entity}
 
 function Baby:init(def)
     Entity.init(self, def)
-    self.player = def.playState.player
+    self.player = self.playState.player
 
     -- 1 in 2 chance baby gets a balloon
     if math.random(2) == 1 then
@@ -40,7 +40,6 @@ end
 function Baby:update(dt)
    -- ensure babies still on screen
     if self.x > -self.width then
-        self.x = self.x - self.walkSpeed * dt
         Entity.update(self, dt)
 
         -- update baby's items, unless the item gets stolen!

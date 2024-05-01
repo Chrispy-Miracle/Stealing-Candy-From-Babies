@@ -44,7 +44,7 @@ function Mom:init(def)
 end
 
 function Mom:update(dt)
-    Entity.update(self, dt   )
+    Entity.update(self, dt)
 end
 
 function Mom:render()
