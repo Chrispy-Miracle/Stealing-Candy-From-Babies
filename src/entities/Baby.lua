@@ -58,7 +58,8 @@ function Baby:update(dt)
                     entity_def = ENTITY_DEFS['mom'],
                     x = VIRTUAL_WIDTH,
                     y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
-                    playState = self.playState
+                    playState = self.playState,
+                    direction = 'left'
                 }
                 table.insert(self.playState.moms, mom)
             else

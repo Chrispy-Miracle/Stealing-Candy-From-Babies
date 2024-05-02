@@ -19,30 +19,34 @@ function PlayerWalkState:update(dt)
 
     -- check each direction button, and update player position if pressed
     if love.keyboard.isDown('right') then
+        --move player
+        self.player.direction = 'right'
+        self.player:changeAnimation('walk-' .. self.player.direction)
         self.player.x = self.player.x + PLAYER_WALK_SPEED * dt
-        if not self.player.isFloating then
-            self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-            self.playState.backgroundScrollY = 0
-        end
+        -- scroll background accordingly
+        self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
+        self.playState.backgroundScrollY = 0
     end
 
     if love.keyboard.isDown('left') then
+        --move player
+        self.player.direction = 'left'
+        self.player:changeAnimation('walk-' .. self.player.direction)
         self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
-        if not self.player.isFloating then
-            self.playState.backgroundScrollX = (self.playState.backgroundScrollX - BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-            self.playState.backgroundScrollY = 0
-        end
+        -- scroll background accordingly
+        self.playState.backgroundScrollX = (self.playState.backgroundScrollX - BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
+        self.playState.backgroundScrollY = 0
     end
 
     if love.keyboard.isDown('up') then
-        -- confine y-axis movement
+        --move player while confining y-axis movement
         if self.player.y > VIRTUAL_HEIGHT / 3 then
             self.player.y = self.player.y - (PLAYER_WALK_SPEED / 2) * dt
         end
     end
 
     if love.keyboard.isDown('down') then
-        -- confine y-axis movement
+        --move player while confining y-axis movement
         if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
             self.player.y = self.player.y + (PLAYER_WALK_SPEED / 2) * dt
         end

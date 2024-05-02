@@ -61,6 +61,7 @@ function PlayState:spawnBabies()  --(or storks!)
                     entity_def = ENTITY_DEFS['baby'],
                     x = VIRTUAL_WIDTH - 10,
                     y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
+                    direction = 'left'
                 }
                 baby:changeAnimation('crawl-left')
             end
@@ -74,9 +75,10 @@ function PlayState:spawnBabies()  --(or storks!)
                     playState = self,
                     entity_def = ENTITY_DEFS['stork'],
                     x = VIRTUAL_WIDTH,
-                    y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS['stork'].height)
+                    y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS['stork'].height),
+                    direction = 'left'
                 }
-                baby:changeAnimation('fly')
+                baby:changeAnimation('fly-left')
             end
         end
         table.insert(self.babies, baby)

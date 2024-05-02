@@ -6,7 +6,7 @@ function StartState:init()
         type = 'baby',
         entity_def = ENTITY_DEFS['baby'],
         x = VIRTUAL_WIDTH - 10,
-        y = VIRTUAL_HEIGHT - 32
+        y = VIRTUAL_HEIGHT - 32,
     }
 
     --man
@@ -23,7 +23,7 @@ function StartState:init()
 
     --balloon
     self.balloonPosition = {
-        x = self.baby.x + BABY_BALLOON_OFFSET_X, 
+        x = self.baby.x - BABY_BALLOON_OFFSET_X, 
         y = self.baby.y + BABY_BALLOON_OFFSET_Y
     }
 
@@ -37,8 +37,9 @@ function StartState:init()
     -- Move baby and balloon to left (towards man)
     Timer.tween(5, {
         [self.baby] = {x = VIRTUAL_WIDTH / 3},
-        [self.balloonPosition] = {x = VIRTUAL_WIDTH / 3 + BABY_BALLOON_OFFSET_X}        
+        [self.balloonPosition] = {x = VIRTUAL_WIDTH / 3 - BABY_BALLOON_OFFSET_X}        
     })
+    :finish(function () self.baby.walkSpeed = 0 end)
 
     gSounds['walking']:setLooping(true)
     gSounds['walking']:play()
@@ -52,7 +53,7 @@ function StartState:init()
         -- wait half a sec then man steals balloon from baby
         Timer.after(1, function ()
             -- make it look like he grabbed it
-            self.man:changeAnimation('idle')
+            self.man:changeAnimation('idle-right')
             gSounds['steal']:play()
 
             -- slide balloon up to man's hand
@@ -126,11 +127,11 @@ end
 function StartState:update(dt)
     -- change animation to idle when baby and man get to their destinations
     if self.baby.x == VIRTUAL_WIDTH / 3 then
-        self.baby:changeAnimation('idle')
+        self.baby:changeAnimation('idle-left')
     end
 
     if self.man.x > VIRTUAL_WIDTH then
-        self.man:changeAnimation('idle')
+        self.man:changeAnimation('idle-right')
     end
 
     -- update entities

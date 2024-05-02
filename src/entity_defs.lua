@@ -7,7 +7,7 @@ ENTITY_DEFS = {
         startingHealth = 60,
         maxHealth = 100,
         animations = {
-            ['idle'] = {
+            ['idle-right'] = {
                 frames = {3},
                 texture = 'bad-man'
             },
@@ -15,7 +15,16 @@ ENTITY_DEFS = {
                 frames = {1, 2},
                 interval = 0.4,
                 texture = 'bad-man'
-            }
+            },
+            ['idle-left'] = {
+                frames = {4},
+                texture = 'bad-man'
+            },
+            ['walk-left'] = {
+                frames = {6, 5},
+                interval = 0.4,
+                texture = 'bad-man'
+            },
         }
     },
     ['baby'] = {
@@ -24,7 +33,7 @@ ENTITY_DEFS = {
         width = 32,
         walkSpeed = 25,
         animations = {
-            ['idle'] = {
+            ['idle-left'] = {
                 frames = {1},
                 texture = 'bad-baby'
             },
@@ -41,7 +50,7 @@ ENTITY_DEFS = {
         width = 32,
         walkSpeed = 40,
         animations = {
-            ['idle'] = {
+            ['idle-left'] = {
                 frames = {1},
                 texture = 'bad-mom'
             },
@@ -58,7 +67,7 @@ ENTITY_DEFS = {
         width = 64,
         walkSpeed = 60,
         animations = {
-            ['fly'] = {
+            ['fly-left'] = {
                 frames = {1, 2},
                 interval = 0.2,
                 texture = 'bad-stork'

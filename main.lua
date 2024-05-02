@@ -30,6 +30,7 @@ end
 
 function love.keypressed(key)
     if key == 'escape' then
+        Timer.clear()
         love.event.quit()
     end
 

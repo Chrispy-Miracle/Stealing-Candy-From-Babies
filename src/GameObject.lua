@@ -25,10 +25,15 @@ function GameObject:init(def)
     if self.isCarried then
         self.carrier = def.carrier
         -- used to position item with carrier
-        self.carrier_offset_x = def.carrier_offset_x
+        if self.carrier.direction == 'right' then
+            self.carrier_offset_x = def.carrier_offset_x
+        elseif self.carrier.direction == 'left' then
+            self.carrier_offset_x = -def.carrier_offset_x
+        end
+
         self.carrier_offset_y = def.carrier_offset_y
 
-        self.x = self.carrier.x +  self.carrier_offset_x
+        self.x = self.carrier.x + self.carrier_offset_x
         self.y = self.carrier.y + self.carrier_offset_y
 
         self.numBalloonsCarried = 0
@@ -41,17 +46,25 @@ end
 function GameObject:update(dt)
     -- update object position in relation to carrier
     if self.isCarried then
+        if self.carrier.direction == 'right' then
             self.x = self.carrier.x + self.carrier_offset_x
-            self.y = self.carrier.y + self.carrier_offset_y
+        elseif self.carrier.direction == 'left' then
+            self.x = self.carrier.x - self.carrier_offset_x
+        end
+
+        self.x = self.carrier.x + self.carrier_offset_x
+        self.y = self.carrier.y + self.carrier_offset_y
 
         -- when there is more than one item (should be balloons)
         if #self.carrier.items > 1 then
             -- angle the balloons nicely
             for k, item in pairs(self.carrier.items) do
-                if k % 2 == 0 then
-                    item.balloonAngle =  math.rad(k * -10)
-                else 
-                    item.balloonAngle = math.rad(k * 10)
+                if item.type == 'balloon' then
+                    if k % 2 == 0 then
+                        item.balloonAngle =  math.rad(k * -10)
+                    else 
+                        item.balloonAngle = math.rad(k * 10)
+                    end
                 end
             end
         else

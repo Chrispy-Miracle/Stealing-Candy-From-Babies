@@ -28,10 +28,14 @@ function PlayerFallState:update(dt)
 
     -- allow for movement
     if love.keyboard.isDown('right') then
+        self.player.direction = 'right'
+        self.player:changeAnimation('idle-' .. self.player.direction)
         self.player.x = self.player.x + PLAYER_WALK_SPEED * dt
     end
 
     if love.keyboard.isDown('left') then
+        self.player.direction = 'left'
+        self.player:changeAnimation('idle-' .. self.player.direction)
         self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
     end
 

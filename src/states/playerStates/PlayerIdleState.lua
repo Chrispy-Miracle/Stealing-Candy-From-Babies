@@ -6,7 +6,7 @@ function PlayerIdleState:init(player)
     -- stop walk sound and set animation to idle
     gSounds['walking']:stop()
     self.player.isWalking = false
-    self.player:changeAnimation('idle')
+    self.player:changeAnimation('idle-' .. self.player.direction)
 end
 
 function PlayerIdleState:update(dt)
