@@ -10,6 +10,11 @@ function PlayerIdleState:init(player)
 end
 
 function PlayerIdleState:update(dt)
+    --change to floating state
+    if self.player.balloonsCarried > 3 then
+        self.player.stateMachine:change('float-state')
+    end
+    
     -- change to walk state if arrow buttons pushed
     if love.keyboard.isDown('right') or love.keyboard.isDown('left') 
         or love.keyboard.isDown('up') or love.keyboard.isDown('down') then
@@ -17,10 +22,7 @@ function PlayerIdleState:update(dt)
         self.player.stateMachine:change('walk-state')
     end
 
-    --change to floating state
-    if self.player.balloonsCarried > 3 then
-        self.player.stateMachine:change('float-state')
-    end
+
 
     self.player:update(dt)
 end

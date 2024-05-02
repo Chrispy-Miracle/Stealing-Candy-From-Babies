@@ -73,5 +73,18 @@ ENTITY_DEFS = {
                 texture = 'bad-stork'
             }
         }
+    },
+    ['plane-mom'] = {
+        type = 'plane-mom',
+        height = 32,
+        width = 64,
+        walkSpeed = 80,
+        animations = {
+            ['fly-left'] = {
+                frames = {1, 2},
+                interval = 0.2,
+                texture = 'bad-plane-mom'
+            }
+        }
     }
 }

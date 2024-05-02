@@ -16,6 +16,20 @@ end
 
 
 function PlayerFloatingState:update(dt)
+    -- set player gravity and background scoll accorging to number of balloons
+    self.player.gravity = self.player.balloonsCarried * 10
+    self.playState.backgroundScrollY = (self.playState.backgroundScrollY - self.player.gravity * dt) % BACKGROUND_Y_LOOP_POINT
+
+    -- if player on screen,they float up
+    if self.player.y > -self.player.height then
+        self.player.y = self.player.y - self.player.gravity * dt
+    else 
+        -- wrap player back to bottom of sceen if they floated off
+        self.player.y = VIRTUAL_HEIGHT
+        self.player.gravity = 0
+    end
+
+
     -- check items for balloon pops 
     for k, item in pairs(self.player.items) do 
         if item.type == 'balloon' then
@@ -32,19 +46,6 @@ function PlayerFloatingState:update(dt)
     -- change to falling state if not enough balloons to float
     if self.player.balloonsCarried <= 3 then
         self.player.stateMachine:change('fall-state')
-    else
-        -- set player gravity and background scoll accorging to number of balloons
-        self.player.gravity = self.player.balloonsCarried * 10
-        self.playState.backgroundScrollY = (self.playState.backgroundScrollY - self.player.gravity * dt) % BACKGROUND_Y_LOOP_POINT
-
-        -- if player on screen,they float up
-        if self.player.y > -self.player.height then
-            self.player.y = self.player.y - self.player.gravity * dt
-        else 
-            -- wrap player back to bottom of sceen if they floated off
-            self.player.y = VIRTUAL_HEIGHT
-            self.player.gravity = 0
-        end
     end
 
     -- allow for movement

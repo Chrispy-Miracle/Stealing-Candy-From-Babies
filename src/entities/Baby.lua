@@ -44,23 +44,40 @@ function Baby:update(dt)
 
         -- update baby's items, unless the item gets stolen!
         for k, item in pairs(self.items) do
+            local playerHandPosition
             -- to check for item's stealability
-            local playerHandPosition = {x = self.player.x + self.player.width / 2, y = self.player.y + self.player.height / 2}
+            if self.player.direction == 'right' then
+                playerHandPosition = {x = self.player.x + self.player.width / 2, y = self.player.y + self.player.height / 2}
+            elseif self.player.direction == 'left' then
+                playerHandPosition = {x = self.player.x, y = self.player.y + self.player.height / 2}
+            end
             
             if love.keyboard.wasPressed('space') and 
                 playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 then
                 -- steal the item
                 self.player:stealItem(self, item, k)
-
-                -- spawn a mom when item is stolen from baby
-                local mom = Mom {
-                    type = 'mom',
-                    entity_def = ENTITY_DEFS['mom'],
-                    x = VIRTUAL_WIDTH,
-                    y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
-                    playState = self.playState,
-                    direction = 'left'
-                }
+                local mom
+                if not self.player.isFloating then
+                    -- spawn a mom when item is stolen from baby
+                     mom = Mom {
+                        type = 'mom',
+                        entity_def = ENTITY_DEFS['mom'],
+                        x = VIRTUAL_WIDTH,
+                        y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
+                        playState = self.playState,
+                        direction = 'left'
+                    }
+                elseif self.player.isFloating then
+                    -- if floating, spawn a plane mom!
+                    mom = Mom {
+                        type = 'plane-mom',
+                        entity_def = ENTITY_DEFS['plane-mom'],
+                        x = VIRTUAL_WIDTH,
+                        y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
+                        playState = self.playState,
+                        direction = 'left'
+                    }
+                end
                 table.insert(self.playState.moms, mom)
             else
                 -- update item if not stolen

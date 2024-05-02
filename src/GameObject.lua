@@ -52,7 +52,7 @@ function GameObject:update(dt)
             self.x = self.carrier.x - self.carrier_offset_x
         end
 
-        self.x = self.carrier.x + self.carrier_offset_x
+        -- self.x = self.carrier.x + self.carrier_offset_x
         self.y = self.carrier.y + self.carrier_offset_y
 
         -- when there is more than one item (should be balloons)
