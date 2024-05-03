@@ -22,6 +22,7 @@ require 'src/states/playerStates/PlayerIdleState'
 require 'src/states/playerStates/PlayerWalkState'
 require 'src/states/playerStates/PlayerFloatingState'
 require 'src/states/playerStates/PlayerFallState'
+require 'src/states/playerStates/PlayerBoardShipState'
 
 -- entities
 require 'src/entities/Entity'
@@ -53,7 +54,8 @@ gTextures = {
     ['bad-stork'] = love.graphics.newImage('graphics/bad-stork.png'),
     ['bad-balloon'] = love.graphics.newImage('graphics/bad-balloon.png'),
     ['bad-bag'] = love.graphics.newImage('graphics/bad-bag.png'),
-    ['bad-plane-mom'] = love.graphics.newImage('graphics/bad-plane-mom.png')
+    ['bad-plane-mom'] = love.graphics.newImage('graphics/bad-plane-mom.png'),
+    ['ufo'] = love.graphics.newImage('graphics/ufo.png')
 
 }
 
@@ -67,7 +69,8 @@ gFrames = {
     ['bad-mom'] = GenerateQuads(gTextures['bad-mom'], 32, 64),
     ['bad-stork'] = GenerateQuads(gTextures['bad-stork'], 64, 32),
     ['bad-bag'] = GenerateQuads(gTextures['bad-bag'], 32, 32),
-    ['bad-plane-mom'] = GenerateQuads(gTextures['bad-plane-mom'], 64, 32)
+    ['bad-plane-mom'] = GenerateQuads(gTextures['bad-plane-mom'], 64, 32),
+    ['ufo'] = GenerateQuads(gTextures['ufo'], 200, 64)
 }
 
 

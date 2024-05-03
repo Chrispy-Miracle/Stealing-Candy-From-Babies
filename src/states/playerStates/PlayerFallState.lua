@@ -5,7 +5,8 @@ function PlayerFallState:init(playState)
     self.player = playState.player
 
     self.player.isFalling = true
-    self.player.gravity = 40 - self.player.balloonsCarried * 5
+    gSounds['falling']:play()
+    self.player.gravity = 40 - 30 / self.player.balloonsCarried-- * 5
         
     self.playState.backgroundScrollX = 0
 end
@@ -21,16 +22,19 @@ function PlayerFallState:update(dt)
     if self.player.y > VIRTUAL_HEIGHT then
         self.player.y = -self.player.height
         self.player.screensFloatedUp = self.player.screensFloatedUp - 1
-        if self.player.screensFloatedUp <= 1 then
+        if self.player.screensFloatedUp < 1 then
             self.playState.background = 1
-            Timer.after(2.4, function ()
-                self.player.isFloating =  false
-                Timer.tween(1, {
-                    [self.player] = {y = VIRTUAL_HEIGHT / 2},
-                    [self.playState] = {backgroundScrollX = 0}
-                })
-                self.player.stateMachine:change('idle')
+            self.player.isFloating =  false
+            
+            Timer.tween(1, {
+                [self.player] = {y = VIRTUAL_HEIGHT / 2},
+                [self.playState] = {backgroundScrollY = BACKGROUND_Y_LOOP_POINT}
+            }):finish(function()
+                gSounds['hit-ground']:play()
+                self.player.health = self.player.health - (10 / self.player.balloonsCarried)
+                self.player.stateMachine:change('idle')            
             end)
+
         end
     end
     

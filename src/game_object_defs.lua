@@ -19,5 +19,12 @@ OBJECT_DEFS = {
         frames = {1, 2},
         height = 32,
         width = 32
+    },
+    ['ufo'] = {
+        type = 'ufo',
+        texture = 'ufo',
+        frames = {1},
+        height = 64,
+        width = 200
     }
 }

@@ -9,7 +9,7 @@ function PlayerFloatingState:init(playState)
     gSounds['walking']:stop()
     
     self.playState.backgroundScrollX = 0
-    self.playState.backgroundScrollY = self.player.gravity
+    -- self.playState.backgroundScrollY = self.player.gravity
 
     -- change background to sky after you cant see the ground
     Timer.after(2.4, function () self.playState.background = 2 end)
@@ -17,6 +17,10 @@ end
 
 
 function PlayerFloatingState:update(dt)
+    if self.player.screensFloatedUp == 3 then
+        self.player.stateMachine:change('board-ship')
+    end
+
     -- set player gravity and background scoll accorging to number of balloons
     self.player.gravity = self.player.balloonsCarried * 10
     self.playState.backgroundScrollY = (self.playState.backgroundScrollY - self.player.gravity * dt) % BACKGROUND_Y_LOOP_POINT
@@ -78,8 +82,8 @@ end
 
 -- check for storks colliding with balloons, pop em if so
 function PlayerFloatingState:tryBalloonPop(popper, balloon, itemKey)
-    if popper.x < balloon.x + balloon.width + 10 and popper.x > balloon.x + balloon.width - 10 and
-        popper.y < balloon.y + 30 and popper.y > balloon.y then
+    if popper.x < balloon.x + balloon.width + 5 and popper.x > balloon.x + balloon.width - 5 and
+        popper.y < balloon.y + 20 and popper.y > balloon.y then
 
         table.remove(self.player.items, itemKey)
         gSounds['hit']:play()

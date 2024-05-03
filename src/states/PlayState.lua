@@ -21,7 +21,8 @@ function PlayState:init()
         ['idle'] = function () return PlayerIdleState(self.player) end,
         ['walk-state'] = function () return PlayerWalkState(self) end,
         ['float-state'] = function () return PlayerFloatingState(self) end,
-        ['fall-state'] = function () return PlayerFallState(self) end
+        ['fall-state'] = function () return PlayerFallState(self) end,
+        ['board-ship'] = function () return PlayerBoardShipState(self) end
     }
     self.player.stateMachine:change('idle')
 
@@ -203,9 +204,9 @@ function PlayState:renderBackground()
         math.floor(-self.backgroundScrollX), 
         math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT) - 144)
 
-    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
-        math.floor(self.backgroundScrollX), 
-        math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT))
+    -- love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
+    --     math.floor(self.backgroundScrollX), 
+    --     math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT))
 end
 
 

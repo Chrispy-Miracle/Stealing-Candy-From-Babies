@@ -55,9 +55,8 @@ function PlayerWalkState:update(dt)
     -- return to idle state if no direction buttons pushed
     if not love.keyboard.isDown('right') and not love.keyboard.isDown('left') 
         and not love.keyboard.isDown('up') and not love.keyboard.isDown('down') then
-
         gSounds['walking']:stop()
-        self.player.stateMachine:change('idle')
+        self.player.stateMachine:change('idle') 
     end
 
     self.player:update(dt)
