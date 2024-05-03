@@ -2,6 +2,7 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
     --background
+    self.backgroundName = 'space-background'
     self.background = 1 -- can be changed for extra backgrounds
     self.backgroundScrollX = 0
     self.backgroundScrollY = 0
@@ -190,17 +191,17 @@ end
 
 function PlayState:renderBackground()
     -- this is the normal centered scrollable background
-    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
+    love.graphics.draw(gTextures[self.backgroundName], gFrames[self.backgroundName][self.background], 
         math.floor(-self.backgroundScrollX), 
         math.floor(-self.backgroundScrollY) - 144)
 
     -- this allows background to left and right to appear
-    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
+    love.graphics.draw(gTextures[self.backgroundName], gFrames[self.backgroundName][self.background], 
         math.floor(-self.backgroundScrollX + BACKGROUND_X_LOOP_POINT), 
         math.floor(-self.backgroundScrollY) - 144)
 
     -- this allows background below to appear while floating or falling
-    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
+    love.graphics.draw(gTextures[self.backgroundName], gFrames[self.backgroundName][self.background], 
         math.floor(-self.backgroundScrollX), 
         math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT) - 144)
 

@@ -55,7 +55,8 @@ gTextures = {
     ['bad-balloon'] = love.graphics.newImage('graphics/bad-balloon.png'),
     ['bad-bag'] = love.graphics.newImage('graphics/bad-bag.png'),
     ['bad-plane-mom'] = love.graphics.newImage('graphics/bad-plane-mom.png'),
-    ['ufo'] = love.graphics.newImage('graphics/ufo.png')
+    ['ufo'] = love.graphics.newImage('graphics/ufo.png'),
+    ['space-background'] = love.graphics.newImage('graphics/space-background.png'),
 
 }
 
@@ -70,7 +71,8 @@ gFrames = {
     ['bad-stork'] = GenerateQuads(gTextures['bad-stork'], 64, 32),
     ['bad-bag'] = GenerateQuads(gTextures['bad-bag'], 32, 32),
     ['bad-plane-mom'] = GenerateQuads(gTextures['bad-plane-mom'], 64, 32),
-    ['ufo'] = GenerateQuads(gTextures['ufo'], 200, 64)
+    ['ufo'] = GenerateQuads(gTextures['ufo'], 200, 64),
+    ['space-background'] = GenerateQuads(gTextures['space-background'], 272, 288),
 }
 
 
