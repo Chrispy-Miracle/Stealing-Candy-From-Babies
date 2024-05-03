@@ -16,6 +16,7 @@ require 'src/states/BaseState'
 require 'src/states/StartState'
 require 'src/states/PlayState'
 require 'src/states/GameOverState'
+require 'src/states/LevelUpState'
 
 -- player states
 require 'src/states/playerStates/PlayerIdleState'

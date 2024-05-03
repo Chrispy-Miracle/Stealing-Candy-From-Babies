@@ -40,8 +40,17 @@ function PlayerBoardShipState:update(dt)
             end
             Timer.tween(3, {
                 [self.player] = {y = 0}
+            })        
+            :finish(function()
+            self.startBeam = false
+            Timer.tween(1, {
+                [self.ufo] = { x = VIRTUAL_WIDTH, y = -self.ufo.height},
+                [self.player] = { x = VIRTUAL_WIDTH, y = -self.player.height}
             })
+            :finish(function() gStateMachine:change("level-up") end)
         end)
+        end)
+
     end
 
     if self.beamOpacity < 215 then
