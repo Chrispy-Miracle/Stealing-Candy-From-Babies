@@ -182,21 +182,30 @@ function PlayState:render()
             end
         -- end
     end
+
+    love.graphics.print(tostring(self.player.screensFloatedUp), VIRTUAL_WIDTH - 50, 10 )
 end
 
 
 function PlayState:renderBackground()
+    -- this is the normal centered scrollable background
     love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
         math.floor(-self.backgroundScrollX), 
         math.floor(-self.backgroundScrollY) - 144)
 
+    -- this allows background to left and right to appear
     love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
         math.floor(-self.backgroundScrollX + BACKGROUND_X_LOOP_POINT), 
         math.floor(-self.backgroundScrollY) - 144)
 
+    -- this allows background below to appear while floating or falling
     love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
         math.floor(-self.backgroundScrollX), 
         math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT) - 144)
+
+    love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
+        math.floor(self.backgroundScrollX), 
+        math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT))
 end
 
 

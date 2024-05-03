@@ -17,6 +17,7 @@ function Entity:init(def)
 
     self.items = {}
     self.dead = false
+    self.groundOnly = def.groundOnly
 end
 
 

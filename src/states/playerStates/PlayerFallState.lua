@@ -20,10 +20,26 @@ function PlayerFallState:update(dt)
     -- player wraps to top of screen if falls below bottom 
     if self.player.y > VIRTUAL_HEIGHT then
         self.player.y = -self.player.height
+        self.player.screensFloatedUp = self.player.screensFloatedUp - 1
+        if self.player.screensFloatedUp <= 1 then
+            self.playState.background = 1
+            Timer.after(2.4, function ()
+                self.player.isFloating =  false
+                Timer.tween(1, {
+                    [self.player] = {y = VIRTUAL_HEIGHT / 2},
+                    [self.playState] = {backgroundScrollX = 0}
+                })
+                self.player.stateMachine:change('idle')
+            end)
+        end
     end
     
-    self.player.gravity = 40 - self.player.balloonsCarried * 5
-    -- self.playState.backgroundScrollY = (self.player.gravity * dt - self.playState.backgroundScrollY) % BACKGROUND_Y_LOOP_POINT
+    -- if self.playState.background == 1 and self.player.y == VIRTUAL_HEIGHT * .8  then
+
+    -- end
+
+    self.player.gravity = self.player.balloonsCarried * 10
+    self.playState.backgroundScrollY = (self.player.gravity * dt + self.playState.backgroundScrollY) % BACKGROUND_Y_LOOP_POINT
     
 
     -- allow for movement

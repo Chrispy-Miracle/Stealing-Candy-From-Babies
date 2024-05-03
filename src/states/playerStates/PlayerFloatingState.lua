@@ -9,6 +9,7 @@ function PlayerFloatingState:init(playState)
     gSounds['walking']:stop()
     
     self.playState.backgroundScrollX = 0
+    self.playState.backgroundScrollY = self.player.gravity
 
     -- change background to sky after you cant see the ground
     Timer.after(2.4, function () self.playState.background = 2 end)
@@ -27,6 +28,8 @@ function PlayerFloatingState:update(dt)
         -- wrap player back to bottom of sceen if they floated off
         self.player.y = VIRTUAL_HEIGHT
         self.player.gravity = 0
+        --increase # of screens floated up
+        self.player.screensFloatedUp = self.player.screensFloatedUp + 1
     end
 
 

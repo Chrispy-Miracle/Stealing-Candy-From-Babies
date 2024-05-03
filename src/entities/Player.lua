@@ -17,6 +17,8 @@ function Player:init(def)
     self.isFloating = false
     self.isFalling = false
 
+    self.screensFloatedUp = 0
+
 end
 
 function Player:update(dt)

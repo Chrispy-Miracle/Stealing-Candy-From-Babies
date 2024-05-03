@@ -5,6 +5,8 @@ function Mom:init(def)
     --reference to player
     self.player = def.playState.player
 
+    self.didHitPlayer = false
+
     -- if spawned on the ground
     if self.type == 'mom' then
         self.purse = GameObject {
@@ -31,13 +33,8 @@ function Mom:init(def)
     })
     
     :finish(function () 
-        if self.player.isFloating then
-            if self.x < self.player.x + self.player.width and self.x > self.player.x and self.y > self.player.y and self.y < self.player.y + self.player.height then
-                gSounds['hit-ground']:play()
-                self.player.health =  self.player.health - 10
-            end
-        else
 
+        if not self.player.isFloating then
             Timer.every(.3, function ()
                 -- mom's purse is animated to swing at player
                 if self.items[1].frame == 1 then
@@ -58,7 +55,18 @@ function Mom:init(def)
 end
 
 function Mom:update(dt)
-    Entity.update(self, dt)
+    if self.player.isFloating and self.type == 'plane-mom' and not self.didHitPlayer then
+        if self.x < self.player.x + self.player.width and self.x > self.player.x + self.player.width - 10 and self.y > self.player.y and self.y < self.player.y + self.player.height then
+            gSounds['hit-ground']:play()
+            self.player.health =  self.player.health - 10
+            self.didHitPlayer = true
+        end
+    end
+
+    -- if not self.player.isFloating then
+        Entity.update(self, dt)
+    -- elseif self.player.isFloating and self.groundOnly == false or then
+    --     En
 end
 
 function Mom:render()

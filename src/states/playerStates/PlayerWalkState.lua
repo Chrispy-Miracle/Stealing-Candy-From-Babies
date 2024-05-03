@@ -12,11 +12,6 @@ function PlayerWalkState:init(playState)
 end
 
 function PlayerWalkState:update(dt)
-    --change to floating state
-    if self.player.balloonsCarried > 3 then
-        self.player.stateMachine:change('float-state')
-    end
-
     -- check each direction button, and update player position if pressed
     if love.keyboard.isDown('right') then
         --move player
@@ -50,6 +45,11 @@ function PlayerWalkState:update(dt)
         if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
             self.player.y = self.player.y + (PLAYER_WALK_SPEED / 2) * dt
         end
+    end
+
+    --change to floating state
+    if self.player.balloonsCarried > 3 then
+        self.player.stateMachine:change('float-state')
     end
 
     -- return to idle state if no direction buttons pushed
