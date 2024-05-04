@@ -5,7 +5,7 @@ function Baby:init(def)
     self.player = self.playState.player
 
     -- 1 in 2 chance baby gets a balloon
-    if math.random(1) == 1 then
+    if math.random(2) == 1 then
         local balloon = GameObject {
             object_def = OBJECT_DEFS['balloon'],
             x = self.x + BABY_BALLOON_OFFSET_X,
@@ -19,7 +19,7 @@ function Baby:init(def)
         self.hasBalloon = true
     end 
 
-    -- 1 in 3 chance baby gets a lollipop
+    -- 1 in 2 chance baby gets a lollipop
     if not self.hasBalloon and math.random(2) == 1 then
         
         local lollipop = GameObject {

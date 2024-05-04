@@ -4,9 +4,6 @@ function PlayState:enter(params)
     -- player
     if params then
         self.player = params.player 
-        -- self.player:LevelUp()
-
-        -- self.player.playState = self
 
     else 
         self.player = Player {
@@ -19,6 +16,8 @@ function PlayState:enter(params)
             level = 1
         }
     end
+
+    self.player.levelEnded = false
 
     if self.player.level == 1 then
         -- mountain background
