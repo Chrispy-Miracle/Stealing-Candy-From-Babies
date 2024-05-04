@@ -55,6 +55,7 @@ function Entity:stealItem(prevOwner, item, itemKey)
         -- put into player's items
         item.carrier = self
         table.insert(self.items, item) 
+        self.scoreDetails[self.level]['Balloons Stolen'] = self.scoreDetails[self.level]['Balloons Stolen'] + 1
         
     elseif item.type == 'lollipop' then
         self.hasLollipop = true
@@ -66,6 +67,7 @@ function Entity:stealItem(prevOwner, item, itemKey)
         -- put into player's items
         item.carrier = self
         table.insert(self.items, item)  
+        self.scoreDetails[self.level]['Candies Stolen'] = self.scoreDetails[self.level]['Candies Stolen'] + 1
         
 
         -- this animates health bar going up 1 point every .2 seconds

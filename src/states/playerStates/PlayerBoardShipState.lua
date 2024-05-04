@@ -2,7 +2,7 @@ PlayerBoardShipState = Class{__includes = BaseState}
 
 function PlayerBoardShipState:init(playState)
     self.player = playState.player
-
+    self.player.levelEnded = true
     self.player.gravity = 0
 
     self.startBeam = false
@@ -15,6 +15,7 @@ function PlayerBoardShipState:init(playState)
         isCarried = false
     }
 
+    -- bring player and ufo to center
     Timer.tween(2, {
         [self.ufo] = {x = VIRTUAL_WIDTH / 2 - self.ufo.width / 2, y = 0},
         [self.player] = {x = VIRTUAL_WIDTH / 2 - self.player.width / 2, y = VIRTUAL_HEIGHT - self.player.height}
@@ -30,36 +31,44 @@ function PlayerBoardShipState:update(dt)
     self.ufo:update(dt)
 
     if self.startBeam then 
+        -- flash ufo's beam 
+        if self.beamOpacity < 215 then
+            self.beamOpacity = self.beamOpacity + 5
+        else
+            self.beamOpacity = 0
+        end
+
         Timer.after(2, function ()
-            for k, balloon in pairs(self.player.items) do
-                if balloon.y > 0 then
-                    Timer.tween(3, { 
-                        [balloon] = {y = 0}
+            -- "beam up" players items 
+            for k, item in pairs(self.player.items) do
+                if item.y > 0 then
+                    if item.type == 'lollipop' then
+                        table.remove(self.player.items, k)
+                    end
+                    Timer.tween(.5, { 
+                        [item] = {y = -item.height}
                     })
                 end
             end
-            Timer.tween(3, {
-                [self.player] = {y = 0}
+
+            -- "beam up" player
+            Timer.tween(1.5, {
+                [self.player] = {y = -self.player.height}
             })        
             :finish(function()
-            self.startBeam = false
-            Timer.tween(1, {
-                [self.ufo] = { x = VIRTUAL_WIDTH, y = -self.ufo.height},
-                [self.player] = { x = VIRTUAL_WIDTH, y = -self.player.height}
-            })
-            :finish(function() gStateMachine:change("level-up") end)
+                self.startBeam = false
+                -- after that, zip ufo off screen
+                Timer.tween(1.5, {
+                    [self.ufo] = { x = VIRTUAL_WIDTH, y = -self.ufo.height}
+                })
+
+                -- swtich to player level up screen
+                :finish(function() 
+                    gStateMachine:change("level-up", {player = self.player}) 
+                end)
+            end)
         end)
-        end)
-
     end
-
-    if self.beamOpacity < 215 then
-        self.beamOpacity = self.beamOpacity + 5
-    else
-        self.beamOpacity = 0
-    end
-
-
 end
 
 

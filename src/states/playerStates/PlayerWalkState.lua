@@ -5,7 +5,6 @@ function PlayerWalkState:init(playState)
     self.player = playState.player
     
     -- start walking sound and animation
-    self.player.isWalking = true
     gSounds['walking']:play()
     self.player:changeAnimation('walk-' .. self.player.direction)
 

@@ -1,22 +1,39 @@
 PlayState = Class{__includes = BaseState}
 
-function PlayState:init()
-    --background
-    self.backgroundName = 'space-background'
+function PlayState:enter(params)
+    -- player
+    if params then
+        self.player = params.player 
+        -- self.player:LevelUp()
+
+        -- self.player.playState = self
+
+    else 
+        self.player = Player {
+            type = 'player',
+            playState = self,
+            entity_def = ENTITY_DEFS['player'],
+            x = - 16,
+            y = VIRTUAL_HEIGHT - 70,
+            direction = 'right',
+            level = 1
+        }
+    end
+
+    if self.player.level == 1 then
+        -- mountain background
+        self.backgroundName = 'background'
+    elseif self.player.level == 2 then
+        -- space background
+        self.backgroundName = 'space-background'
+    end
+
+
     self.background = 1 -- can be changed for extra backgrounds
     self.backgroundScrollX = 0
     self.backgroundScrollY = 0
-
-    -- player
-    self.player = Player {
-        type = 'player',
-        playState = self,
-        entity_def = ENTITY_DEFS['player'],
-        x = - 16,
-        y = VIRTUAL_HEIGHT - 70,
-        direction = 'right',
-    }
-    
+        
+     
     -- player's state machine
     self.player.stateMachine = StateMachine{
         ['idle'] = function () return PlayerIdleState(self.player) end,
@@ -29,7 +46,6 @@ function PlayState:init()
 
 
     -- this animation walks player onto scene
-    self.player.isWalking = true
     self.player:changeAnimation('walk-' .. self.player.direction)
     gSounds['walking']:play()
     Timer.tween(1, {
@@ -37,7 +53,6 @@ function PlayState:init()
     })
     -- stop player (Ready to Play!)
     :finish(function() 
-        self.player.isWalking = false
         self.player.stateMachine:change('idle')
     end)
 
@@ -91,7 +106,8 @@ end
 function PlayState:update(dt)
     -- if no health, game over
     if self.player.health <= 0 then
-        gStateMachine:change('game-over')
+        self.player.levelEnded = true
+        gStateMachine:change('game-over', {gameStats = self.player.scoreDetails})
     end
 
     -- update player state machine
@@ -99,6 +115,10 @@ function PlayState:update(dt)
     
     -- update babies
     for k, baby in pairs(self.babies) do
+        if self.player.isFloating and baby.groundOnly then
+            baby.dead = true
+        end
+
         if not baby.dead then
             baby:update(dt)
         else 
@@ -113,8 +133,22 @@ function PlayState:update(dt)
 
     -- update moms
     for k, mom in pairs(self.moms) do
+        -- if player not floating
+        -- if not self.player.isFloating then
+        --     --update alive ground only moms
+        --     if mom.groundOnly and not mom.dead then
+        --         mom:update()
+        --     end
+        -- -- if floating
+        -- else
+            
         if not mom.dead then
-            mom:update(dt)
+            if mom.groundOnly and not self.player.isFloating then
+                mom:update(dt)
+            elseif not mom.groundOnly then
+                mom:update(dt)
+            end
+            
         else
             table.remove(self.moms, k)
         end

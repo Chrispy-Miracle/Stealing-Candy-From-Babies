@@ -21,7 +21,7 @@ function PlayerFloatingState:update(dt)
         self.player.stateMachine:change('board-ship')
     end
 
-    -- set player gravity and background scoll accorging to number of balloons
+    -- set player gravity and background scoll according to number of balloons
     self.player.gravity = self.player.balloonsCarried * 10
     self.playState.backgroundScrollY = (self.playState.backgroundScrollY - self.player.gravity * dt) % BACKGROUND_Y_LOOP_POINT
 

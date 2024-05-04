@@ -44,6 +44,7 @@ function Mom:init(def)
                     if self.items[1].x < self.player.x + self.player.width then
                         gSounds['hit']:play()
                         self.player.health =  self.player.health - 5
+                        self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
                     end
                 else
                     self.items[1].frame = 1 
@@ -59,6 +60,7 @@ function Mom:update(dt)
         if self.x < self.player.x + self.player.width and self.x > self.player.x + self.player.width - 10 and self.y > self.player.y and self.y < self.player.y + self.player.height then
             gSounds['hit-ground']:play()
             self.player.health =  self.player.health - 10
+            self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 10
             self.didHitPlayer = true
         end
     end

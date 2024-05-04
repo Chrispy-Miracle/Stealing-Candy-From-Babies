@@ -32,6 +32,7 @@ function PlayerFallState:update(dt)
             }):finish(function()
                 gSounds['hit-ground']:play()
                 self.player.health = self.player.health - (10 / self.player.balloonsCarried)
+                self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + (10 / self.player.balloonsCarried)
                 self.player.stateMachine:change('idle')            
             end)
 
