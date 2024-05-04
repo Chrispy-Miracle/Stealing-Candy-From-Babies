@@ -17,6 +17,7 @@ function PlayState:enter(params)
         }
     end
 
+    -- this restarts the play timer
     self.player.levelEnded = false
 
     if self.player.level == 1 then
@@ -114,13 +115,10 @@ function PlayState:update(dt)
     
     -- update babies
     for k, baby in pairs(self.babies) do
-        if self.player.isFloating and baby.groundOnly then
-            baby.dead = true
-        end
-
+        -- if the baby is still on screen
         if not baby.dead then
             baby:update(dt)
-        else 
+        else
             table.remove(self.babies, k)
         end
     end
@@ -132,26 +130,13 @@ function PlayState:update(dt)
 
     -- update moms
     for k, mom in pairs(self.moms) do
-        -- if player not floating
-        -- if not self.player.isFloating then
-        --     --update alive ground only moms
-        --     if mom.groundOnly and not mom.dead then
-        --         mom:update()
-        --     end
-        -- -- if floating
-        -- else
-            
         if not mom.dead then
-            if mom.groundOnly and not self.player.isFloating then
                 mom:update(dt)
-            elseif not mom.groundOnly then
-                mom:update(dt)
-            end
-            
         else
             table.remove(self.moms, k)
         end
     end
+    
 end
 
 

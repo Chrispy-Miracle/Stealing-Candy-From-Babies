@@ -9,7 +9,19 @@ function PlayerFloatingState:init(playState)
     gSounds['walking']:stop()
     
     self.playState.backgroundScrollX = 0
-    -- self.playState.backgroundScrollY = self.player.gravity
+
+    -- make onground moms and babies go away with the ground
+    for k, baby in pairs(self.playState.babies) do
+        Timer.tween(2, {
+            [baby] = {y = VIRTUAL_HEIGHT}
+        })
+    end
+
+    for k, mom in pairs(self.playState.moms) do
+        Timer.tween(2, {
+            [mom] = {y = VIRTUAL_HEIGHT}
+        })
+    end
 
     -- change background to sky after you cant see the ground
     Timer.after(2.4, function () self.playState.background = 2 end)

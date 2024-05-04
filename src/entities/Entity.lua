@@ -96,7 +96,7 @@ function Entity:update(dt)
 
     if self.type ~= 'player' then
         -- update NPCs that are still on screen
-        if self.x > -self.width then
+        if self.x > -self.width and self.y < VIRTUAL_HEIGHT then
             self.x = self.x - self.walkSpeed * dt
             -- update player's items
             for k, item in pairs(self.items) do
