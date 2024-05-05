@@ -64,6 +64,7 @@ function PlayerBoardShipState:update(dt)
 
                 -- swtich to player level up screen
                 :finish(function() 
+                    self.player.stateMachine:change('idle')
                     gStateMachine:change("level-up", {player = self.player}) 
                 end)
             end)

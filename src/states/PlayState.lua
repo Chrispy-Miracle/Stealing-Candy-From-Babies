@@ -2,9 +2,10 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:enter(params)
     -- player
-    if params then
+    if params.player then
         self.player = params.player 
-
+        self.player.playState = self
+        self.player:LevelUp()
     else 
         self.player = Player {
             type = 'player',
@@ -136,7 +137,7 @@ function PlayState:update(dt)
             table.remove(self.moms, k)
         end
     end
-    
+
 end
 
 
@@ -203,7 +204,7 @@ function PlayState:render()
         -- end
     end
 
-    love.graphics.print(tostring(self.player.screensFloatedUp), VIRTUAL_WIDTH - 50, 10 )
+
 end
 
 

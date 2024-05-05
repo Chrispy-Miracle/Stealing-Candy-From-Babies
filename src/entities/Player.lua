@@ -29,6 +29,7 @@ function Player:init(def)
     if self.type == 'player' then
         Timer.every(1, function () 
             if not self.levelEnded then
+                -- one damage per second
                 self.health = self.health - 1 
                 self.scoreDetails[self.level]['Damage Taken'] = self.scoreDetails[self.level]['Damage Taken'] + 1
                 self.scoreDetails[self.level]['Time'] = self.scoreDetails[self.level]['Time'] + 1
@@ -46,8 +47,7 @@ function Player:render()
 end
 
 function Player:LevelUp()
-    -- self.levelEnded = false
-    self.stateMachine:change('idle')
+    -- self.stateMachine:change('idle')
     self.level = self.level + 1
     self.isFloating = false
     self.isFalling = false

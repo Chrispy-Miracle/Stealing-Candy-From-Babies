@@ -142,7 +142,7 @@ function StartState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         Timer.clear()
         gSounds['walking']:stop()
-        gStateMachine:change('play')
+        gStateMachine:change('play', {player = nil})
     end
 end
 
