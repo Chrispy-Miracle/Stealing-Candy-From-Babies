@@ -29,7 +29,7 @@ end
 
 
 function PlayerFloatingState:update(dt)
-    if self.player.screensFloatedUp == 10 then
+    if self.player.screensFloatedUp == 3 then
         self.player.stateMachine:change('board-ship')
     end
 

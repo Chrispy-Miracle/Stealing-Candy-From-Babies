@@ -108,7 +108,10 @@ function PlayState:update(dt)
     -- if no health, game over
     if self.player.health <= 0 then
         self.player.levelEnded = true
-        gStateMachine:change('game-over', {gameStats = self.player.scoreDetails})
+        gStateMachine:change('game-over', {
+            gameStats = self.player.scoreDetails,
+            level = self.player.level
+        })
     end
 
     -- update player state machine

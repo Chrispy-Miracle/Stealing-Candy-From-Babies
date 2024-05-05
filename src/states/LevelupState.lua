@@ -17,7 +17,10 @@ function LevelUpState:update(dt)
     if self.timerDone then
         if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') then
             if self.didWin then
-                gStateMachine:change('won-game', {player = self.player})
+                gStateMachine:change('won-game', {
+                    gameStats = self.player.scoreDetails, 
+                    level = self.player.level
+                })
             else
                 gStateMachine:change('play', {player = self.player})
             end
