@@ -34,7 +34,7 @@ function Mom:init(def)
     
     :finish(function () 
 
-        if not self.player.isFloating then
+        if not self.player.isFloating and not self.player.isFalling then
             Timer.every(.3, function ()
                 -- mom's purse is animated to swing at player
                 if self.items[1].frame == 1 then
