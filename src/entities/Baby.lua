@@ -71,6 +71,7 @@ function Baby:update(dt)
                         direction = 'left',
                         level = self.level
                     }
+                    gSounds['walking']:play()
                 elseif self.player.isFloating then
                     -- if floating, spawn a plane mom!
                     mom = Mom {
@@ -82,6 +83,11 @@ function Baby:update(dt)
                         direction = 'left',
                         level = self.level
                     }
+                    if self.level == 1 then
+                        gSounds['plane']:play()
+                    elseif self.level == 2 then
+                        gSounds['zap']:play()
+                    end
                 end
                 table.insert(self.playState.moms, mom)
             else

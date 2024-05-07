@@ -59,6 +59,7 @@ function Entity:stealItem(prevOwner, item, itemKey)
         self.scoreDetails[self.level]['Balloons Stolen'] = self.scoreDetails[self.level]['Balloons Stolen'] + 1
         
     elseif item.type == 'lollipop' then
+        Timer.after(.4, function () gSounds['lollipop']:play() end )
         self.hasLollipop = true
         item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
         item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y

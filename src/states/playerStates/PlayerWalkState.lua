@@ -16,14 +16,38 @@ end
 
 function PlayerWalkState:update(dt)
     -- check each direction button, and update player position if pressed
-    if love.keyboard.isDown('right') then
-        --move player
+    if love.keyboard.isDown('right') then            
         self.player.direction = 'right'
         self.player:changeAnimation('walk-' .. self.player.direction)
-        self.player.x = self.player.x + self.player.walkSpeed * dt
-        -- scroll background accordingly
-        self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
+
+        -- if player is at right edge of screen scroll all things back to left
+        if self.player.x > VIRTUAL_WIDTH - self.player.width then
+            -- scroll player and background left
+            Timer.tween(1.5, {
+                [self.player] = {x = 16},
+                [self.playState] = {backgroundScrollX = BACKGROUND_X_LOOP_POINT}
+            })
+            -- scroll babies left
+            for k, entity in pairs(self.playState.babies) do
+                Timer.tween(1.5, {
+                    [entity] = {x = entity.x - BACKGROUND_X_LOOP_POINT + 16 + entity.walkSpeed * dt}
+                })
+            end 
+            -- scroll moms left
+            for k, entity in pairs(self.playState.moms) do
+                Timer.tween(1.5, {
+                    [entity] = {x = entity.x - BACKGROUND_X_LOOP_POINT + 16 + entity.walkSpeed * dt}
+                })
+            end
+        else        
         
+            --move player normally
+            self.player.x = self.player.x + self.player.walkSpeed * dt
+            -- scroll background accordingly
+            self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
+        end
+
+
     end
 
     if love.keyboard.isDown('left') then

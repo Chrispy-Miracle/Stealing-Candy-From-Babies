@@ -9,7 +9,7 @@ function LevelUpState:enter(params)
         self.didWin = false
     end
     self.timerDone = false
-    Timer.after(3, function () self.timerDone = true end )
+    Timer.after(2, function () self.timerDone = true end )
 
 end
 

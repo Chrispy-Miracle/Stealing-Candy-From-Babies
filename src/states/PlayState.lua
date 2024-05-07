@@ -158,6 +158,20 @@ function PlayState:render()
     -- used to render NPCs behind or in front of player
     local playerY = self.player.y + self.player.height
 
+
+    -- draw moms
+    for k, mom in pairs(self.moms) do
+        local momY = mom.y + mom.height
+        if  momY < playerY then 
+            -- draw moms items behind player
+            for k, item in pairs(mom.items) do
+                item:render()
+            end
+            -- draw moms behind player
+            mom:render()
+        end
+    end
+
     -- draw babies
     for k, baby in pairs(self.babies) do
         local babyY = baby.y + baby.height
@@ -191,7 +205,7 @@ function PlayState:render()
    -- babies
     for k, baby in pairs(self.babies) do
         -- draw babies' items in front of player
-        if baby.y + baby.height > self.player.y + self.player.height then 
+        if baby.y + baby.height >= self.player.y + self.player.height then 
             for k, item in pairs(baby.items) do
                 item:render()
             end
@@ -200,16 +214,16 @@ function PlayState:render()
         end
     end
 
-    -- moms  (All moms now drawn in front of player)
+    -- moms  
     for k, mom in pairs(self.moms) do
         -- moms in front of player
-        -- if mom.y + mom.height > self.player.y + self.player.height then
+        if mom.y + mom.height >= self.player.y + self.player.height then
             mom:render()
             -- mom's items
             for k, item in pairs(mom.items) do
                 item:render()
             end
-        -- end
+        end
     end
 
 

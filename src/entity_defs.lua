@@ -112,7 +112,7 @@ ENTITY_DEFS = {
                 },
                 ['walk-right'] = {
                     frames = {1, 2},
-                    interval = 0.3,
+                    interval = 0.5,
                     texture = 'space-man'
                 },
                 ['idle-left'] = {
@@ -121,7 +121,7 @@ ENTITY_DEFS = {
                 },
                 ['walk-left'] = {
                     frames = {6, 5},
-                    interval = 0.3,
+                    interval = 0.5,
                     texture = 'space-man'
                 },
             }

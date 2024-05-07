@@ -7,6 +7,7 @@ function PlayerFloatingState:init(playState)
     self.player.isFloating = true
     self.player:changeAnimation('idle-' .. self.player.direction)
     gSounds['walking']:stop()
+    gSounds['fly-away']:play()
     
     self.playState.backgroundScrollX = 0
 
@@ -72,12 +73,22 @@ function PlayerFloatingState:update(dt)
         self.player.direction = 'right'
         self.player:changeAnimation('idle-' .. self.player.direction)
         self.player.x = self.player.x + self.player.walkSpeed * dt
+
+        -- player to left side of screen if they float off right
+        if self.player.x > VIRTUAL_WIDTH - 2 then
+            self.player.x = -self.player.width - 2
+        end
     end
 
     if love.keyboard.isDown('left') then
         self.player.direction = 'left'
         self.player:changeAnimation('idle-' .. self.player.direction)
         self.player.x = self.player.x - self.player.walkSpeed * dt
+
+        -- player to right side of screen if they float off left
+        if self.player.x < -self.player.width - 2 then
+            self.player.x = VIRTUAL_WIDTH - 2
+        end
     end
 
     if love.keyboard.isDown('up') then

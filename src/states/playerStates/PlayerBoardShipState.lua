@@ -16,6 +16,8 @@ function PlayerBoardShipState:init(playState)
         level = self.player.level
     }
 
+    gSounds['space-ship']:play()
+
     -- bring player and ufo to center
     Timer.tween(2, {
         [self.ufo] = {x = VIRTUAL_WIDTH / 2 - self.ufo.width / 2, y = 0},
@@ -23,6 +25,7 @@ function PlayerBoardShipState:init(playState)
     })
     :finish(function () 
         self.startBeam = true
+        gSounds['beam-up3']:play()
     end)
 end
 
@@ -32,6 +35,8 @@ function PlayerBoardShipState:update(dt)
     self.ufo:update(dt)
 
     if self.startBeam then 
+        
+
         -- flash ufo's beam 
         if self.beamOpacity < 215 then
             self.beamOpacity = self.beamOpacity + 5
@@ -54,10 +59,12 @@ function PlayerBoardShipState:update(dt)
 
             -- "beam up" player
             Timer.tween(1.5, {
-                [self.player] = {y = -self.player.height}
+                [self.player] = {y = -self.player.height - 16}
             })        
             :finish(function()
                 self.startBeam = false
+                gSounds['ufo']:play()
+
                 -- after that, zip ufo off screen
                 Timer.tween(1.5, {
                     [self.ufo] = { x = VIRTUAL_WIDTH, y = -self.ufo.height}

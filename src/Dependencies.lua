@@ -126,7 +126,19 @@ gSounds = {
     ['hit-ground'] = love.audio.newSource('sounds/hit-ground.wav', 'static'),
     ['jump'] = love.audio.newSource('sounds/jump.wav', 'static'), 
     ['steal'] = love.audio.newSource('sounds/steal.wav', 'static'), 
-    ['walking'] = love.audio.newSource('sounds/walking.wav', 'static')
+    ['walking'] = love.audio.newSource('sounds/walking.wav', 'static'),
+    ['beam-up'] = love.audio.newSource('sounds/beam-up.wav', 'static'),
+    ['beam-up2'] = love.audio.newSource('sounds/beam-up2.wav', 'static'),
+    ['beam-up3'] = love.audio.newSource('sounds/beam-up3.wav', 'static'),
+    ['fly-away'] = love.audio.newSource('sounds/fly-away.wav', 'static'),
+    ['lollipop'] = love.audio.newSource('sounds/lollipop.wav', 'static'),
+    ['plane'] = love.audio.newSource('sounds/plane.wav', 'static'),
+    ['space-ship'] = love.audio.newSource('sounds/space-ship.wav', 'static'),
+    ['steal2'] = love.audio.newSource('sounds/steal2.wav', 'static'),
+    ['ufo'] = love.audio.newSource('sounds/ufo.wav', 'static'),
+    ['zap'] = love.audio.newSource('sounds/zap.wav', 'static'),
+
+    
 }
 
 
