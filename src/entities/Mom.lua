@@ -17,7 +17,8 @@ function Mom:init(def)
             isCarried = true,
             carrier = self,
             carrier_offset_x = MOM_BAG_OFFSET_X,
-            carrier_offset_y = MOM_BAG_OFFSET_Y
+            carrier_offset_y = MOM_BAG_OFFSET_Y,
+            level = self.player.level
         }
         self:changeAnimation('walk-left')
         table.insert(self.items, self.purse)

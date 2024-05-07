@@ -3,6 +3,7 @@ Baby = Class{__includes = Entity}
 function Baby:init(def)
     Entity.init(self, def)
     self.player = self.playState.player
+    self.level = def.level
 
     -- 1 in 2 chance baby gets a balloon
     if math.random(2) == 1 then
@@ -13,7 +14,8 @@ function Baby:init(def)
             isCarried = true,
             carrier = self,
             carrier_offset_x = BABY_BALLOON_OFFSET_X,
-            carrier_offset_y = BABY_BALLOON_OFFSET_Y
+            carrier_offset_y = BABY_BALLOON_OFFSET_Y,
+            level = self.level
         }
         table.insert(self.items, balloon)
         self.hasBalloon = true
@@ -29,7 +31,8 @@ function Baby:init(def)
             isCarried = true,
             carrier = self,
             carrier_offset_x = BABY_LOLLIPOP_OFFSET_X,
-            carrier_offset_y = BABY_LOLLIPOP_OFFSET_Y
+            carrier_offset_y = BABY_LOLLIPOP_OFFSET_Y,
+            level = self.level
         }
 
         table.insert(self.items, lollipop)
@@ -61,21 +64,23 @@ function Baby:update(dt)
                     -- spawn a mom when item is stolen from baby
                      mom = Mom {
                         type = 'mom',
-                        entity_def = ENTITY_DEFS['mom'],
+                        entity_def = ENTITY_DEFS[self.level]['mom'],
                         x = VIRTUAL_WIDTH,
                         y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
                         playState = self.playState,
-                        direction = 'left'
+                        direction = 'left',
+                        level = self.level
                     }
                 elseif self.player.isFloating then
                     -- if floating, spawn a plane mom!
                     mom = Mom {
                         type = 'plane-mom',
-                        entity_def = ENTITY_DEFS['plane-mom'],
+                        entity_def = ENTITY_DEFS[self.level]['plane-mom'],
                         x = VIRTUAL_WIDTH,
                         y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
                         playState = self.playState,
-                        direction = 'left'
+                        direction = 'left',
+                        level = self.level
                     }
                 end
                 table.insert(self.playState.moms, mom)

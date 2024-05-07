@@ -58,7 +58,9 @@ function Player:LevelUp()
     self.health = 60
     self.x = -16
     self.y = VIRTUAL_HEIGHT - 70
+
     self.direction = 'right'
+    self.animations = self:createAnimations(ENTITY_DEFS[self.level]['player'].animations)
     self.items = {}
     table.insert(self.scoreDetails, {
         ['Candies Stolen'] = 0,
@@ -66,4 +68,18 @@ function Player:LevelUp()
         ['Damage Taken'] =  0,
         ['Time'] =  0
     })
+end
+
+-- check for storks colliding with balloons, pop em if so--math.random(4, 16)
+function Player:tryBalloonPop(popper, balloon, itemKey)
+    -- 2 balloons 
+    if popper.x < balloon.x + math.deg(balloon.balloonAngle) and popper.x > balloon.x - math.deg(balloon.balloonAngle) and
+        popper.y + 8 < balloon.y + 20 and popper.y + 16 > balloon.y then
+
+        table.remove(self.items, itemKey)
+        gSounds['hit']:play()
+        
+        -- this will affect gravity
+        self.balloonsCarried = self.balloonsCarried - 1
+    end 
 end

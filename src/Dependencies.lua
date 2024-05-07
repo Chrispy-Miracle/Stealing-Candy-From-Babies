@@ -47,34 +47,74 @@ gFonts = {
 
 
 gTextures = {
-    ['background'] = love.graphics.newImage('graphics/background-tall.png'),
-    ['bad-baby'] = love.graphics.newImage('graphics/Bad-Baby2.png'),
-    ['balloons'] = love.graphics.newImage('graphics/balloons.png'),
-    ['lollipops'] = love.graphics.newImage('graphics/lollipops.png'),
-    ['bad-man'] = love.graphics.newImage('graphics/bad-man6.png'),
-    ['bad-mom'] = love.graphics.newImage('graphics/Bad-Mom.png'),
-    ['bad-stork'] = love.graphics.newImage('graphics/bad-stork.png'),
-    ['bad-balloon'] = love.graphics.newImage('graphics/bad-balloon.png'),
-    ['bad-bag'] = love.graphics.newImage('graphics/bad-bag.png'),
-    ['bad-plane-mom'] = love.graphics.newImage('graphics/bad-plane-mom.png'),
-    ['ufo'] = love.graphics.newImage('graphics/ufo.png'),
-    ['space-background'] = love.graphics.newImage('graphics/space-background.png'),
-
+    -- LEVEL 1
+    {
+        -- backgrounds
+        ['background'] = love.graphics.newImage('graphics/background-tall.png'),
+        -- game objects
+        ['balloons'] = love.graphics.newImage('graphics/balloons.png'),
+        ['lollipops'] = love.graphics.newImage('graphics/lollipops.png'),
+        ['bad-bag'] = love.graphics.newImage('graphics/bad-bag.png'),
+        ['ufo'] = love.graphics.newImage('graphics/ufo.png'),
+        -- entities
+        ['bad-baby'] = love.graphics.newImage('graphics/Bad-Baby2.png'),
+        ['bad-man'] = love.graphics.newImage('graphics/bad-man6.png'),
+        ['bad-mom'] = love.graphics.newImage('graphics/Bad-Mom.png'),
+        ['bad-stork'] = love.graphics.newImage('graphics/bad-stork.png'),
+        ['bad-plane-mom'] = love.graphics.newImage('graphics/bad-plane-mom.png'),  
+    },
+    -- LEVEL 2
+    {
+        -- space-background
+        ['background'] = love.graphics.newImage('graphics/space-background.png'),
+        -- game objects
+        ['balloons'] = love.graphics.newImage('graphics/balloons.png'),
+        ['lollipops'] = love.graphics.newImage('graphics/lollipops.png'),
+        ['bad-bag'] = love.graphics.newImage('graphics/bad-bag.png'),
+        ['ufo'] = love.graphics.newImage('graphics/ufo.png'),
+        -- entities
+        ['space-baby'] = love.graphics.newImage('graphics/space-baby.png'),
+        ['space-man'] = love.graphics.newImage('graphics/space-man.png'),
+        ['space-mom'] = love.graphics.newImage('graphics/space-mom.png'),
+        ['space-stork'] = love.graphics.newImage('graphics/space-stork.png'),
+        ['space-plane-mom'] = love.graphics.newImage('graphics/space-plane-mom.png'),
+    }
 }
 
 
 gFrames = {
-    ['background'] = GenerateQuads(gTextures['background'], 272, 288),
-    ['bad-baby'] = GenerateQuads(gTextures['bad-baby'], 32, 32),
-    ['balloons'] = GenerateQuads(gTextures['balloons'], 32, 32),
-    ['lollipops'] = GenerateQuads(gTextures['lollipops'], 16, 32),
-    ['bad-man'] = GenerateQuads(gTextures['bad-man'], 32, 64),
-    ['bad-mom'] = GenerateQuads(gTextures['bad-mom'], 32, 64),
-    ['bad-stork'] = GenerateQuads(gTextures['bad-stork'], 64, 32),
-    ['bad-bag'] = GenerateQuads(gTextures['bad-bag'], 32, 32),
-    ['bad-plane-mom'] = GenerateQuads(gTextures['bad-plane-mom'], 64, 32),
-    ['ufo'] = GenerateQuads(gTextures['ufo'], 200, 64),
-    ['space-background'] = GenerateQuads(gTextures['space-background'], 272, 288),
+    -- LEVEL 1
+    {    
+        -- background
+        ['background'] = GenerateQuads(gTextures[1]['background'], 272, 288),    
+        -- game objects
+        ['balloons'] = GenerateQuads(gTextures[1]['balloons'], 32, 32),
+        ['lollipops'] = GenerateQuads(gTextures[1]['lollipops'], 16, 32),
+        ['bad-bag'] = GenerateQuads(gTextures[1]['bad-bag'], 32, 32),
+        ['ufo'] = GenerateQuads(gTextures[1]['ufo'], 200, 64),
+        -- entities
+        ['bad-man'] = GenerateQuads(gTextures[1]['bad-man'], 32, 64),
+        ['bad-baby'] = GenerateQuads(gTextures[1]['bad-baby'], 32, 32),
+        ['bad-mom'] = GenerateQuads(gTextures[1]['bad-mom'], 32, 64),
+        ['bad-stork'] = GenerateQuads(gTextures[1]['bad-stork'], 64, 32),
+        ['bad-plane-mom'] = GenerateQuads(gTextures[1]['bad-plane-mom'], 64, 32)
+    },
+    -- LEVEL 2
+    {
+        -- space-background
+        ['background'] = GenerateQuads(gTextures[2]['background'], 272, 288),    
+        -- game objects
+        ['balloons'] = GenerateQuads(gTextures[2]['balloons'], 32, 32),
+        ['lollipops'] = GenerateQuads(gTextures[2]['lollipops'], 16, 32),
+        ['bad-bag'] = GenerateQuads(gTextures[2]['bad-bag'], 32, 32),
+        ['ufo'] = GenerateQuads(gTextures[2]['ufo'], 200, 64),
+        -- entities
+        ['space-man'] = GenerateQuads(gTextures[2]['space-man'], 32, 64),
+        ['space-baby'] = GenerateQuads(gTextures[2]['space-baby'], 32, 32),
+        ['space-mom'] = GenerateQuads(gTextures[2]['space-mom'], 32, 64),
+        ['space-stork'] = GenerateQuads(gTextures[2]['space-stork'], 64, 32),
+        ['space-plane-mom'] = GenerateQuads(gTextures[2]['space-plane-mom'], 64, 32),
+    }
 }
 
 
@@ -82,6 +122,7 @@ gSounds = {
     ['bonus'] = love.audio.newSource('sounds/bonus.wav', 'static'),
     ['falling'] = love.audio.newSource('sounds/falling.wav', 'static'),
     ['hit'] = love.audio.newSource('sounds/hit.wav', 'static'),
+    ['hit-wall'] = love.audio.newSource('sounds/hit-wall.wav', 'static'),
     ['hit-ground'] = love.audio.newSource('sounds/hit-ground.wav', 'static'),
     ['jump'] = love.audio.newSource('sounds/jump.wav', 'static'), 
     ['steal'] = love.audio.newSource('sounds/steal.wav', 'static'), 

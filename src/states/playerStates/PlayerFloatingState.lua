@@ -29,7 +29,7 @@ end
 
 
 function PlayerFloatingState:update(dt)
-    if self.player.screensFloatedUp == 3 then
+    if self.player.screensFloatedUp == 6 then
         self.player.stateMachine:change('board-ship')
     end
 
@@ -56,7 +56,7 @@ function PlayerFloatingState:update(dt)
             for j, stork in pairs(self.playState.babies) do 
                 -- baby is a stork in this instance
                 if stork.type == 'stork' then
-                    self:tryBalloonPop(stork, item, k)
+                    self.player:tryBalloonPop(stork, item, k)
                 end
             end
         end
@@ -71,39 +71,39 @@ function PlayerFloatingState:update(dt)
     if love.keyboard.isDown('right') then
         self.player.direction = 'right'
         self.player:changeAnimation('idle-' .. self.player.direction)
-        self.player.x = self.player.x + PLAYER_WALK_SPEED * dt
+        self.player.x = self.player.x + self.player.walkSpeed * dt
     end
 
     if love.keyboard.isDown('left') then
         self.player.direction = 'left'
         self.player:changeAnimation('idle-' .. self.player.direction)
-        self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
+        self.player.x = self.player.x - self.player.walkSpeed * dt
     end
 
     if love.keyboard.isDown('up') then
-        self.player.y = self.player.y - (PLAYER_WALK_SPEED / 2) * dt
+        self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
     end
 
     if love.keyboard.isDown('down') then
-        self.player.y = self.player.y + (PLAYER_WALK_SPEED / 2) * dt
+        self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
     end
 
     -- update player
     self.player:update(dt)  
 end
 
--- check for storks colliding with balloons, pop em if so
-function PlayerFloatingState:tryBalloonPop(popper, balloon, itemKey)
-    if popper.x < balloon.x + balloon.width + 5 and popper.x > balloon.x + balloon.width - 5 and
-        popper.y < balloon.y + 20 and popper.y > balloon.y then
+-- -- check for storks colliding with balloons, pop em if so
+-- function PlayerFloatingState:tryBalloonPop(popper, balloon, itemKey)
+--     if popper.x < balloon.x + balloon.width + 5 and popper.x > balloon.x + balloon.width - 5 and
+--         popper.y + 8 < balloon.y + 20 and popper.y + 16 > balloon.y then
 
-        table.remove(self.player.items, itemKey)
-        gSounds['hit']:play()
+--         table.remove(self.player.items, itemKey)
+--         gSounds['hit']:play()
         
-        -- this will affect gravity
-        self.player.balloonsCarried = self.player.balloonsCarried - 1
-    end 
-end
+--         -- this will affect gravity
+--         self.player.balloonsCarried = self.player.balloonsCarried - 1
+--     end 
+-- end
 
 
 function PlayerFloatingState:render()

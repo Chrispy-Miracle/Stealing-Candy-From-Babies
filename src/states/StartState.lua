@@ -4,17 +4,19 @@ function StartState:init()
     --baby
     self.baby = Entity {
         type = 'baby',
-        entity_def = ENTITY_DEFS['baby'],
+        entity_def = ENTITY_DEFS[1]['baby'],
         x = VIRTUAL_WIDTH - 10,
         y = VIRTUAL_HEIGHT - 32,
+        level = 1
     }
 
     --man
     self.man = Entity {
         type = 'player',
-        entity_def = ENTITY_DEFS['player'],
+        entity_def = ENTITY_DEFS[1]['player'],
         x = -32,
-        y = VIRTUAL_HEIGHT - 64
+        y = VIRTUAL_HEIGHT - 64,
+        level = 1
     }
 
     -- start animations
@@ -171,7 +173,7 @@ function StartState:render()
     end
 
     -- draw balloon
-    love.graphics.draw(gTextures['balloons'], gFrames['balloons'][math.random(#OBJECT_DEFS['balloon'].frames)], 
+    love.graphics.draw(gTextures[1]['balloons'], gFrames[1]['balloons'][math.random(#OBJECT_DEFS['balloon'].frames)], 
         self.balloonPosition.x, 
         self.balloonPosition.y)
     

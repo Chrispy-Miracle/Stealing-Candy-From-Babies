@@ -3,6 +3,7 @@ Entity = Class{}
 function Entity:init(def)
     self.type = def.entity_def.type
     self.playState = def.playState
+    self.level = def.level
 
     self.animations = self:createAnimations(def.entity_def.animations)
 
@@ -117,6 +118,6 @@ end
 
 function Entity:render()
     local anim = self.currentAnimation
-    love.graphics.draw(gTextures[anim.texture], 
-        gFrames[anim.texture][anim:getCurrentFrame()], self.x, self.y)
+    love.graphics.draw(gTextures[self.level][anim.texture], 
+        gFrames[self.level][anim.texture][anim:getCurrentFrame()], self.x, self.y)
 end

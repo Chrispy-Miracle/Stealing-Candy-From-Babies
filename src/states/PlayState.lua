@@ -10,7 +10,8 @@ function PlayState:enter(params)
         self.player = Player {
             type = 'player',
             playState = self,
-            entity_def = ENTITY_DEFS['player'],
+            -- level 1 by default
+            entity_def = ENTITY_DEFS[1]['player'],
             x = - 16,
             y = VIRTUAL_HEIGHT - 70,
             direction = 'right',
@@ -21,13 +22,15 @@ function PlayState:enter(params)
     -- this restarts the play timer
     self.player.levelEnded = false
 
-    if self.player.level == 1 then
-        -- mountain background
-        self.backgroundName = 'background'
-    elseif self.player.level == 2 then
-        -- space background
-        self.backgroundName = 'space-background'
-    end
+    self.level = self.player.level
+
+    -- if self.player.level == 1 then
+    --     -- mountain background
+    --     self.backgroundName = 'background'
+    -- elseif self.player.level == 2 then
+    --     -- space background
+    --     self.backgroundName = 'space-background'
+    -- end
 
 
     self.background = 1 -- can be changed for extra backgrounds
@@ -76,10 +79,11 @@ function PlayState:spawnBabies()  --(or storks!)
                 baby = Baby {
                     type = 'baby',
                     playState = self,
-                    entity_def = ENTITY_DEFS['baby'],
+                    entity_def = ENTITY_DEFS[self.level]['baby'],
                     x = VIRTUAL_WIDTH - 10,
                     y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
-                    direction = 'left'
+                    direction = 'left',
+                    level = self.level
                 }
                 baby:changeAnimation('crawl-left')
             end
@@ -91,10 +95,11 @@ function PlayState:spawnBabies()  --(or storks!)
                 baby = Baby {
                     type = 'stork',
                     playState = self,
-                    entity_def = ENTITY_DEFS['stork'],
+                    entity_def = ENTITY_DEFS[self.level]['stork'],
                     x = VIRTUAL_WIDTH,
-                    y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS['stork'].height),
-                    direction = 'left'
+                    y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS[self.level]['stork'].height),
+                    direction = 'left',
+                    level = self.level
                 }
                 baby:changeAnimation('fly-left')
             end
@@ -213,17 +218,17 @@ end
 
 function PlayState:renderBackground()
     -- this is the normal centered scrollable background
-    love.graphics.draw(gTextures[self.backgroundName], gFrames[self.backgroundName][self.background], 
+    love.graphics.draw(gTextures[self.level]['background'], gFrames[self.level]['background'][self.background], 
         math.floor(-self.backgroundScrollX), 
         math.floor(-self.backgroundScrollY) - 144)
 
     -- this allows background to left and right to appear
-    love.graphics.draw(gTextures[self.backgroundName], gFrames[self.backgroundName][self.background], 
+    love.graphics.draw(gTextures[self.level]['background'], gFrames[self.level]['background'][self.background], 
         math.floor(-self.backgroundScrollX + BACKGROUND_X_LOOP_POINT), 
         math.floor(-self.backgroundScrollY) - 144)
 
     -- this allows background below to appear while floating or falling
-    love.graphics.draw(gTextures[self.backgroundName], gFrames[self.backgroundName][self.background], 
+    love.graphics.draw(gTextures[self.level]['background'], gFrames[self.level]['background'][self.background], 
         math.floor(-self.backgroundScrollX), 
         math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT) - 144)
 

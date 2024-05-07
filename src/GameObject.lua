@@ -3,6 +3,7 @@ GameObject = Class{}
 function GameObject:init(def)
     self.type = def.object_def.type
     self.texture = def.object_def.texture
+    self.level = def.level
     
     -- mom's purse changes frames when mom attacks
     if self.type == 'bad-bag' then
@@ -77,9 +78,9 @@ end
 function GameObject:render()   
     if self.isCarried and self.carrier.type == 'player' and self.type == 'balloon' then 
         -- tilt balloons if need be                    
-        love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.frame], self.x + ROTATED_BALLOON_OFFSET_X, self.y + ROTATED_BALLOON_OFFSET_Y, self.balloonAngle, 1, 1, self.width / 2, self.height)
+        love.graphics.draw(gTextures[self.level][self.texture], gFrames[self.level][self.texture][self.frame], self.x + ROTATED_BALLOON_OFFSET_X, self.y + ROTATED_BALLOON_OFFSET_Y, self.balloonAngle, 1, 1, self.width / 2, self.height)
     else
         -- or draw object normally
-        love.graphics.draw(gTextures[self.texture], gFrames[self.texture][self.frame], self.x, self.y)
+        love.graphics.draw(gTextures[self.level][self.texture], gFrames[self.level][self.texture][self.frame], self.x, self.y)
     end
 end

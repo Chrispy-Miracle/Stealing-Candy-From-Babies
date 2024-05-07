@@ -12,7 +12,8 @@ function PlayerBoardShipState:init(playState)
         object_def = OBJECT_DEFS['ufo'],
         x = -OBJECT_DEFS['ufo'].width,
         y = -OBJECT_DEFS['ufo'].height,
-        isCarried = false
+        isCarried = false,
+        level = self.player.level
     }
 
     -- bring player and ufo to center

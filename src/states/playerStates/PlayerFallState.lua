@@ -6,14 +6,27 @@ function PlayerFallState:init(playState)
 
     self.player.isFalling = true
     gSounds['falling']:play()
-    self.player.gravity =  80 - self.player.balloonsCarried * 20
+    self.player.gravity =  100 - self.player.balloonsCarried * 20
         
     self.playState.backgroundScrollX = 0
 end
 
 function PlayerFallState:update(dt)
-    if self.player.balloonsCarried >= 3 then
+    if self.player.balloonsCarried > 3 then
         self.player.stateMachine:change('float-state')
+    end
+
+    -- check items for balloon pops 
+    for k, item in pairs(self.player.items) do 
+        if item.type == 'balloon' then
+            -- check playState storks
+            for j, stork in pairs(self.playState.babies) do 
+                -- baby is a stork in this instance
+                if stork.type == 'stork' then
+                    self.player:tryBalloonPop(stork, item, k)
+                end
+            end
+        end
     end
 
     -- player falls
@@ -33,8 +46,8 @@ function PlayerFallState:update(dt)
             }):finish(function()
                 gSounds['hit-ground']:play()
                 --damage player
-                self.player.health = self.player.health - (10 / self.player.balloonsCarried)
-                self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + (10 / self.player.balloonsCarried)
+                self.player.health = self.player.health - (30 - (self.player.balloonsCarried * 10))
+                self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + (30 - (self.player.balloonsCarried * 10))
                 -- go back to player idle state
                 self.player.stateMachine:change('idle')            
             end)
@@ -43,7 +56,7 @@ function PlayerFallState:update(dt)
     end
 
     -- update player gravity and background Y scroll
-    self.player.gravity = 80 - self.player.balloonsCarried * 20
+    self.player.gravity = 100 - self.player.balloonsCarried * 20
     self.playState.backgroundScrollY = (self.player.gravity * dt + self.playState.backgroundScrollY) % BACKGROUND_Y_LOOP_POINT
     
 
@@ -51,13 +64,13 @@ function PlayerFallState:update(dt)
     if love.keyboard.isDown('right') then
         self.player.direction = 'right'
         self.player:changeAnimation('idle-' .. self.player.direction)
-        self.player.x = self.player.x + PLAYER_WALK_SPEED * dt
+        self.player.x = self.player.x + self.player.walkSpeed * dt
     end
 
     if love.keyboard.isDown('left') then
         self.player.direction = 'left'
         self.player:changeAnimation('idle-' .. self.player.direction)
-        self.player.x = self.player.x - PLAYER_WALK_SPEED * dt
+        self.player.x = self.player.x - self.player.walkSpeed * dt
     end
 
     self.player:update(dt)
