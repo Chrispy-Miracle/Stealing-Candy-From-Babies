@@ -36,14 +36,23 @@ function Player:init(def)
             end
         end)
     end
+
+    --particle system
+    self.pSystem = love.graphics.newParticleSystem(gTextures[1]['particle'], 32)
+    self.pSystem:setParticleLifetime(.3, 1.5) -- Particles live at least 2s and at most 5s.
+	self.pSystem:setSpin(math.rad(-360), math.rad(360))
+	self.pSystem:setLinearAcceleration(-200, -150, 200, 200) -- Random movement in all directions.
+	self.pSystem:setColors(0, 1, 0, 1, 0, 1, 0, .5) -- Fade to transparency.
 end
 
 function Player:update(dt)
     Entity.update(self, dt)
+    self.pSystem:update(dt)
 end
 
 function Player:render()
     Entity.render(self)
+    love.graphics.draw(self.pSystem, self.x + self.width, self.y)
 end
 
 function Player:LevelUp()
@@ -72,13 +81,16 @@ end
 
 -- check for storks colliding with balloons, pop em if so--math.random(4, 16)
 function Player:tryBalloonPop(popper, balloon, itemKey)
+    local r, g, b = math.random(255) / 255, math.random(255) / 255, math.random(255) / 255
+
     -- 2 balloons 
     if popper.x < balloon.x + math.deg(balloon.balloonAngle) and popper.x > balloon.x - math.deg(balloon.balloonAngle) and
         popper.y + 8 < balloon.y + 20 and popper.y + 16 > balloon.y then
 
         table.remove(self.items, itemKey)
         gSounds['hit']:play()
-        
+        self.pSystem:setColors(r, g, b, 1, r, g, b, 0)
+        self.pSystem:emit(32)
         -- this will affect gravity
         self.balloonsCarried = self.balloonsCarried - 1
     end 

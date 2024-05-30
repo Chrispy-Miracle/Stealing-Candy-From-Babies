@@ -61,7 +61,9 @@ gTextures = {
         ['bad-man'] = love.graphics.newImage('graphics/bad-man6.png'),
         ['bad-mom'] = love.graphics.newImage('graphics/Bad-Mom.png'),
         ['bad-stork'] = love.graphics.newImage('graphics/bad-stork.png'),
-        ['bad-plane-mom'] = love.graphics.newImage('graphics/bad-plane-mom.png'),  
+        ['bad-plane-mom'] = love.graphics.newImage('graphics/bad-plane-mom.png'),
+        -- particle system
+        ['particle'] = love.graphics.newImage('graphics/particle.png'),
     },
     -- LEVEL 2
     {

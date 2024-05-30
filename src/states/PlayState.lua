@@ -163,12 +163,14 @@ function PlayState:render()
     for k, mom in pairs(self.moms) do
         local momY = mom.y + mom.height
         if  momY < playerY then 
+            -- draw moms behind player
+            mom:render()            
+            
             -- draw moms items behind player
             for k, item in pairs(mom.items) do
                 item:render()
             end
-            -- draw moms behind player
-            mom:render()
+
         end
     end
 
