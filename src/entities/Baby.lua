@@ -55,7 +55,7 @@ function Baby:update(dt)
                 playerHandPosition = {x = self.player.x, y = self.player.y + self.player.height / 2}
             end
             
-            if love.keyboard.wasPressed('space') and 
+            if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) and 
                 playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 then
                 -- steal the item
                 self.player:stealItem(self, item, k)

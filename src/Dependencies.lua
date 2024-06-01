@@ -139,8 +139,6 @@ gSounds = {
     ['steal2'] = love.audio.newSource('sounds/steal2.wav', 'static'),
     ['ufo'] = love.audio.newSource('sounds/ufo.wav', 'static'),
     ['zap'] = love.audio.newSource('sounds/zap.wav', 'static'),
-
-    
 }
 
 

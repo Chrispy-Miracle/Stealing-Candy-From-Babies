@@ -141,7 +141,7 @@ function StartState:update(dt)
     self.man:update(dt)
 
     -- change to play state
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') or is_joystick and joystick:isDown({SNES_MAP.start})then
         Timer.clear()
         gSounds['walking']:stop()
         gStateMachine:change('play', {player = nil})

@@ -15,7 +15,7 @@ end
 
 function LevelUpState:update(dt)
     if self.timerDone then
-        if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') then
+        if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') or is_joystick and joystick:isDown({SNES_MAP.start})then
             if self.didWin then
                 gStateMachine:change('won-game', {
                     gameStats = self.player.scoreDetails, 

@@ -16,7 +16,11 @@ function PlayerIdleState:update(dt)
     
     -- change to walk state if arrow buttons pushed
     if love.keyboard.isDown('right') or love.keyboard.isDown('left') 
-        or love.keyboard.isDown('up') or love.keyboard.isDown('down') then
+        or love.keyboard.isDown('up') or love.keyboard.isDown('down')
+        or joystick:getAxis(SNES_MAP.xDir) == -1
+        or joystick:getAxis(SNES_MAP.xDir) == 1
+        or joystick:getAxis(SNES_MAP.yDir) == -1
+        or joystick:getAxis(SNES_MAP.yDir) == 1 then
         self.player.stateMachine:change('walk-state')
     end
 

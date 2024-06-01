@@ -37,3 +37,27 @@ BACKGROUND_Y_LOOP_POINT = 288
 
 MOM_BAG_OFFSET_X = -6
 MOM_BAG_OFFSET_Y = 26
+
+-- SNES Controller
+if #love.joystick.getJoysticks() > 0 then
+    is_joystick = true
+    joystick = love.joystick.getJoysticks()[1]
+
+    SNES_MAP = {
+        -- This is a mapping of controller buttons to their indexes
+        a = 1, 
+        b = 2, 
+        x = 3, 
+        y = 4, 
+        sel = 5, 
+        start = 7, 
+        leftTrig = 10, 
+        rightTrig = 11,
+        -- This is x and y axes on controller
+        xDir = 1, 
+        yDir = 2        
+    }
+    
+else 
+    is_joystick = false
+end

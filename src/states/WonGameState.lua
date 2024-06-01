@@ -19,7 +19,7 @@ function WonGameState:enter(params)
 end
 
 function WonGameState:update()
-    if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') then
+    if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') or is_joystick and joystick:isDown({SNES_MAP.start}) then
         love.event.quit()
     end
 end
