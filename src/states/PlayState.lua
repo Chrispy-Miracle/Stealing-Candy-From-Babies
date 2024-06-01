@@ -133,7 +133,10 @@ function PlayState:update(dt)
     end
     
     -- update player's items
-    for k, item in pairs(self.player.items) do
+    for k, item in pairs(self.player.items['balloons']) do
+        item:update(dt)
+    end
+    for k, item in pairs(self.player.items['lollipops']) do
         item:update(dt)
     end
 
@@ -188,20 +191,16 @@ function PlayState:render()
     end
     
     -- draw player's balloons behind player
-    for k, item in pairs(self.player.items) do
-        if item.type == 'balloon' then
-            item:render()
-        end 
+    for k, item in pairs(self.player.items['balloons']) do
+        item:render()
     end 
 
     -- draw player
     self.player.stateMachine:render()
 
     -- draw player's lollipops in front of player
-    for k, item in pairs(self.player.items) do
-        if item.type == 'lollipop' then
-            item:render()
-        end 
+    for k, item in pairs(self.player.items['lollipops']) do
+        item:render()
     end
 
    -- babies

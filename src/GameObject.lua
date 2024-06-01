@@ -53,24 +53,21 @@ function GameObject:update(dt)
             self.x = self.carrier.x - self.carrier_offset_x
         end
 
-        -- self.x = self.carrier.x + self.carrier_offset_x
         self.y = self.carrier.y + self.carrier_offset_y
 
         -- when there is more than one item (should be balloons)
-        if #self.carrier.items > 1 then
-            -- angle the balloons nicely
-            for k, item in pairs(self.carrier.items) do
-                if item.type == 'balloon' then
-                    if k % 2 == 0 then
-                        item.balloonAngle =  math.rad(k * -10)
-                    else 
-                        item.balloonAngle = math.rad(k * 10)
-                    end
-                end
-            end
-        else
-            self.balloonAngle = 0
-        end
+        -- if if self.carrier == se#self.carrier.items['balloons'] > 1 then
+        --     -- angle the balloons nicely
+        --     for k, item in pairs(self.carrier.items['balloons']) do
+        --         if k % 2 == 0 then
+        --             item.balloonAngle =  math.rad(k * -10)
+        --         else 
+        --             item.balloonAngle = math.rad(k * 10)
+        --         end
+        --     end
+        -- else
+        --     self.balloonAngle = 0
+        -- end
     end
 end
 

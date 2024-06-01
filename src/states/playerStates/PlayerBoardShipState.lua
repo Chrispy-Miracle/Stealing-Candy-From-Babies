@@ -46,11 +46,16 @@ function PlayerBoardShipState:update(dt)
 
         Timer.after(2, function ()
             -- "beam up" players items 
-            for k, item in pairs(self.player.items) do
+            for k, item in pairs(self.player.items['balloons']) do
                 if item.y > 0 then
-                    if item.type == 'lollipop' then
-                        table.remove(self.player.items, k)
-                    end
+                    Timer.tween(.5, { 
+                        [item] = {y = -item.height}
+                    })
+                end
+            end
+
+            for k, item in pairs(self.player.items['lollipops']) do
+                if item.y > 0 then
                     Timer.tween(.5, { 
                         [item] = {y = -item.height}
                     })

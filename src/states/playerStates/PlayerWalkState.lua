@@ -92,17 +92,16 @@ function PlayerWalkState:update(dt)
     end
 
     -- return to idle state if no direction buttons pushed
-    if is_joystick then
-        if joystick:getAxis(SNES_MAP.xDir) == 0 and joystick:getAxis(SNES_MAP.yDir) == 0 then
-            gSounds['walking']:stop()
-            self.player.stateMachine:change('idle')
-        end
-    elseif not love.keyboard.isDown('right') and not love.keyboard.isDown('left') 
+    if not love.keyboard.isDown('right') and not love.keyboard.isDown('left') 
     and not love.keyboard.isDown('up') and not love.keyboard.isDown('down') 
     and not love.keyboard.isDown('d') and not love.keyboard.isDown('a') 
     and not love.keyboard.isDown('w') and not love.keyboard.isDown('s') then
-        gSounds['walking']:stop()
-        self.player.stateMachine:change('idle')
+        if is_joystick and joystick:getAxis(SNES_MAP.xDir) == 0 
+        and joystick:getAxis(SNES_MAP.yDir) == 0 
+        or not is_joystick then
+            gSounds['walking']:stop()
+            self.player.stateMachine:change('idle')
+        end
     end
 
     self.player:update(dt)

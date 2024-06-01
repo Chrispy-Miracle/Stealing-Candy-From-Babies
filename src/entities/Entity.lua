@@ -42,65 +42,13 @@ function Entity:changeAnimation(name)
 end
 
 
-function Entity:stealItem(prevOwner, item, itemKey)
-                    
-    gSounds['steal']:play()
-
-    if item.type == 'balloon' then
-        item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
-        item.carrier_offset_y = PLAYER_BALLOON_OFFSET_Y
-        self.balloonsCarried = self.balloonsCarried + 1
-
-        -- take out of previous carrier's items
-        table.remove(prevOwner.items, itemKey)
-        -- put into player's items
-        item.carrier = self
-        table.insert(self.items, item) 
-        self.scoreDetails[self.level]['Balloons Stolen'] = self.scoreDetails[self.level]['Balloons Stolen'] + 1
-        
-    elseif item.type == 'lollipop' then
-        Timer.after(.4, function () gSounds['lollipop']:play() end )
-        self.hasLollipop = true
-        item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
-        item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y
-
-        -- take out of previous carrier's items
-        table.remove(prevOwner.items, itemKey)
-        -- put into player's items
-        item.carrier = self
-        table.insert(self.items, item)  
-        self.scoreDetails[self.level]['Candies Stolen'] = self.scoreDetails[self.level]['Candies Stolen'] + 1
-        
-
-        -- this animates health bar going up 1 point every .2 seconds
-        Timer.every(.2, function () 
-            if self.health < self.maxHealth then
-                self.health = self.health + 1
-            end
-        end)
-        :limit(15)
-        :finish(function () 
-            self.hasLollipop = false
-            -- remove lollipop from items
-            if self.items[#self.items].type == 'lollipop' then
-                table.remove(self.items, #self.items)
-            else
-                table.remove(self.items, #self.items - 1) 
-            end
-        end)
-    end 
-  
-end
-
-
-
 function Entity:update(dt)
 
     if self.type ~= 'player' then
         -- update NPCs that are still on screen
         if self.x > -self.width and self.y < VIRTUAL_HEIGHT then
             self.x = self.x - self.walkSpeed * dt
-            -- update player's items
+            -- update entity's items
             for k, item in pairs(self.items) do
                 item:update(dt)
             end
@@ -110,7 +58,6 @@ function Entity:update(dt)
         end
     end
 
- 
     if self.currentAnimation then
         self.currentAnimation:update(dt)
     end

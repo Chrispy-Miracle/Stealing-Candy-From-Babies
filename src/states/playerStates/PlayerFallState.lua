@@ -17,14 +17,12 @@ function PlayerFallState:update(dt)
     end
 
     -- check items for balloon pops 
-    for k, item in pairs(self.player.items) do 
-        if item.type == 'balloon' then
-            -- check playState storks
-            for j, stork in pairs(self.playState.babies) do 
-                -- baby is a stork in this instance
-                if stork.type == 'stork' then
-                    self.player:tryBalloonPop(stork, item, k)
-                end
+    for k, item in pairs(self.player.items['balloons']) do
+        -- check playState storks
+        for j, stork in pairs(self.playState.babies) do 
+            -- baby is a stork in this instance
+            if stork.type == 'stork' then
+                self.player:tryBalloonPop(stork, item, k)
             end
         end
     end
@@ -36,7 +34,7 @@ function PlayerFallState:update(dt)
         self.player.y = -self.player.height
         self.player.screensFloatedUp = self.player.screensFloatedUp - 1
         -- if player is nearing the ground
-        if self.player.screensFloatedUp < 1 then
+        if self.player.screensFloatedUp <= 1 then
             self.playState.background = 1
             self.player.isFloating =  false
             -- scoot player and background such that player is back on the ground

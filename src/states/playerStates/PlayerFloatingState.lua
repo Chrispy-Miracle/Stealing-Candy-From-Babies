@@ -51,14 +51,12 @@ function PlayerFloatingState:update(dt)
 
 
     -- check items for balloon pops 
-    for k, item in pairs(self.player.items) do 
-        if item.type == 'balloon' then
-            -- check playState storks
-            for j, stork in pairs(self.playState.babies) do 
-                -- baby is a stork in this instance
-                if stork.type == 'stork' then
-                    self.player:tryBalloonPop(stork, item, k)
-                end
+    for k, item in pairs(self.player.items['balloons']) do 
+        -- check playState storks
+        for j, stork in pairs(self.playState.babies) do 
+            -- baby is a stork in this instance
+            if stork.type == 'stork' then
+                self.player:tryBalloonPop(stork, item, k)
             end
         end
     end
@@ -102,19 +100,6 @@ function PlayerFloatingState:update(dt)
     -- update player
     self.player:update(dt)  
 end
-
--- -- check for storks colliding with balloons, pop em if so
--- function PlayerFloatingState:tryBalloonPop(popper, balloon, itemKey)
---     if popper.x < balloon.x + balloon.width + 5 and popper.x > balloon.x + balloon.width - 5 and
---         popper.y + 8 < balloon.y + 20 and popper.y + 16 > balloon.y then
-
---         table.remove(self.player.items, itemKey)
---         gSounds['hit']:play()
-        
---         -- this will affect gravity
---         self.player.balloonsCarried = self.player.balloonsCarried - 1
---     end 
--- end
 
 
 function PlayerFloatingState:render()
