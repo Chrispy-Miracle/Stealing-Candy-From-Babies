@@ -55,41 +55,43 @@ function Baby:update(dt)
                 playerHandPosition = {x = self.player.x, y = self.player.y + self.player.height / 2}
             end
             
-            if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) and 
-                playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 then
-                -- steal the item
-                self.player:stealItem(self, item, k)
-                local mom
-                if not self.player.isFloating then
-                    -- spawn a mom when item is stolen from baby
-                     mom = Mom {
-                        type = 'mom',
-                        entity_def = ENTITY_DEFS[self.level]['mom'],
-                        x = VIRTUAL_WIDTH,
-                        y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
-                        playState = self.playState,
-                        direction = 'left',
-                        level = self.level
-                    }
-                    gSounds['walking']:play()
-                elseif self.player.isFloating then
-                    -- if floating, spawn a plane mom!
-                    mom = Mom {
-                        type = 'plane-mom',
-                        entity_def = ENTITY_DEFS[self.level]['plane-mom'],
-                        x = VIRTUAL_WIDTH,
-                        y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
-                        playState = self.playState,
-                        direction = 'left',
-                        level = self.level
-                    }
-                    if self.level == 1 then
-                        gSounds['plane']:play()
-                    elseif self.level == 2 then
-                        gSounds['zap']:play()
+            if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) then
+                if playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 then
+                    -- steal the item
+                    self.player:stealItem(self, item, k)
+                    local mom
+                    if not self.player.isFloating then
+                        -- spawn a mom when item is stolen from baby
+                        mom = Mom {
+                            type = 'mom',
+                            entity_def = ENTITY_DEFS[self.level]['mom'],
+                            x = VIRTUAL_WIDTH,
+                            y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
+                            playState = self.playState,
+                            direction = 'left',
+                            level = self.level
+                        }
+                        gSounds['walking']:play()
+                    elseif self.player.isFloating then
+                        -- if floating, spawn a plane mom!
+                        mom = Mom {
+                            type = 'plane-mom',
+                            entity_def = ENTITY_DEFS[self.level]['plane-mom'],
+                            x = VIRTUAL_WIDTH,
+                            y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
+                            playState = self.playState,
+                            direction = 'left',
+                            level = self.level
+                        }
+                        if self.level == 1 then
+                            gSounds['plane']:play()
+                        elseif self.level == 2 then
+                            gSounds['zap']:play()
+                        end
                     end
+                    table.insert(self.playState.moms, mom)
                 end
-                table.insert(self.playState.moms, mom)
+                
             else
                 -- update item if not stolen
                 item:update(dt)
@@ -105,3 +107,4 @@ end
 function Baby:render()
     Entity.render(self)
 end
+

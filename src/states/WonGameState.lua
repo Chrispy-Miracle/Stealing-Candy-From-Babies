@@ -16,11 +16,16 @@ function WonGameState:enter(params)
             self.gameStatTotals[k] = self.gameStatTotals[k] + gameStat
         end
     end
+
+    self.canQuit = false
+    Timer.after(3, function () self.canQuit = true end)
 end
 
 function WonGameState:update()
-    if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') or is_joystick and joystick:isDown({SNES_MAP.start}) then
-        love.event.quit()
+    if self.canQuit then
+        if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') or is_joystick and joystick:isDown({SNES_MAP.start}) then
+            love.event.quit()
+        end
     end
 end
 

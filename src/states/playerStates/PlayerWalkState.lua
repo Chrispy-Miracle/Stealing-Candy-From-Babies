@@ -16,7 +16,7 @@ end
 
 function PlayerWalkState:update(dt)
     -- check each direction button, and update player position if pressed
-    if love.keyboard.isDown('right') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == 1 then            
+    if love.keyboard.isDown('right') or love.keyboard.isDown('d') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == 1 then            
         self.player.direction = 'right'
         self.player:changeAnimation('walk-' .. self.player.direction)
 
@@ -50,7 +50,7 @@ function PlayerWalkState:update(dt)
 
     end
 
-    if love.keyboard.isDown('left') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1 then
+    if love.keyboard.isDown('left') or love.keyboard.isDown('a') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1 then
         --move player
         self.player.direction = 'left'
         self.player:changeAnimation('walk-' .. self.player.direction)
@@ -72,14 +72,14 @@ function PlayerWalkState:update(dt)
 
     end
 
-    if love.keyboard.isDown('up') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == -1 then
+    if love.keyboard.isDown('up') or love.keyboard.isDown('w') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == -1 then
         --move player while confining y-axis movement
         if self.player.y > VIRTUAL_HEIGHT / 3 then
             self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
         end
     end
 
-    if love.keyboard.isDown('down') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == 1 then
+    if love.keyboard.isDown('down') or love.keyboard.isDown('s') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == 1 then
         --move player while confining y-axis movement
         if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
             self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
@@ -92,14 +92,17 @@ function PlayerWalkState:update(dt)
     end
 
     -- return to idle state if no direction buttons pushed
-    if not love.keyboard.isDown('right') and not love.keyboard.isDown('left') 
-        and not love.keyboard.isDown('up') and not love.keyboard.isDown('down')
-        and not joystick:getAxis(SNES_MAP.xDir) == -1
-        and not joystick:getAxis(SNES_MAP.xDir) == 1 
-        and not joystick:getAxis(SNES_MAP.yDir) == -1 
-        and not joystick:getAxis(SNES_MAP.yDir) == 1 then
+    if is_joystick then
+        if joystick:getAxis(SNES_MAP.xDir) == 0 and joystick:getAxis(SNES_MAP.yDir) == 0 then
+            gSounds['walking']:stop()
+            self.player.stateMachine:change('idle')
+        end
+    elseif not love.keyboard.isDown('right') and not love.keyboard.isDown('left') 
+    and not love.keyboard.isDown('up') and not love.keyboard.isDown('down') 
+    and not love.keyboard.isDown('d') and not love.keyboard.isDown('a') 
+    and not love.keyboard.isDown('w') and not love.keyboard.isDown('s') then
         gSounds['walking']:stop()
-        self.player.stateMachine:change('idle') 
+        self.player.stateMachine:change('idle')
     end
 
     self.player:update(dt)
