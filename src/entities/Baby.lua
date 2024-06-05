@@ -106,5 +106,14 @@ end
 
 function Baby:render()
     Entity.render(self)
+
+    -- for debugging collisions
+    love.graphics.setColor(0,1,0,1)
+    love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+
+    if self.type == 'stork' then
+        love.graphics.rectangle('line', self.x, self.y + self.height / 2 - 5, 15, 5)
+    end
+    love.graphics.setColor(1,1,1,1)
 end
 

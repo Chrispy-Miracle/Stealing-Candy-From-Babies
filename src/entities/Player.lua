@@ -72,6 +72,16 @@ end
 function Player:render()
     Entity.render(self)
     love.graphics.draw(self.pSystem, self.x + self.width, self.y)
+
+    -- for debugging collisions
+    love.graphics.setColor(0,1,0,1)
+    love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+    if self.direction == 'right' then
+        love.graphics.rectangle('line', self.x + self.width / 2, self.y + self.height / 2, 5, 5)
+    elseif self.direction == 'left' then
+        love.graphics.rectangle('line', self.x, self.y + self.height / 2, 5, 5)
+    end
+    love.graphics.setColor(1,1,1,1)
 end
 
 function Player:LevelUp()
@@ -117,7 +127,7 @@ function Player:tryBalloonPop(popper, balloon, itemKey)
     end 
 end
 
--- probs should be player function?
+
 function Player:stealItem(prevOwner, item, itemKey)
                     
     gSounds['steal']:play()

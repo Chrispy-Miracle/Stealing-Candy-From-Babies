@@ -54,20 +54,6 @@ function GameObject:update(dt)
         end
 
         self.y = self.carrier.y + self.carrier_offset_y
-
-        -- when there is more than one item (should be balloons)
-        -- if if self.carrier == se#self.carrier.items['balloons'] > 1 then
-        --     -- angle the balloons nicely
-        --     for k, item in pairs(self.carrier.items['balloons']) do
-        --         if k % 2 == 0 then
-        --             item.balloonAngle =  math.rad(k * -10)
-        --         else 
-        --             item.balloonAngle = math.rad(k * 10)
-        --         end
-        --     end
-        -- else
-        --     self.balloonAngle = 0
-        -- end
     end
 end
 
@@ -76,8 +62,18 @@ function GameObject:render()
     if self.isCarried and self.carrier.type == 'player' and self.type == 'balloon' then 
         -- tilt balloons if need be                    
         love.graphics.draw(gTextures[self.level][self.texture], gFrames[self.level][self.texture][self.frame], self.x + ROTATED_BALLOON_OFFSET_X, self.y + ROTATED_BALLOON_OFFSET_Y, self.balloonAngle, 1, 1, self.width / 2, self.height)
+        
+        -- for debugging collisions
+        love.graphics.setColor(0,1,0,1)
+        love.graphics.rectangle('line', self.x + ROTATED_BALLOON_OFFSET_X, self.y + ROTATED_BALLOON_OFFSET_Y, self.width, self.height)
+        love.graphics.setColor(1,1,1,1)
     else
         -- or draw object normally
         love.graphics.draw(gTextures[self.level][self.texture], gFrames[self.level][self.texture][self.frame], self.x, self.y)
+
+        -- for debugging collisions
+        love.graphics.setColor(0,1,0,1)
+        love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+        love.graphics.setColor(1,1,1,1)
     end
 end
