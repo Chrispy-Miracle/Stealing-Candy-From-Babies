@@ -4,14 +4,14 @@ OBJECT_DEFS = {
         texture = 'balloons',
         frames = {1, 2, 3, 4, 5, 6, 7, 8, 9},
         height = 32,
-        width = 32,
+        width = 16,
     },
     ['lollipop'] = {
         type = 'lollipop',
         texture = 'lollipops',
         frames = {1, 2, 3, 4, 5, 6, 7, 8},
         height = 32, 
-        width = 32
+        width = 16
     },
     ['bad-bag'] = {
         type = 'bad-bag',

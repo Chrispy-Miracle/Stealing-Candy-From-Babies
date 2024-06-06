@@ -41,10 +41,23 @@ function GameObject:init(def)
     end
 
     self.balloonAngle = 0
+    self.angledXY = {x = 0, y = 0}
+
+    self.hitBox = HitBox{
+        item = self,
+        x = self.x,
+        y = self.y,
+        width = self.width,
+        height = self.height,
+        rotation = 0
+    }
+
+
 
 end
 
-function GameObject:update(dt)
+function GameObject:update(dt)  
+    
     -- update object position in relation to carrier
     if self.isCarried then
         if self.carrier.direction == 'right' then
@@ -55,6 +68,20 @@ function GameObject:update(dt)
 
         self.y = self.carrier.y + self.carrier_offset_y
     end
+
+    if self.isCarried and self.carrier.type == 'player' and self.type == 'balloon' then
+        self.hitBox.item = {
+                x = self.x + ROTATED_BALLOON_OFFSET_X + self.width / 2 + self.angledXY.x, 
+                y = self.y + ROTATED_BALLOON_OFFSET_Y - self.height / 2 + self.angledXY.y,
+                rotation = self.balloonAngle + math.rad(180)           
+            }
+        self.hitBox.x = self.x + ROTATED_BALLOON_OFFSET_X + self.width / 2 + self.angledXY.x
+        self.hitBox.y = self.y + ROTATED_BALLOON_OFFSET_Y - self.height / 2 + self.angledXY.y
+        self.hitBox.height = self.height / 2
+    end
+
+    self.hitBox:update(dt)
+    
 end
 
 
@@ -64,16 +91,17 @@ function GameObject:render()
         love.graphics.draw(gTextures[self.level][self.texture], gFrames[self.level][self.texture][self.frame], self.x + ROTATED_BALLOON_OFFSET_X, self.y + ROTATED_BALLOON_OFFSET_Y, self.balloonAngle, 1, 1, self.width / 2, self.height)
         
         -- for debugging collisions
-        love.graphics.setColor(0,1,0,1)
-        love.graphics.rectangle('line', self.x + ROTATED_BALLOON_OFFSET_X, self.y + ROTATED_BALLOON_OFFSET_Y, self.width, self.height)
-        love.graphics.setColor(1,1,1,1)
+        -- self.hitBox:render()
+        -- love.graphics.setColor(0,1,0,1)
+        -- drawRotatedRectangle('line', self.x + ROTATED_BALLOON_OFFSET_X + self.width / 2 + self.angledXY.x, self.y + ROTATED_BALLOON_OFFSET_Y - self.height / 2 + self.angledXY.y, self.width, self.height / 2, self.balloonAngle +math.rad(180))
+        -- love.graphics.setColor(1,1,1,1)
     else
         -- or draw object normally
         love.graphics.draw(gTextures[self.level][self.texture], gFrames[self.level][self.texture][self.frame], self.x, self.y)
 
-        -- for debugging collisions
-        love.graphics.setColor(0,1,0,1)
-        love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
-        love.graphics.setColor(1,1,1,1)
+        -- self.hitBox:render()
     end
+    
+    -- for debugging collisions
+    self.hitBox:render()
 end

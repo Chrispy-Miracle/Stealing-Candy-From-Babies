@@ -37,6 +37,7 @@ require 'src/GameObject'
 
 -- helper classes
 require 'src/Animation'
+require 'src/Hitbox'
 
 
 gFonts = {
@@ -90,7 +91,7 @@ gFrames = {
         -- background
         ['background'] = GenerateQuads(gTextures[1]['background'], 272, 288),    
         -- game objects
-        ['balloons'] = GenerateQuads(gTextures[1]['balloons'], 32, 32),
+        ['balloons'] = GenerateQuads(gTextures[1]['balloons'], 16, 32),
         ['lollipops'] = GenerateQuads(gTextures[1]['lollipops'], 16, 32),
         ['bad-bag'] = GenerateQuads(gTextures[1]['bad-bag'], 32, 32),
         ['ufo'] = GenerateQuads(gTextures[1]['ufo'], 200, 64),
@@ -106,7 +107,7 @@ gFrames = {
         -- space-background
         ['background'] = GenerateQuads(gTextures[2]['background'], 272, 288),    
         -- game objects
-        ['balloons'] = GenerateQuads(gTextures[2]['balloons'], 32, 32),
+        ['balloons'] = GenerateQuads(gTextures[2]['balloons'], 16, 32),
         ['lollipops'] = GenerateQuads(gTextures[2]['lollipops'], 16, 32),
         ['bad-bag'] = GenerateQuads(gTextures[2]['bad-bag'], 32, 32),
         ['ufo'] = GenerateQuads(gTextures[2]['ufo'], 200, 64),

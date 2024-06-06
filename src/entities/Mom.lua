@@ -24,6 +24,14 @@ function Mom:init(def)
         table.insert(self.items, self.purse)
     elseif self.type == 'plane-mom' then
         self:changeAnimation('fly-left')
+        self.hitBox = HitBox{
+            item = self,
+            x = self.x,
+            y = self.y,
+            width = self.width,
+            height = self.height,
+            rotation = 0
+        }
     end
 
     
@@ -57,6 +65,10 @@ function Mom:init(def)
 end
 
 function Mom:update(dt)
+    if self.hitBox then
+        self.hitBox:update(dt)
+    end
+
     if self.player.isFloating and self.type == 'plane-mom' and not self.didHitPlayer then
         if self.x < self.player.x + self.player.width and self.x > self.player.x + self.player.width - 10 and self.y > self.player.y and self.y < self.player.y + self.player.height then
             gSounds['hit-ground']:play()
@@ -66,12 +78,16 @@ function Mom:update(dt)
         end
     end
 
-    -- if not self.player.isFloating then
-        Entity.update(self, dt)
-    -- elseif self.player.isFloating and self.groundOnly == false or then
-    --     En
+    Entity.update(self, dt)
 end
 
 function Mom:render()
     Entity.render(self)
+    if self.type == 'plane-mom' then
+        self.hitBox:render()
+        -- love.graphics.setColor(0,1,0,1)
+        -- love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+        -- love.graphics.setColor(1,1,1,1)
+    end
+
 end

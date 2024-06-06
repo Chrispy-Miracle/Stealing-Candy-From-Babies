@@ -5,6 +5,29 @@ function Baby:init(def)
     self.player = self.playState.player
     self.level = def.level
 
+    self.hitBox = HitBox{
+        item = self, 
+        x = self.x,
+        y = self.y,
+        width = self.width,
+        height = self.height,
+        rotation = 0
+    }
+
+    if self.type == 'stork' then
+        self.beakHitBox = HitBox{
+            item = {
+                x = self.x,
+                y = self.y + self.height / 2 - 8
+            }, 
+            x = self.x,
+            y = self.y + self.height / 2 - 8,
+            width = 15,
+            height = 5,
+            rotation = 0
+        }  
+    end
+
     -- 1 in 2 chance baby gets a balloon
     if math.random(2) == 1 then
         local balloon = GameObject {
@@ -56,7 +79,8 @@ function Baby:update(dt)
             end
             
             if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) then
-                if playerHandPosition.x < item.x + 5 and playerHandPosition.x > item.x -5 then
+                if playerHandPosition.x < item.x + item.width and playerHandPosition.x > item.x 
+                and playerHandPosition.y < item.y + item.height and playerHandPosition.y > item.y then
                     -- steal the item
                     self.player:stealItem(self, item, k)
                     local mom
@@ -102,18 +126,28 @@ function Baby:update(dt)
         self.dead = true
     end
 
+    self.hitBox:update(dt)
+
+    if self.type == 'stork' then
+        self.beakHitBox.item.x = self.x
+        self.beakHitBox.item.y = self.y + self.height / 2 - 8
+        self.beakHitBox:update(dt)
+    end
+
 end
 
 function Baby:render()
     Entity.render(self)
+    self.hitBox:render()
 
     -- for debugging collisions
-    love.graphics.setColor(0,1,0,1)
-    love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+    -- love.graphics.setColor(0,1,0,1)
+    -- love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
 
     if self.type == 'stork' then
-        love.graphics.rectangle('line', self.x, self.y + self.height / 2 - 5, 15, 5)
+        self.beakHitBox:render()
+        -- love.graphics.rectangle('line', self.x, self.y + self.height / 2 - 5, 15, 5)
     end
-    love.graphics.setColor(1,1,1,1)
+    -- love.graphics.setColor(1,1,1,1)
 end
 

@@ -68,7 +68,7 @@ function StartState:init()
                 gSounds['jump']:play()
                 Timer.tween(1.5, {
                     [self.man] = {x = VIRTUAL_WIDTH / 2 - 36, y = 16},
-                    [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 + 11 - 36, y = 24}
+                    [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 - 16, y = 24}
                 }) 
 
                 -- man walks aways on fading title with balloon
@@ -77,7 +77,7 @@ function StartState:init()
                     self.man:changeAnimation('walk-right')
                     gSounds['walking']:play()
                     
-                    -- shift balloon to stay with man
+                    -- -- shift balloon to stay with man
                     Timer.every(.4, function ()
                         if self.man.currentAnimation:getCurrentFrame() == 1 then
                             self.balloonPosition.x = self.balloonPosition.x + 3
@@ -89,7 +89,7 @@ function StartState:init()
                     -- tween man and balloon position to right of screen
                     Timer.tween(3, {
                         [self.man] = {x = VIRTUAL_WIDTH},
-                        [self.balloonPosition] = {x = VIRTUAL_WIDTH + 11}
+                        [self.balloonPosition] = {x = VIRTUAL_WIDTH + 20}
                     })
 
                     -- fade in "Press Enter to Play" title

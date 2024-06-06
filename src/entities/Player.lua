@@ -42,17 +42,49 @@ function Player:init(def)
         end)
     end
 
-    --particle system
+    --particle system for popping balloons
     self.pSystem = love.graphics.newParticleSystem(gTextures[1]['particle'], 32)
     self.pSystem:setParticleLifetime(.3, 1.5) -- Particles live at least 2s and at most 5s.
 	self.pSystem:setSpin(math.rad(-360), math.rad(360))
 	self.pSystem:setLinearAcceleration(-200, -150, 200, 200) -- Random movement in all directions.
 	self.pSystem:setColors(0, 1, 0, 1, 0, 1, 0, .5) -- Fade to transparency.
+
+    -- hit boxes
+    self.hitBox = HitBox{
+        item = self,
+        x = self.x,
+        y = self.y,
+        width = self.width,
+        height = self.height,
+        rotation = 0
+    }
+    self.handHitBox = HitBox{
+        item = {
+            x = self.x + self.width / 2, 
+            y = self.y + self.height / 3           
+        },
+        x = self.x + self.width / 2, 
+        y = self.y + self.height / 3,
+        width = self.width / 2,
+        height = 10,
+        rotation = 0
+    }
 end
 
 function Player:update(dt)
     Entity.update(self, dt)
     self.pSystem:update(dt)
+    self.hitBox:update(dt)
+
+    if self.direction == 'right' then
+        self.handHitBox.item.x = self.x + self.width / 2
+        self.handHitBox.item.y = self.y + self.height / 3
+    elseif self.direction == 'left' then 
+        self.handHitBox.item.x = self.x
+        self.handHitBox.item.y = self.y + self.height / 3
+    end
+
+    self.handHitBox:update(dt)
 
     -- update player's balloons
     if #self.items['balloons'] > 1 then
@@ -60,13 +92,23 @@ function Player:update(dt)
         for k, item in pairs(self.items['balloons']) do
             if k % 2 == 0 then
                 item.balloonAngle =  math.rad(k * -10)
+                item.angledXY = {x = -k * 3, y = -k}
             else 
                 item.balloonAngle = math.rad(k * 10)
+                item.angledXY = {x = k * 3, y = k}
             end
+            item.hitBox.rotation = item.balloonAngle + math.rad(180)
+            item.hitBox.item.x = item.x + ROTATED_BALLOON_OFFSET_X + item.width / 2 + item.angledXY.x 
+            item.hitBox.item.y = item.y + ROTATED_BALLOON_OFFSET_Y - item.height / 2 + item.angledXY.y
         end
     elseif #self.items['balloons'] == 1 then
+        local loneBalloon = self.items['balloons'][1]
         self.items['balloons'][1].balloonAngle = 0
+        loneBalloon.hitBox.rotation = loneBalloon.balloonAngle + math.rad(180)
+        loneBalloon.hitBox.item.x = loneBalloon.x + ROTATED_BALLOON_OFFSET_X + loneBalloon.width / 2 + loneBalloon.angledXY.x 
+        loneBalloon.hitBox.item.y = loneBalloon.y + ROTATED_BALLOON_OFFSET_Y - loneBalloon.height / 2 + loneBalloon.angledXY.y
     end
+
 end
 
 function Player:render()
@@ -74,14 +116,18 @@ function Player:render()
     love.graphics.draw(self.pSystem, self.x + self.width, self.y)
 
     -- for debugging collisions
-    love.graphics.setColor(0,1,0,1)
-    love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
-    if self.direction == 'right' then
-        love.graphics.rectangle('line', self.x + self.width / 2, self.y + self.height / 2, 5, 5)
-    elseif self.direction == 'left' then
-        love.graphics.rectangle('line', self.x, self.y + self.height / 2, 5, 5)
-    end
-    love.graphics.setColor(1,1,1,1)
+    -- love.graphics.setColor(0,1,0,1)
+    -- -- love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+
+    -- if self.direction == 'right' then
+    --     love.graphics.rectangle('line', self.x + self.width / 2, self.y + self.height / 3, self.width / 2, 10)
+    -- elseif self.direction == 'left' then
+    --     love.graphics.rectangle('line', self.x, self.y + self.height / 3, self.width / 2, 10)
+    -- end
+    -- love.graphics.setColor(1,1,1,1)
+
+    self.hitBox:render()
+    self.handHitBox:render()
 end
 
 function Player:LevelUp()
