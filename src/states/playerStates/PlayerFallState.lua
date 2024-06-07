@@ -22,7 +22,7 @@ function PlayerFallState:update(dt)
         for j, stork in pairs(self.playState.babies) do 
             -- baby is a stork in this instance
             if stork.type == 'stork' then
-                self.player:tryBalloonPop(stork, item, k)
+                self.player:tryBalloonPop(stork.beakHitBox, item.hitBox, k)
             end
         end
     end

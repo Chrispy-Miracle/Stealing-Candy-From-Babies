@@ -6,12 +6,14 @@ function Baby:init(def)
     self.level = def.level
 
     self.hitBox = HitBox{
-        item = self, 
+        item = {
+            x = self.x,
+            y = self.y + self.height / 2
+        }, 
         x = self.x,
-        y = self.y,
+        y = self.y + self.height / 2 ,
         width = self.width,
-        height = self.height,
-        rotation = 0
+        height = self.height / 2 - 5
     }
 
     if self.type == 'stork' then
@@ -23,8 +25,7 @@ function Baby:init(def)
             x = self.x,
             y = self.y + self.height / 2 - 8,
             width = 15,
-            height = 5,
-            rotation = 0
+            height = 5
         }  
     end
 
@@ -70,17 +71,8 @@ function Baby:update(dt)
 
         -- update baby's items, unless the item gets stolen!
         for k, item in pairs(self.items) do
-            local playerHandPosition
-            -- to check for item's stealability
-            if self.player.direction == 'right' then
-                playerHandPosition = {x = self.player.x + self.player.width / 2, y = self.player.y + self.player.height / 2}
-            elseif self.player.direction == 'left' then
-                playerHandPosition = {x = self.player.x, y = self.player.y + self.player.height / 2}
-            end
-            
             if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) then
-                if playerHandPosition.x < item.x + item.width and playerHandPosition.x > item.x 
-                and playerHandPosition.y < item.y + item.height and playerHandPosition.y > item.y then
+                if self.player.handHitBox:didCollide(item.hitBox) then
                     -- steal the item
                     self.player:stealItem(self, item, k)
                     local mom
@@ -126,28 +118,26 @@ function Baby:update(dt)
         self.dead = true
     end
 
-    self.hitBox:update(dt)
-
     if self.type == 'stork' then
         self.beakHitBox.item.x = self.x
         self.beakHitBox.item.y = self.y + self.height / 2 - 8
         self.beakHitBox:update(dt)
+    else 
+        self.hitBox.item.x = self.x
+        self.hitBox.item.y = self.y + self.height / 2
+        self.hitBox:update(dt)
     end
 
 end
 
 function Baby:render()
     Entity.render(self)
-    self.hitBox:render()
 
-    -- for debugging collisions
-    -- love.graphics.setColor(0,1,0,1)
-    -- love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+    -- for debugging collisions 
+    self.hitBox:render()
 
     if self.type == 'stork' then
         self.beakHitBox:render()
-        -- love.graphics.rectangle('line', self.x, self.y + self.height / 2 - 5, 15, 5)
     end
-    -- love.graphics.setColor(1,1,1,1)
 end
 

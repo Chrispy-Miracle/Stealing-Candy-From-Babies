@@ -55,8 +55,7 @@ function Player:init(def)
         x = self.x,
         y = self.y,
         width = self.width,
-        height = self.height,
-        rotation = 0
+        height = self.height - 3
     }
     self.handHitBox = HitBox{
         item = {
@@ -66,8 +65,7 @@ function Player:init(def)
         x = self.x + self.width / 2, 
         y = self.y + self.height / 3,
         width = self.width / 2,
-        height = 10,
-        rotation = 0
+        height = 10
     }
 end
 
@@ -92,19 +90,15 @@ function Player:update(dt)
         for k, item in pairs(self.items['balloons']) do
             if k % 2 == 0 then
                 item.balloonAngle =  math.rad(k * -10)
-                item.angledXY = {x = -k * 3, y = -k}
+                item.angledXY = {x = -k * 4, y = k * 1.75}
             else 
                 item.balloonAngle = math.rad(k * 10)
-                item.angledXY = {x = k * 3, y = k}
+                item.angledXY = {x = k * 4, y = k * 1.75}
             end
-            item.hitBox.rotation = item.balloonAngle + math.rad(180)
-            item.hitBox.item.x = item.x + ROTATED_BALLOON_OFFSET_X + item.width / 2 + item.angledXY.x 
-            item.hitBox.item.y = item.y + ROTATED_BALLOON_OFFSET_Y - item.height / 2 + item.angledXY.y
         end
     elseif #self.items['balloons'] == 1 then
         local loneBalloon = self.items['balloons'][1]
         self.items['balloons'][1].balloonAngle = 0
-        loneBalloon.hitBox.rotation = loneBalloon.balloonAngle + math.rad(180)
         loneBalloon.hitBox.item.x = loneBalloon.x + ROTATED_BALLOON_OFFSET_X + loneBalloon.width / 2 + loneBalloon.angledXY.x 
         loneBalloon.hitBox.item.y = loneBalloon.y + ROTATED_BALLOON_OFFSET_Y - loneBalloon.height / 2 + loneBalloon.angledXY.y
     end
@@ -116,16 +110,6 @@ function Player:render()
     love.graphics.draw(self.pSystem, self.x + self.width, self.y)
 
     -- for debugging collisions
-    -- love.graphics.setColor(0,1,0,1)
-    -- -- love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
-
-    -- if self.direction == 'right' then
-    --     love.graphics.rectangle('line', self.x + self.width / 2, self.y + self.height / 3, self.width / 2, 10)
-    -- elseif self.direction == 'left' then
-    --     love.graphics.rectangle('line', self.x, self.y + self.height / 3, self.width / 2, 10)
-    -- end
-    -- love.graphics.setColor(1,1,1,1)
-
     self.hitBox:render()
     self.handHitBox:render()
 end
@@ -158,16 +142,17 @@ end
 
 -- check for storks colliding with balloons, pop em if so--math.random(4, 16)
 function Player:tryBalloonPop(popper, balloon, itemKey)
+    -- random color (for now) for particle system
     local r, g, b = math.random(255) / 255, math.random(255) / 255, math.random(255) / 255
 
-    -- 2 balloons 
-    if popper.x < balloon.x + math.deg(balloon.balloonAngle) and popper.x > balloon.x - math.deg(balloon.balloonAngle) and
-        popper.y + 8 < balloon.y + 20 and popper.y + 16 > balloon.y then
-
+    if balloon:didCollide(popper) then
         table.remove(self.items['balloons'], itemKey)
         gSounds['hit']:play()
+
+        -- particle system
         self.pSystem:setColors(r, g, b, 1, r, g, b, 0)
         self.pSystem:emit(32)
+
         -- this will affect gravity
         self.balloonsCarried = self.balloonsCarried - 1
     end 

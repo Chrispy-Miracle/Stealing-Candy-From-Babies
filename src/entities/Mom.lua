@@ -29,12 +29,9 @@ function Mom:init(def)
             x = self.x,
             y = self.y,
             width = self.width,
-            height = self.height,
-            rotation = 0
+            height = self.height
         }
     end
-
-    
 
     -- race mom over to player
     Timer.tween(1, {
@@ -50,7 +47,7 @@ function Mom:init(def)
                     self.items[1].frame = 2 
 
                     -- deal damage if mom's purse hits player
-                    if self.items[1].x < self.player.x + self.player.width then
+                    if self.items[1].hitBox:didCollide(self.player.hitBox) then
                         gSounds['hit']:play()
                         self.player.health =  self.player.health - 5
                         self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
@@ -70,8 +67,8 @@ function Mom:update(dt)
     end
 
     if self.player.isFloating and self.type == 'plane-mom' and not self.didHitPlayer then
-        if self.x < self.player.x + self.player.width and self.x > self.player.x + self.player.width - 10 and self.y > self.player.y and self.y < self.player.y + self.player.height then
-            gSounds['hit-ground']:play()
+        if self.player.hitBox:didCollide(self.hitBox) then  
+        gSounds['hit-ground']:play()
             self.player.health =  self.player.health - 10
             self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 10
             self.didHitPlayer = true
@@ -85,9 +82,6 @@ function Mom:render()
     Entity.render(self)
     if self.type == 'plane-mom' then
         self.hitBox:render()
-        -- love.graphics.setColor(0,1,0,1)
-        -- love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
-        -- love.graphics.setColor(1,1,1,1)
     end
 
 end

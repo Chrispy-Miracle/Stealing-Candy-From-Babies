@@ -6,7 +6,8 @@ function HitBox:init(def)
     self.y = def.y
     self.height = def.height
     self.width = def.width
-    self.rotation = def.rotation
+
+    self.showHitBoxes = true
 end
 
 function HitBox:update(dt)
@@ -14,17 +15,15 @@ function HitBox:update(dt)
     self.y = self.item.y
 end
 
-function HitBox:collide(other)
-
-    return 
+function HitBox:didCollide(target)
+    return not (self.x + self.width < target.x or self.x > target.x + target.width or
+                self.y + self.height < target.y or self.y > target.y + target.height)
 end
 
 function HitBox:render()
-    love.graphics.setColor(0,1,0,1)
-    if self.rotation == 0 then
+    if self.showHitBoxes then
+        love.graphics.setColor(0,1,0,1)
         love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
-    else
-        drawRotatedRectangle('line', self.x, self.y, self.width, self.height, self.rotation)
+        love.graphics.setColor(1,1,1,1)
     end
-    love.graphics.setColor(1,1,1,1)
 end
