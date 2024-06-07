@@ -5,6 +5,8 @@ function Baby:init(def)
     self.player = self.playState.player
     self.level = def.level
 
+    self.momSpawned = false 
+
     self.hitBox = HitBox{
         item = {
             x = self.x,
@@ -75,37 +77,40 @@ function Baby:update(dt)
                 if self.player.handHitBox:didCollide(item.hitBox) then
                     -- steal the item
                     self.player:stealItem(self, item, k)
-                    local mom
-                    if not self.player.isFloating then
-                        -- spawn a mom when item is stolen from baby
-                        mom = Mom {
-                            type = 'mom',
-                            entity_def = ENTITY_DEFS[self.level]['mom'],
-                            x = VIRTUAL_WIDTH,
-                            y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
-                            playState = self.playState,
-                            direction = 'left',
-                            level = self.level
-                        }
-                        gSounds['walking']:play()
-                    elseif self.player.isFloating then
-                        -- if floating, spawn a plane mom!
-                        mom = Mom {
-                            type = 'plane-mom',
-                            entity_def = ENTITY_DEFS[self.level]['plane-mom'],
-                            x = VIRTUAL_WIDTH,
-                            y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
-                            playState = self.playState,
-                            direction = 'left',
-                            level = self.level
-                        }
-                        if self.level == 1 then
-                            gSounds['plane']:play()
-                        elseif self.level == 2 then
-                            gSounds['zap']:play()
+                    if not self.momSpawned then
+                        local mom
+                        if not self.player.isFloating then
+                            -- spawn a mom when item is stolen from baby
+                            mom = Mom {
+                                type = 'mom',
+                                entity_def = ENTITY_DEFS[self.level]['mom'],
+                                x = VIRTUAL_WIDTH,
+                                y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
+                                playState = self.playState,
+                                direction = 'left',
+                                level = self.level
+                            }
+                            -- gSounds['walking']:play()
+                        elseif self.player.isFloating then
+                            -- if floating, spawn a plane mom!
+                            mom = Mom {
+                                type = 'plane-mom',
+                                entity_def = ENTITY_DEFS[self.level]['plane-mom'],
+                                x = VIRTUAL_WIDTH,
+                                y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
+                                playState = self.playState,
+                                direction = 'left',
+                                level = self.level
+                            }
+                            if self.level == 1 then
+                                gSounds['plane']:play()
+                            elseif self.level == 2 then
+                                gSounds['zap']:play()
+                            end
                         end
+                        table.insert(self.playState.moms, mom)
+                        self.momSpawned = true
                     end
-                    table.insert(self.playState.moms, mom)
                 end
                 
             else
@@ -120,7 +125,21 @@ function Baby:update(dt)
 
 
     if self.hitBox:didCollide(self.player.footHitBox) then
-        gSounds['hit']:play()
+        if not self.momSpawned then
+            local mom
+            mom = Mom {
+                type = 'mom',
+                entity_def = ENTITY_DEFS[self.level]['mom'],
+                x = VIRTUAL_WIDTH,
+                y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
+                playState = self.playState,
+                direction = 'left',
+                level = self.level
+            }
+            gSounds['hit']:play()
+            table.insert(self.playState.moms, mom)
+            self.momSpawned = true
+        end
     end
 
 
