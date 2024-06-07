@@ -42,20 +42,22 @@ function Mom:init(def)
 
         if not self.player.isFloating and not self.player.isFalling then
             Timer.every(.3, function ()
-                -- mom's purse is animated to swing at player
-                if self.items[1].frame == 1 then
-                    self.items[1].frame = 2 
+                if self.items[1] then
+                    -- mom's purse is animated to swing at player
+                    if self.items[1].frame == 1 then
+                        self.items[1].frame = 2 
 
-                    -- deal damage if mom's purse hits player
-                    if self.items[1].hitBox:didCollide(self.player.hitBox) then
-                        gSounds['hit']:play()
-                        self.player.health =  self.player.health - 5
-                        self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
+                        -- deal damage if mom's purse hits player
+                        if self.items[1].hitBox:didCollide(self.player.hitBox) then
+                            gSounds['hit']:play()
+                            self.player.health =  self.player.health - 5
+                            self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
+                        end
+                    else
+                        self.items[1].frame = 1 
                     end
-                else
-                    self.items[1].frame = 1 
+                -- this limit makes the full purse animation happen twice
                 end
-            -- this limit makes the full purse animation happen twice
             end):limit(4)
         end
     end)

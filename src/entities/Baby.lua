@@ -118,6 +118,12 @@ function Baby:update(dt)
         self.dead = true
     end
 
+
+    if self.hitBox:didCollide(self.player.footHitBox) then
+        gSounds['hit']:play()
+    end
+
+
     if self.type == 'stork' then
         self.beakHitBox.item.x = self.x
         self.beakHitBox.item.y = self.y + self.height / 2 - 8

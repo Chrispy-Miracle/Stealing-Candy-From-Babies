@@ -24,13 +24,13 @@ function PlayerFloatingState:init(playState)
         })
     end
 
-    -- change background to sky after you cant see the ground
-    Timer.after(2.4, function () self.playState.background = 2 end)
 end
 
 
 function PlayerFloatingState:update(dt)
-    if self.player.screensFloatedUp == 6 then
+    if self.player.level == 1 and self.player.screensFloatedUp == 6 then
+        self.player.stateMachine:change('board-ship')
+    elseif self.player.level == 2 and self.player.screensFloatedUp == 10 then
         self.player.stateMachine:change('board-ship')
     end
 
@@ -47,6 +47,11 @@ function PlayerFloatingState:update(dt)
         self.player.gravity = 0
         --increase # of screens floated up
         self.player.screensFloatedUp = self.player.screensFloatedUp + 1
+    end
+
+    -- change background to sky after you cant see the ground
+    if self.player.y < self.player.height / 2 then
+        self.playState.background = 2 
     end
 
 

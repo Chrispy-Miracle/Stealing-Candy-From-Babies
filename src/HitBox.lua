@@ -7,7 +7,7 @@ function HitBox:init(def)
     self.height = def.height
     self.width = def.width
 
-    self.showHitBoxes = true
+    self.showHitBoxes = false
 end
 
 function HitBox:update(dt)

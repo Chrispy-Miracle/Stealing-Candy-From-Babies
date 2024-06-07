@@ -67,6 +67,16 @@ function Player:init(def)
         width = self.width / 2,
         height = 10
     }
+    self.footHitBox = HitBox{
+        item = {
+            x = self.x,
+            y = self.y + self.height - 10
+        },
+        x = self.x,
+        y = self.y + self.height - 10,
+        width = self.width,
+        height = 10
+    }
 end
 
 function Player:update(dt)
@@ -83,6 +93,10 @@ function Player:update(dt)
     end
 
     self.handHitBox:update(dt)
+
+    self.footHitBox.item.x = self.x
+    self.footHitBox.item.y = self.y + self.height - 10
+    self.footHitBox:update(dt)
 
     -- update player's balloons
     if #self.items['balloons'] > 1 then
@@ -112,6 +126,7 @@ function Player:render()
     -- for debugging collisions
     self.hitBox:render()
     self.handHitBox:render()
+    self.footHitBox:render()
 end
 
 function Player:LevelUp()
@@ -202,4 +217,26 @@ function Player:stealItem(prevOwner, item, itemKey)
             table.remove(self.items['lollipops']) 
         end)
     end 
+end
+
+function Player:crashDown()
+    self.playState.background = 1
+
+    self.playState.backgroundScrollY = BACKGROUND_Y_LOOP_POINT / 2
+
+    -- scoot player and background such that player is back on the ground
+    Timer.tween(1, {
+        [self] = {y = VIRTUAL_HEIGHT / 2},
+        [self.playState] = {backgroundScrollY = BACKGROUND_Y_LOOP_POINT}
+
+    }):finish(function()
+        self.isFloating =  false
+
+        gSounds['hit-ground']:play()
+        --damage player
+        self.health = self.health - (30 - (self.balloonsCarried * 10))
+        self.scoreDetails[self.level]['Damage Taken'] = self.scoreDetails[self.level]['Damage Taken'] + (30 - (self.balloonsCarried * 10))
+        -- go back to player idle state
+        self.stateMachine:change('idle')            
+    end)
 end

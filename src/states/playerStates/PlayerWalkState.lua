@@ -21,7 +21,7 @@ function PlayerWalkState:update(dt)
         self.player:changeAnimation('walk-' .. self.player.direction)
 
         -- if player is at right edge of screen scroll all things back to left
-        if self.player.x > VIRTUAL_WIDTH - self.player.width then
+        if self.player.x > VIRTUAL_WIDTH - self.player.width * 2 then
             -- scroll player and background left
             Timer.tween(1.5, {
                 [self.player] = {x = 16},
@@ -59,6 +59,7 @@ function PlayerWalkState:update(dt)
         -- scroll background accordingly
         self.playState.backgroundScrollX = (self.playState.backgroundScrollX - BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
 
+        -- if player hits left wall, do a bit of damage
         if self.player.x < -self.player.width / 2 then
             gSounds['hit-wall']:play()
             self.player.health = self.player.health - 2
