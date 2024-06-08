@@ -26,8 +26,6 @@ function PlayerIdleState:update(dt)
         self.player.stateMachine:change('walk-state')
     end
 
-
-
     self.player:update(dt)
 end
 

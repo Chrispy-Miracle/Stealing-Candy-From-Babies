@@ -6,16 +6,19 @@ function PlayerWalkState:init(playState)
 
     self.player.isFalling =  false
     self.player.isFloating = false
+
     self.playState.backgroundScrollY = 0
 
     -- start walking sound and animation
     gSounds['walking']:play()
     self.player:changeAnimation('walk-' .. self.player.direction)
-
 end
+
 
 function PlayerWalkState:update(dt)
     -- check each direction button, and update player position if pressed
+
+    -- move player right
     if love.keyboard.isDown('right') or love.keyboard.isDown('d') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == 1 then            
         self.player.direction = 'right'
         self.player:changeAnimation('walk-' .. self.player.direction)
@@ -28,33 +31,32 @@ function PlayerWalkState:update(dt)
                 [self.player] = {x = 16},
                 [self.playState] = {backgroundScrollX = BACKGROUND_X_LOOP_POINT}
             })
+
             -- scroll babies left
             for k, entity in pairs(self.playState.babies) do
                 local newEntityX = entity.x >= playerX and 16 + (entity.x - playerX) or 16- (playerX - entity.x)
                 Timer.tween(1.5, {
-                    [entity] = {x = newEntityX} --entity.x - BACKGROUND_X_LOOP_POINT + 16 + entity.walkSpeed * dt}
+                    [entity] = {x = newEntityX} 
                 })
             end 
+
             -- scroll moms left
             for k, entity in pairs(self.playState.moms) do
                 local newEntityX = entity.x >= playerX and 16 + (entity.x - playerX) or 16- (playerX - entity.x)
                 Timer.tween(1.5, {
-                    [entity] = {x = newEntityX} --entity.x - BACKGROUND_X_LOOP_POINT + 16 + entity.walkSpeed * dt}
+                    [entity] = {x = newEntityX} 
                 })
             end
         else        
-        
-            --move player normally
+            --move player normally to right
             self.player.x = self.player.x + self.player.walkSpeed * dt
             -- scroll background accordingly
             self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
         end
-
-
     end
 
+    --move player left
     if love.keyboard.isDown('left') or love.keyboard.isDown('a') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1 then
-        --move player
         self.player.direction = 'left'
         self.player:changeAnimation('walk-' .. self.player.direction)
         self.player.x = self.player.x - self.player.walkSpeed * dt
@@ -71,11 +73,10 @@ function PlayerWalkState:update(dt)
             self.player.x = self.player.x + self.player.width / 2
             -- scroll background accordingly
             self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-            
         end
-
     end
 
+    -- move player up
     if love.keyboard.isDown('up') or love.keyboard.isDown('w') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == -1 then
         --move player while confining y-axis movement
         if self.player.y > VIRTUAL_HEIGHT / 3 then
@@ -83,6 +84,7 @@ function PlayerWalkState:update(dt)
         end
     end
 
+    -- move player down
     if love.keyboard.isDown('down') or love.keyboard.isDown('s') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == 1 then
         --move player while confining y-axis movement
         if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then

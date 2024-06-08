@@ -4,8 +4,7 @@ function GameOverState:enter(params)
     self.level = params.level
     self.gameStats = params.gameStats
 
-    gSounds['walking']:stop()
-
+    -- for showing whole game stats
     self.gameStatTotals = {
         ['Candies Stolen'] = 0,
         ['Balloons Stolen'] = 0,
@@ -13,6 +12,7 @@ function GameOverState:enter(params)
         ['Time'] =  0
     }
 
+    -- compile whole game stats from level stats
     for l, levelStats in pairs(self.gameStats) do 
         for k, gameStat in pairs(levelStats) do
             self.gameStatTotals[k] = self.gameStatTotals[k] + gameStat
@@ -23,6 +23,7 @@ end
 
 
 function GameOverState:update()
+    -- restart game
     if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') or is_joystick and joystick:isDown({SNES_MAP.start}) then
         gSounds['game-music-' .. tostring(self.level)]:stop()
         gStateMachine:change('start')
@@ -42,5 +43,5 @@ function GameOverState:render()
         keyNum = keyNum + 1
     end
 
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(1,1,1,1)
 end

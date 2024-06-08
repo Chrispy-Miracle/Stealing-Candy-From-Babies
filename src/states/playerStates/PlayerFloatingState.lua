@@ -6,6 +6,8 @@ function PlayerFloatingState:init(playState)
 
     self.player.isFloating = true
     self.player:changeAnimation('idle-' .. self.player.direction)
+
+    -- play/stop sounds
     gSounds['walking']:stop()
     gSounds['fly-away']:play()
     
@@ -23,26 +25,26 @@ function PlayerFloatingState:init(playState)
             [mom] = {y = VIRTUAL_HEIGHT}
         })
     end
-
 end
 
 
 function PlayerFloatingState:update(dt)
-    if self.player.level == 1 and self.player.screensFloatedUp == 6 then
+    -- check for level ending 
+    if self.player.level == 1 and self.player.screensFloatedUp == 10 then
         self.player.stateMachine:change('board-ship')
-    elseif self.player.level == 2 and self.player.screensFloatedUp == 10 then
+    elseif self.player.level == 2 and self.player.screensFloatedUp == 15 then
         self.player.stateMachine:change('board-ship')
     end
 
-    -- set player gravity and background scoll according to number of balloons
+    -- set player gravity and background scroll according to number of balloons
     self.player.gravity = self.player.balloonsCarried * 10
     self.playState.backgroundScrollY = (self.playState.backgroundScrollY - self.player.gravity * dt) % BACKGROUND_Y_LOOP_POINT
 
-    -- if player on screen,they float up
+    -- if player on screen, they float up
     if self.player.y > -self.player.height then
         self.player.y = self.player.y - self.player.gravity * dt
     else 
-        -- wrap player back to bottom of sceen if they floated off
+        -- wrap player back to bottom of sceen if they floated past top
         self.player.y = VIRTUAL_HEIGHT
         self.player.gravity = 0
         --increase # of screens floated up
@@ -50,10 +52,9 @@ function PlayerFloatingState:update(dt)
     end
 
     -- change background to sky after you cant see the ground
-    if self.player.y < self.player.height / 2 then
+    if self.player.y < self.player.height / 3 then
         self.playState.background = 2 
     end
-
 
     -- check items for balloon pops 
     for k, item in pairs(self.player.items['balloons']) do 
@@ -71,7 +72,7 @@ function PlayerFloatingState:update(dt)
         self.player.stateMachine:change('fall-state')
     end
 
-    -- allow for movement
+    -- float to right
     if love.keyboard.isDown('right') or love.keyboard.isDown('d') or is_joystick and joystick:getAxis(SNES_MAP.xDir) ==  1 then
         self.player.direction = 'right'
         self.player:changeAnimation('idle-' .. self.player.direction)
@@ -82,7 +83,8 @@ function PlayerFloatingState:update(dt)
             self.player.x = -self.player.width - 2
         end
     end
-
+    
+    -- float to left
     if love.keyboard.isDown('left') or love.keyboard.isDown('a') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1 then
         self.player.direction = 'left'
         self.player:changeAnimation('idle-' .. self.player.direction)
@@ -94,10 +96,12 @@ function PlayerFloatingState:update(dt)
         end
     end
 
+    -- float up
     if love.keyboard.isDown('up') or love.keyboard.isDown('w') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == -1 then
         self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
     end
 
+    -- float down (more like slow down)
     if love.keyboard.isDown('down') or love.keyboard.isDown('s') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == 1 then
         self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
     end

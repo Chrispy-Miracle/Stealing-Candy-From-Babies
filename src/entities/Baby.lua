@@ -7,6 +7,7 @@ function Baby:init(def)
 
     self.momSpawned = false 
 
+    -- hitbox for baby getting stepped on 
     self.hitBox = HitBox{
         item = {
             x = self.x,
@@ -18,6 +19,7 @@ function Baby:init(def)
         height = self.height / 2 - 5
     }
 
+    -- hitbox for stork beaks
     if self.type == 'stork' then
         self.beakHitBox = HitBox{
             item = {
@@ -31,8 +33,9 @@ function Baby:init(def)
         }  
     end
 
-    -- 1 in 2 chance baby gets a balloon
+    
     if math.random(3) == 1 then
+        -- 1 in 3 chance baby gets a balloon
         local balloon = GameObject {
             object_def = OBJECT_DEFS['balloon'],
             x = self.x + BABY_BALLOON_OFFSET_X,
@@ -44,12 +47,9 @@ function Baby:init(def)
             level = self.level
         }
         table.insert(self.items, balloon)
-        self.hasBalloon = true
-    end 
-
-    -- 1 in 2 chance baby gets a lollipop
-    if not self.hasBalloon and math.random(3) == 1 then
-        
+ 
+    elseif math.random(3) == 1 then
+        -- 1 in 3 chance baby gets a lollipop
         local lollipop = GameObject {
             object_def = OBJECT_DEFS['lollipop'],
             x = self.x + BABY_LOLLIPOP_OFFSET_X,
@@ -60,9 +60,7 @@ function Baby:init(def)
             carrier_offset_y = BABY_LOLLIPOP_OFFSET_Y,
             level = self.level
         }
-
         table.insert(self.items, lollipop)
-        self.hasLollipop = true
     end 
 end
 
@@ -77,10 +75,12 @@ function Baby:update(dt)
                 if self.player.handHitBox:didCollide(item.hitBox) then
                     -- steal the item
                     self.player:stealItem(self, item, k)
+
+                    -- spawn a mom when item is stolen from baby
                     if not self.momSpawned then
                         local mom
+                        -- ground mom if player not floating
                         if not self.player.isFloating then
-                            -- spawn a mom when item is stolen from baby
                             mom = Mom {
                                 type = 'mom',
                                 entity_def = ENTITY_DEFS[self.level]['mom'],
@@ -90,7 +90,6 @@ function Baby:update(dt)
                                 direction = 'left',
                                 level = self.level
                             }
-                            -- gSounds['walking']:play()
                         elseif self.player.isFloating then
                             -- if floating, spawn a plane mom!
                             mom = Mom {
@@ -102,6 +101,7 @@ function Baby:update(dt)
                                 direction = 'left',
                                 level = self.level
                             }
+                            -- different plane mom sounds for different levels
                             if self.level == 1 then
                                 gSounds['plane']:play()
                             elseif self.level == 2 then
@@ -119,7 +119,7 @@ function Baby:update(dt)
             end
         end
     else
-        -- remove babies no longer on screen (along with their items!)
+        -- flag babies no longer on screen for removal (along with their items!)
         self.dead = true
     end
 
@@ -141,7 +141,7 @@ function Baby:update(dt)
             self.momSpawned = true
     end
 
-
+    -- update hitboxes
     if self.type == 'stork' then
         self.beakHitBox.item.x = self.x
         self.beakHitBox.item.y = self.y + self.height / 2 - 8

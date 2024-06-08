@@ -4,8 +4,7 @@ WINDOW_HEGHT = 720
 VIRTUAL_WIDTH = 256
 VIRTUAL_HEIGHT = 144
 
-NUMBER_OF_LEVELS = 2
-
+-- these are resolutions a friend suggested to try out
 --SEGA (kerf pick)
 -- VIRTUAL_WIDTH = 320
 -- VIRTUAL_HEIGHT = 224
@@ -13,6 +12,8 @@ NUMBER_OF_LEVELS = 2
 --SNES
 -- VIRTUAL_WIDTH = 256
 -- VIRTUAL_HEIGHT = 224
+
+NUMBER_OF_LEVELS = 2
 
 BABY_BALLOON_OFFSET_X = -7
 BABY_BALLOON_OFFSET_Y = -12
@@ -32,19 +33,18 @@ PLAYER_LOLLIPOP_OFFSET_Y = 16
 BACKGROUND_X_SCROLL_SPEED = 30
 BACKGROUND_X_LOOP_POINT = 272
 
--- BACKGROUND_Y_SCROLL_SPEED = 15
 BACKGROUND_Y_LOOP_POINT = 288
 
 MOM_BAG_OFFSET_X = -6
 MOM_BAG_OFFSET_Y = 26
 
--- SNES Controller
+-- SNES Controller (a generic controller I have)
 if #love.joystick.getJoysticks() > 0 then
     is_joystick = true
     joystick = love.joystick.getJoysticks()[1]
 
     SNES_MAP = {
-        -- This is a mapping of controller buttons to their indexes
+        -- This is a mapping of controller buttons to their indexes (accessed with love.joystick.isDown())
         a = 1, 
         b = 2, 
         x = 3, 
@@ -53,7 +53,7 @@ if #love.joystick.getJoysticks() > 0 then
         start = 7, 
         leftTrig = 10, 
         rightTrig = 11,
-        -- This is x and y axes on controller
+        -- This is x and y axes on controller(accessed with love.joystick.getAxis())
         xDir = 1, 
         yDir = 2        
     }

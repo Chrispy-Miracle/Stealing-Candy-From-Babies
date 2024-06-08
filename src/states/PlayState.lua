@@ -1,19 +1,17 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:enter(params)
-    
-    -- player
+    -- player from previous level 
     if params.player then
         self.player = params.player 
         self.player.playState = self
         gSounds['game-music-' .. tostring(self.player.level)]:stop()
         self.player:LevelUp()
     else 
-        
+        -- otherwise begin new player (level 1)
         self.player = Player {
             type = 'player',
             playState = self,
-            -- level 1 by default
             entity_def = ENTITY_DEFS[1]['player'],
             x = - 16,
             y = VIRTUAL_HEIGHT - 70,
@@ -27,9 +25,9 @@ function PlayState:enter(params)
 
     self.level = self.player.level
 
+    -- game music settings
     gSounds['game-music-' .. tostring(self.player.level)]:setLooping(true)
     gSounds['game-music-' .. tostring(self.player.level)]:setVolume(.7)
-    Timer.after(1, function () gSounds['game-music-' .. tostring(self.player.level)]:play() end )
 
     self.background = 1 -- can be changed for extra backgrounds
     self.backgroundScrollX = 0
@@ -45,7 +43,6 @@ function PlayState:enter(params)
     }
     self.player.stateMachine:change('idle')
 
-
     -- this animation walks player onto scene
     self.player:changeAnimation('walk-' .. self.player.direction)
     gSounds['walking']:play()
@@ -54,7 +51,9 @@ function PlayState:enter(params)
     })
     -- stop player (Ready to Play!)
     :finish(function() 
+        -- change to idlestate and start music
         self.player.stateMachine:change('idle')
+        gSounds['game-music-' .. tostring(self.player.level)]:play()
     end)
 
     -- table for spawned moms
@@ -66,13 +65,14 @@ function PlayState:enter(params)
 end
 
 
-function PlayState:spawnBabies()  --(or storks!)
+function PlayState:spawnBabies()  --(or storks if floating!)
     Timer.every(1, function ()
-        local baby
+        
         if not self.player.isFloating then
-            -- every second, 1 in 3 odds to spawn baby
+            -- every second, 1 in 2 odds to spawn baby
             if math.random(2) == 1 then
-                -- make baby
+                -- make a baby
+                local baby
                 baby = Baby {
                     type = 'baby',
                     playState = self,
@@ -82,14 +82,16 @@ function PlayState:spawnBabies()  --(or storks!)
                     direction = 'left',
                     level = self.level
                 }
+                table.insert(self.babies, baby)
                 baby:changeAnimation('crawl-left')
             end
 
-        -- if player is floating try to make a stork 
+        -- if player is floating try to make a stork baby
         elseif self.player.isFloating then
-            -- 1 in 3 chance
-            if math.random(3) == 1 then
-                baby = Baby {
+            -- 1 in 2 chance
+            if math.random(2) == 1 then
+                local stork
+                stork = Baby {
                     type = 'stork',
                     playState = self,
                     entity_def = ENTITY_DEFS[self.level]['stork'],
@@ -98,10 +100,10 @@ function PlayState:spawnBabies()  --(or storks!)
                     direction = 'left',
                     level = self.level
                 }
-                baby:changeAnimation('fly-left')
+                table.insert(self.babies, stork)
+                stork:changeAnimation('fly-left')
             end
         end
-        table.insert(self.babies, baby)
     end)
 end
 
@@ -157,13 +159,13 @@ function PlayState:render()
     self:renderHealthBar()
     
     -- used to render NPCs behind or in front of player
-    local playerY = self.player.y + self.player.height
+    -- local playerY = self.player.y + self.player.height
 
 
     -- draw moms
     for k, mom in pairs(self.moms) do
         local momY = mom.y + mom.height
-        if  momY < playerY then 
+        if  momY < self.player.y + self.player.height then 
             -- draw moms behind player
             mom:render()            
             
@@ -178,7 +180,7 @@ function PlayState:render()
     -- draw babies
     for k, baby in pairs(self.babies) do
         local babyY = baby.y + baby.height
-        if  babyY < playerY then 
+        if  babyY < self.player.y + self.player.height then 
             -- draw babies items behind player
             for k, item in pairs(baby.items) do
                 item:render()
@@ -244,10 +246,6 @@ function PlayState:renderBackground()
     love.graphics.draw(gTextures[self.level]['background'], gFrames[self.level]['background'][self.background], 
         math.floor(-self.backgroundScrollX), 
         math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT) - 144)
-
-    -- love.graphics.draw(gTextures['background'], gFrames['background'][self.background], 
-    --     math.floor(self.backgroundScrollX), 
-    --     math.floor(-self.backgroundScrollY + BACKGROUND_Y_LOOP_POINT))
 end
 
 

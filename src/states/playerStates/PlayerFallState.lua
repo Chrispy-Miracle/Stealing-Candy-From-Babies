@@ -1,14 +1,14 @@
 PlayerFallState = Class{__includes = BaseState}
 
+-- when player was floating but then gets balloons popped and now has less than 4
 function PlayerFallState:init(playState)
     self.playState = playState
     self.player = playState.player
 
     self.player.isFalling = true
-
     gSounds['falling']:play()
+
     self.player.gravity =  100 - self.player.balloonsCarried * 20
-        
     self.playState.backgroundScrollX = 0
 
     -- if player is already near ground, crash them down
@@ -16,6 +16,7 @@ function PlayerFallState:init(playState)
         self.player:crashDown()
     end
 end
+
 
 function PlayerFallState:update(dt)
     -- check for grabbed balloons
@@ -40,11 +41,12 @@ function PlayerFallState:update(dt)
     -- player wraps to top of screen if falls below bottom 
     if self.player.y > VIRTUAL_HEIGHT then
 
-        -- if player is nearing the ground
+        -- if player is nearing the ground, they crash down
         if self.player.screensFloatedUp < 1 then
             self.player.y = -self.player.height
             self.player:crashDown()
         else 
+            -- wrap player back to top if fell past bottom of screen
             self.player.y = -self.player.height
             self.player.screensFloatedUp = self.player.screensFloatedUp - 1
         end
@@ -54,8 +56,8 @@ function PlayerFallState:update(dt)
     self.player.gravity = 100 - self.player.balloonsCarried * 20
     self.playState.backgroundScrollY = (self.player.gravity * dt + self.playState.backgroundScrollY) % BACKGROUND_Y_LOOP_POINT
     
-
-    -- allow for movement
+    -- allow for movement (no up or down in fall state)
+    -- fall right
     if love.keyboard.isDown('right') or love.keyboard.isDown('d') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == 1 then
         self.player.direction = 'right'
         self.player:changeAnimation('idle-' .. self.player.direction)
@@ -67,6 +69,7 @@ function PlayerFallState:update(dt)
         end
     end
 
+    -- fall left
     if love.keyboard.isDown('left') or love.keyboard.isDown('a') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1 then
         self.player.direction = 'left'
         self.player:changeAnimation('idle-' .. self.player.direction)

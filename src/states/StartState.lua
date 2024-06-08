@@ -184,6 +184,7 @@ function StartState:render()
     -- draw man
     self.man:render()
 
+    -- print credits
     love.graphics.setFont(gFonts['xsmall'])
     love.graphics.setColor(0, 170/255, 255/255, 1)
     love.graphics.printf('Created by Chris Patchett 2024, All rights reserved', 0, VIRTUAL_HEIGHT - 8, VIRTUAL_WIDTH, 'center')

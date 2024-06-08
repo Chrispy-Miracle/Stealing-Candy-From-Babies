@@ -1,10 +1,11 @@
 PlayerBoardShipState = Class{__includes = BaseState}
-
+-- at end of level, player gets abducted by aliens
 function PlayerBoardShipState:init(playState)
     self.player = playState.player
     self.player.levelEnded = true
     self.player.gravity = 0
 
+    -- ufo's tractor beam
     self.startBeam = false
     self.beamOpacity = 100
 
@@ -24,6 +25,7 @@ function PlayerBoardShipState:init(playState)
         [self.player] = {x = VIRTUAL_WIDTH / 2 - self.player.width / 2, y = VIRTUAL_HEIGHT - self.player.height}
     })
     :finish(function () 
+        -- start tractor beam
         self.startBeam = true
         gSounds['beam-up3']:play()
     end)
@@ -35,16 +37,14 @@ function PlayerBoardShipState:update(dt)
     self.ufo:update(dt)
 
     if self.startBeam then 
-        
-
-        -- flash ufo's beam 
+        -- flash ufo's tractor beam 
         if self.beamOpacity < 215 then
             self.beamOpacity = self.beamOpacity + 5
         else
             self.beamOpacity = 0
         end
 
-        Timer.after(2, function ()
+        Timer.after(.2, function ()
             -- "beam up" players items 
             for k, item in pairs(self.player.items['balloons']) do
                 if item.y > 0 then
@@ -89,6 +89,7 @@ end
 function PlayerBoardShipState:render()
     self.player:render() 
     
+    -- tractor beam
     if self.startBeam then
         love.graphics.setColor(168/255, 50/255, 158/255, self.beamOpacity /255)
         love.graphics.polygon('fill', VIRTUAL_WIDTH / 2, 0, VIRTUAL_WIDTH / 2 - self.player.width * 2, VIRTUAL_HEIGHT, VIRTUAL_WIDTH / 2 + self.player.width * 2, VIRTUAL_HEIGHT)

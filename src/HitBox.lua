@@ -7,6 +7,7 @@ function HitBox:init(def)
     self.height = def.height
     self.width = def.width
 
+    -- changing this to true will turn on debug/show hitboxes mode
     self.showHitBoxes = false
 end
 
@@ -15,10 +16,12 @@ function HitBox:update(dt)
     self.y = self.item.y
 end
 
+
 function HitBox:didCollide(target)
     return not (self.x + self.width < target.x or self.x > target.x + target.width or
                 self.y + self.height < target.y or self.y > target.y + target.height)
 end
+
 
 function HitBox:render()
     if self.showHitBoxes then

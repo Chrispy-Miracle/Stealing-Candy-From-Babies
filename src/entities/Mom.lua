@@ -7,7 +7,7 @@ function Mom:init(def)
 
     self.didHitPlayer = false
 
-    -- if spawned on the ground
+    -- moms on the ground get purses to attack with
     if self.type == 'mom' then
         self.purse = GameObject {
             type = 'bad-bag',
@@ -20,10 +20,12 @@ function Mom:init(def)
             carrier_offset_y = MOM_BAG_OFFSET_Y,
             level = self.player.level
         }
-        self:changeAnimation('walk-left')
         table.insert(self.items, self.purse)
+        self:changeAnimation('walk-left')
+        
     elseif self.type == 'plane-mom' then
         self:changeAnimation('fly-left')
+        -- plane moms can crash into player to deal damage
         self.hitBox = HitBox{
             item = self,
             x = self.x,
@@ -32,7 +34,8 @@ function Mom:init(def)
             height = self.height
         }
     end
-
+    
+    -- level 2 moms attack quicker
     self.attackSpeed = self.player.level == 1 and 1 or .5
     -- race mom over to player
     Timer.tween(self.attackSpeed, {
@@ -40,7 +43,7 @@ function Mom:init(def)
     })
     
     :finish(function () 
-
+        -- mom swings purse twice at player
         if not self.player.isFloating and not self.player.isFalling then
             Timer.every(.3, function ()
                 if self.items[1] then
@@ -65,10 +68,12 @@ function Mom:init(def)
 end
 
 function Mom:update(dt)
+    -- only plane moms have hitboxes
     if self.hitBox then
         self.hitBox:update(dt)
     end
 
+    -- detect and resolve collisions between plane moms and player
     if self.player.isFloating and self.type == 'plane-mom' and not self.didHitPlayer then
         if self.player.hitBox:didCollide(self.hitBox) then  
         gSounds['hit-ground']:play()
@@ -83,6 +88,7 @@ end
 
 function Mom:render()
     Entity.render(self)
+    
     if self.type == 'plane-mom' then
         self.hitBox:render()
     end

@@ -8,8 +8,10 @@ function Player:init(def)
     self.health = def.entity_def.startingHealth
     self.maxHealth = def.entity_def.maxHealth
 
+    -- # of balloons carried affects gravity
     self.balloonsCarried = 0
     self.gravity = 0
+
     self.isFloating = false
     self.isFalling = false
 
@@ -21,6 +23,7 @@ function Player:init(def)
         ['lollipops'] = {}
     }
 
+    -- to display level and game detail end screens
     self.scoreDetails = {
         {
             ['Candies Stolen'] = 0,
@@ -49,7 +52,7 @@ function Player:init(def)
 	self.pSystem:setLinearAcceleration(-200, -150, 200, 200) -- Random movement in all directions.
 	self.pSystem:setColors(0, 1, 0, 1, 0, 1, 0, .5) -- Fade to transparency.
 
-    -- hit boxes
+    -- entire player (for taking damage)
     self.hitBox = HitBox{
         item = self,
         x = self.x,
@@ -57,6 +60,7 @@ function Player:init(def)
         width = self.width,
         height = self.height - 3
     }
+    -- player's hand position (for stealing)
     self.handHitBox = HitBox{
         item = {
             x = self.x + self.width / 2, 
@@ -67,6 +71,7 @@ function Player:init(def)
         width = self.width / 2,
         height = 10
     }
+    --player's foot position (to detect stepping on babies)
     self.footHitBox = HitBox{
         item = {
             x = self.x,
@@ -84,6 +89,7 @@ function Player:update(dt)
     self.pSystem:update(dt)
     self.hitBox:update(dt)
 
+    -- update hand position hitbox for player's direction 
     if self.direction == 'right' then
         self.handHitBox.item.x = self.x + self.width / 2
         self.handHitBox.item.y = self.y + self.height / 3
@@ -91,9 +97,9 @@ function Player:update(dt)
         self.handHitBox.item.x = self.x
         self.handHitBox.item.y = self.y + self.height / 3
     end
-
     self.handHitBox:update(dt)
 
+    -- update foot hitbox
     self.footHitBox.item.x = self.x
     self.footHitBox.item.y = self.y + self.height - 10
     self.footHitBox:update(dt)
@@ -104,7 +110,7 @@ function Player:update(dt)
         for k, item in pairs(self.items['balloons']) do
             if k % 2 == 0 then
                 item.balloonAngle =  math.rad(k * -10)
-                item.angledXY = {x = -k * 4, y = k * 1.75}
+                item.angledXY = {x = -k * 4, y = k * 1.75} -- for adjusting balloon hitboxes
             else 
                 item.balloonAngle = math.rad(k * 10)
                 item.angledXY = {x = k * 4, y = k * 1.75}
@@ -112,7 +118,8 @@ function Player:update(dt)
         end
     elseif #self.items['balloons'] == 1 then
         local loneBalloon = self.items['balloons'][1]
-        self.items['balloons'][1].balloonAngle = 0
+        loneBalloon.balloonAngle = 0
+        --update single balloon hitbox
         loneBalloon.hitBox.item.x = loneBalloon.x + ROTATED_BALLOON_OFFSET_X + loneBalloon.width / 2 + loneBalloon.angledXY.x 
         loneBalloon.hitBox.item.y = loneBalloon.y + ROTATED_BALLOON_OFFSET_Y - loneBalloon.height / 2 + loneBalloon.angledXY.y
     end
@@ -121,6 +128,8 @@ end
 
 function Player:render()
     Entity.render(self)
+
+    --particle system
     love.graphics.draw(self.pSystem, self.x + self.width, self.y)
 
     -- for debugging collisions
@@ -157,7 +166,7 @@ function Player:LevelUp()
 end
 
 
--- check for storks colliding with balloons, pop em if so--math.random(4, 16)
+-- check for storks colliding with balloons, pop them if so
 function Player:tryBalloonPop(popper, balloon, itemKey)
     -- random color (for now) for particle system
     local r, g, b = math.random(255) / 255, math.random(255) / 255, math.random(255) / 255
@@ -176,14 +185,17 @@ function Player:tryBalloonPop(popper, balloon, itemKey)
 end
 
 
-function Player:stealItem(prevOwner, item, itemKey)             
+function Player:stealItem(prevOwner, item, itemKey)
+    -- play sounds             
     gSounds['steal']:play()
     gSounds['baby-cry-' .. tostring(math.random(3))]:play()
     Timer.after(.7, function () gSounds['mad-mom-' .. tostring(math.random(6))]:play() end)
 
     if item.type == 'balloon' then
+        -- align with player position
         item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X
         item.carrier_offset_y = PLAYER_BALLOON_OFFSET_Y
+
         self.balloonsCarried = self.balloonsCarried + 1
 
         -- take out of previous carrier's items
@@ -194,19 +206,22 @@ function Player:stealItem(prevOwner, item, itemKey)
         self.scoreDetails[self.level]['Balloons Stolen'] = self.scoreDetails[self.level]['Balloons Stolen'] + 1
         
     elseif item.type == 'lollipop' then
-        Timer.after(.4, function () gSounds['lollipop']:play() end )
-        self.hasLollipop = true
+        -- lick lollipop sound
+        Timer.after(.4, function () 
+            gSounds['lollipop']:setVolume(.5) 
+            gSounds['lollipop']:play() 
+        end)
+        -- align with player position
         item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
         item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y
 
-        -- take out of previous carrier's items
+        -- take out of previous carrier's items and put into player's items
         table.remove(prevOwner.items, itemKey)
-        -- put into player's items
         item.carrier = self
-        table.insert(self.items['lollipops'], item)  
+        table.insert(self.items['lollipops'], item) 
+        -- update score
         self.scoreDetails[self.level]['Candies Stolen'] = self.scoreDetails[self.level]['Candies Stolen'] + 1
         
-
         -- this animates health bar going up 1 point every .2 seconds
         Timer.every(.2, function () 
             if self.health < self.maxHealth then
@@ -215,16 +230,15 @@ function Player:stealItem(prevOwner, item, itemKey)
         end)
         :limit(15)
         :finish(function () 
-            self.hasLollipop = false
-            -- remove lollipop from items
+            -- remove lollipop from items after "eating" it
             table.remove(self.items['lollipops']) 
         end)
     end 
 end
 
+-- when player is falling and about to hit the ground
 function Player:crashDown()
     self.playState.background = 1
-
     self.playState.backgroundScrollY = BACKGROUND_Y_LOOP_POINT / 2
 
     -- scoot player and background such that player is back on the ground
@@ -234,11 +248,12 @@ function Player:crashDown()
 
     }):finish(function()
         self.isFloating =  false
-
         gSounds['hit-ground']:play()
+
         --damage player
         self.health = self.health - (30 - (self.balloonsCarried * 10))
         self.scoreDetails[self.level]['Damage Taken'] = self.scoreDetails[self.level]['Damage Taken'] + (30 - (self.balloonsCarried * 10))
+        
         -- go back to player idle state
         self.stateMachine:change('idle')            
     end)

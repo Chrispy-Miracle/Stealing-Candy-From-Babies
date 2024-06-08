@@ -21,26 +21,28 @@ function GameObject:init(def)
     -- is object being carried
     self.isCarried = def.isCarried
 
+    -- position item with carrier
     if self.isCarried then
         self.carrier = def.carrier
-        -- used to position item with carrier
+        self.carrier_offset_y = def.carrier_offset_y
+
+        -- set offset for carrier's direction
         if self.carrier.direction == 'right' then
             self.carrier_offset_x = def.carrier_offset_x
         elseif self.carrier.direction == 'left' then
             self.carrier_offset_x = -def.carrier_offset_x
         end
 
-        self.carrier_offset_y = def.carrier_offset_y
-
+        -- set x and y
         self.x = self.carrier.x + self.carrier_offset_x
         self.y = self.carrier.y + self.carrier_offset_y
-
-        self.numBalloonsCarried = 0
     end
 
+    -- only used for balloons
     self.balloonAngle = 0
-    self.angledXY = {x = 0, y = 0}
+    self.angledXY = {x = 0, y = 0} -- for balloon hitboxes
     
+    -- mom's purses have a special hitbox
     if self.type == 'bad-bag' then
         self.hitBox = HitBox{
             item = {
@@ -53,6 +55,7 @@ function GameObject:init(def)
             height = self.height / 2
         }
     else
+        -- all other game object hitboxes
         self.hitBox = HitBox{
             item = self,
             x = self.x,
@@ -63,20 +66,23 @@ function GameObject:init(def)
     end
 end
 
+
 function GameObject:update(dt)  
-    
     -- update object position in relation to carrier
     if self.isCarried then
+        -- udpate x for carrier direction offset
         if self.carrier.direction == 'right' then
             self.x = self.carrier.x + self.carrier_offset_x
         elseif self.carrier.direction == 'left' then
             self.x = self.carrier.x - self.carrier_offset_x
         end
-
+        -- update y
         self.y = self.carrier.y + self.carrier_offset_y
     end
 
+    -- update hitboxes
     if self.isCarried and self.carrier.type == 'player' and self.type == 'balloon' then
+        --player's balloons hitboxes become modified from originals
         self.hitBox.item = {
                 x = self.x + self.width / 2 + self.angledXY.x,
                 y = self.y + self.angledXY.y            
@@ -85,12 +91,14 @@ function GameObject:update(dt)
         self.hitBox.y = self.y + self.angledXY.y  
         self.hitBox.height = self.height / 2
     elseif self.type == 'bad-bag' then
+        --mom's purses
         self.hitBox.item = {
             x = self.x,
             y = self.y + self.height / 4
         }
     end
 
+    -- all other hitboxes
     self.hitBox:update(dt)
     
 end
@@ -100,7 +108,6 @@ function GameObject:render()
     if self.isCarried and self.carrier.type == 'player' and self.type == 'balloon' then 
         -- tilt balloons if need be                    
         love.graphics.draw(gTextures[self.level][self.texture], gFrames[self.level][self.texture][self.frame], self.x + ROTATED_BALLOON_OFFSET_X, self.y + ROTATED_BALLOON_OFFSET_Y, self.balloonAngle, 1, 1, self.width / 2, self.height)
-
     else
         -- or draw object normally
         love.graphics.draw(gTextures[self.level][self.texture], gFrames[self.level][self.texture][self.frame], self.x, self.y)
