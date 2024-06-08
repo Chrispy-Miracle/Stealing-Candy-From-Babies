@@ -2,7 +2,7 @@
 ## A Final Project for Harvard University's CS50G-Intro to Game Development
 ### Created by Chris Patchett - 2024
 
-## Overview
+## Overview:
 Stealing Candy from Babies is a retro style video game built with the Lua programming language with the Love2d game framework.  
 In what appears at first to be a simple side scroller, the player must
 continue stealing candy from babies in order to maintain their sugar rush.
@@ -29,7 +29,7 @@ However, if the player can keep up their sugar rush whilst dodging plane moms an
 
 In the game's current state, if the player can navigate to the end of the second level successfully, 
 the game is won. <br>
-Did I even mention Space Storks?!
+Did I even mention *Space Storks*?!
 
 Good Luck and Have Fun!
 ***
@@ -37,105 +37,105 @@ Good Luck and Have Fun!
 ***
 ## How to Play:
 ### Using Keyboard:
-    Press 'Enter' or 'Return' to transfer out of Start, Game Over, Level Up and Won Game states as well.
+Press 'Enter' or 'Return' to transfer out of Start, Game Over, Level Up and Won Game states as well.
 
-    Move using the keyboard's directional arrows or the 'w', 'a', 's' and 'd' keys. 
-    (note: You cannot move up or down when falling!)
+Move using the keyboard's directional arrows or the 'w', 'a', 's' and 'd' keys. 
+(note: You cannot move up or down when falling!)
 
-    Steal candy or balloons by pressing 'Space bar' while player's hand is near game object.
+Steal candy or balloons by pressing 'Space bar' while player's hand is near game object.
 
 ### Using Generic SNES Controller:
-    Press 'Start' to transfer out of Start, Game Over, Level Up and Won Game states as well.
+Press 'Start' to transfer out of Start, Game Over, Level Up and Won Game states as well.
 
-    Move using the direction pad arrows. (note: You cannot move up or down when falling!)
+Move using the direction pad arrows. (note: You cannot move up or down when falling!)
 
-    Steal candy or balloons by pressing 'B' while player's hand is near game object.
+Steal candy or balloons by pressing 'B' while player's hand is near game object.
 
 
 ***
 ## Fonts, Graphics, Sounds, Libraries
 ### Fonts: 
-    * Arcade Alternate, which was borrowed from CS50G's Mario project
-    * Font, which was borrowed from CS50G's Pokemon project
+Arcade Alternate, which was borrowed from CS50G's Mario project and Font, which was borrowed from CS50G's Pokemon project.
 
 ### Graphics:
-    I personally made all the graphics/spritesheets for this game using [GIMP](www.gimp.org) (Hooray for open source!)
+I personally made all the graphics/spritesheets for this game using [GIMP](www.gimp.org) (Hooray for open source!)
 
 ### Sounds:
-    The game sounds were all created using BFXR or downloaded for free from <pixabay.com>
+The game sounds were all created using [BFXR](www.bfxr.net) or downloaded for free from [Pixabay](www.pixabay.com)
 
 ### Libraries:
-    Knife library was used exclusively for it's Timer class.  Class and Push libraries also utilized.
+[Knife](https://github.com/airstruck/knife) library was used exclusively for it's Timer class.  [Class](https://github.com/vrld/hump/blob/master/class.lua) and [Push](https://github.com/Ulydev/push) libraries also utilized, as they have been throughout the course.
 
 ***
 ## Entities:
 ### Entity Base Class:
-    All game entities have level dependent data pulled from the entity_defs, keeps track of basic entity info, including animations
+All game entities have level dependent data pulled from the entity_defs, keeps track of basic entity info, including animations
 ### Baby:  
-    Upon being spawned, babies have a random chance of having a lollipop or a balloon, if the player is floating the baby is spawned as a stork carrying a baby. Messing with any baby causes a Mom to spawn
+Upon being spawned, babies have a random chance of having a lollipop or a balloon, if the player is floating the baby is spawned as a stork carrying a baby. Messing with any baby causes a Mom to spawn
 ### Mom:
-    When a baby is stepped on or stolen from, a mom rushes over to the player and attacks 
+When a baby is stepped on or stolen from, a mom rushes over to the player and attacks 
 ### Player:  
-    The most complex of the entity classes, the player class includes functions for leveling up, checking balloon pops, stealing items and crashing down to the ground.
+The most complex of the entity classes, the player class includes functions for leveling up, checking balloon pops, stealing items and crashing down to the ground.
 
 ***
 ## Game Objects:
 ### Game Object Base Class:
-    Allows creation of game objects using the data contained in game_object_defs. Offset is adjusted here for when objects are carried by different entities, potentially in different orientations.  Updates a few object specific scenarios, namely calculating and updating the objects hitboxes 
+Allows creation of game objects using the data contained in game_object_defs. Offset is adjusted here for when objects are carried by different entities, potentially in different orientations.  Updates a few object specific scenarios, namely calculating and updating the objects hitboxes 
 
 ***
 ## Game States:
 ***Stealing Candy from Babies*** features 5 game states and 5 player states
 ### Base State/State Machine:
-    These are both borrowed directly from class projects. Base State is used as a base for all other states, whether game or player states.  State Machine allows transfer from one state to another, whether game states or player states
+These are both borrowed directly from class projects. Base State is used as a base for all other states, whether game or player states.  State Machine allows transfer from one state to another, whether game states or player states
 ### Start State: 
-    This is the title screen, which includes an animation of a man stealing a balloon from a baby, mostly accomplished by leveraging the knife.timer library
+This is the title screen, which includes an animation of a man stealing a balloon from a baby, mostly accomplished by leveraging the knife.timer library
 ### Play State:
-    This is the main gamestate, wherein the player state machine is held and updated. This class sets up main game functions including the player and the game level.  Included is a SpawnBabies function which sets a timer to procedurally generate babies. Tables for both babies and moms are held, updated and rendered from here.
+This is the main gamestate, wherein the player state machine is held and updated. This class sets up main game functions including the player and the game level.  Included is a SpawnBabies function which sets a timer to procedurally generate babies. Tables for both babies and moms are held, updated and rendered from here.
 ### Game Over State:
-    This is a simple screen to display game stats once the player's sugar rush has reached 0
-    Time, damage, candies stolen and balloons stolen are totalled from each level and rendered here.
-    Pressing enter here will restart the game
+This is a simple screen to display game stats once the player's sugar rush has reached 0.
+Time, damage, candies stolen and balloons stolen are totalled from each level and rendered here.
+Pressing enter here will restart the game.
 ### Level Up State
-    Almost identical to the Game Over State, except only game stats from the cleared level are compiled.
-    Pressing enter in this state will take you to either the next level or the Won Game State
+Almost identical to the Game Over State, except only game stats from the cleared level are compiled.
+Pressing enter in this state will take you to either the next level or the Won Game State.
 ### Won Game State
-    This state is almost identical to the Game Over state in that stats from the entire game are totalled from all levels.
-    Pressing enter here will exit the game.
+This state is almost identical to the Game Over state in that stats from the entire game are totalled from all levels.
+Pressing enter here will exit the game.
 
 ***
 ## Player States:
 ### Player Idle State:
-    The simplest of the player states.  Changes to walk state if any directional buttons are pushed
+The simplest of the player states.  Changes to walk state if any directional buttons are pushed
 ### Player Walk State:
-    Allows for player movement in four directions. Returns player to idle if no directional buttons are currently pressed.
-    Restricts movement and causes damage if player tries to walk off screen to left, scrolls back to left if player goes too far to the right. Changes to float state if 4 or more balloons are held by player.
+Allows for player movement in four directions. Returns player to idle if no directional buttons are currently pressed.
+Restricts movement and causes damage if player tries to walk off screen to left, scrolls back to left if player goes too far to the right. Changes to float state if 4 or more balloons are held by player.
 ### Player Floating State:
-    Stops scrolling on X axis and begins scrolling on Y axis, with player's gravity dependent on number of ballons carried. 
-    Checks for balloon pops and can change to falling state if if player has less than 4 balloons.  Checks for player reaching top screen of level and can also change to board ship state if player has floated up a sufficient number of screens.  Also allows for movement in all directions, although 1/2 speed of walking on Y axis.  If player floats off screen right or left, they appear on the opposite side of scree. Same is true of floating past the top of the screen; player appears at bottom.
+Stops scrolling on X axis and begins scrolling on Y axis, with player's gravity dependent on number of ballons carried. 
+Checks for balloon pops and can change to falling state if if player has less than 4 balloons.  Checks for player reaching top screen of level and can also change to board ship state if player has floated up a sufficient number of screens.  Also allows for movement in all directions, although 1/2 speed of walking on Y axis.  If player floats off screen right or left, they appear on the opposite side of scree. Same is true of floating past the top of the screen; player appears at bottom.
 ### Player Falling State:
-    If player was floating and has balloons popped (and has 3 or less), they begin to fall.  Fall speed is relative to the number of balloons player carries.  Player can no longer use direction pad to influence Y axis movement.  They can, however, still float off screen to the left or right.  If player has 4 balloons, they transfer back to float state. If the player is more than one screen above the ground, they appear at the top of screen if they go past the bottom.  If the player is less than one screen above the ground, crash to ground is initiated, damaging player more the fewer balloons they carry. 
+If player was floating and has balloons popped (and has 3 or less), they begin to fall.  Fall speed is relative to the number of balloons player carries.  Player can no longer use direction pad to influence Y axis movement.  They can, however, still float off screen to the left or right.  If player has 4 balloons, they transfer back to float state. If the player is more than one screen above the ground, they appear at the top of screen if they go past the bottom.  If the player is less than one screen above the ground, crash to ground is initiated, damaging player more the fewer balloons they carry. 
 ### Player Board Ship State:
-    This is the end of level state.  If the player successfully floats up required number of screens for the current level, directional input is no longer allowed and an animation plays wherein the player will be beamed up by a ufo and taken to level up state, after which they will either go to the playstate and start the next level or, to the Won game state if the game is completed.
+This is the end of level state.  If the player successfully floats up required number of screens for the current level, directional input is no longer allowed and an animation plays wherein the player will be beamed up by a ufo and taken to level up state, after which they will either go to the playstate and start the next level or, to the Won game state if the game is completed.
 
 ***
 ## Animation and HitBoxes
-    The Animation class is used to animate game entities and game objects, it is borrowed directly from class projects.
+The Animation class is used to animate game entities and game objects, it is borrowed directly from class projects.
     
-    The HitBox class is somewhat more robust than those seen in class projects.  It features a collision detection function as well as a debug/show hitboxes mode which a developer could use to easily toggle hitbox display. This was used for debugging collision detection.
+The HitBox class is somewhat more robust than those seen in class projects.  It features a collision detection function as well as a debug/show hitboxes mode which a developer could use to easily toggle hitbox display. This was used for debugging collision detection.
 
 ***
 ## Constants and Dependencies
-    The Constants file contains exactly that.  In addition toi game window and virtual widths, many object/entity offset values are defined here in order to properly display game objects when they are held by different game entities.  Also defined here is a controller mapping for a generic Super Nintendo controller I have, so that the game can be played with the controller as well as the computer's keyboard.
+The Constants file contains exactly that.  In addition toi game window and virtual widths, many object/entity offset values are defined here in order to properly display game objects when they are held by different game entities.  Also defined here is a controller mapping for a generic Super Nintendo controller I have, so that the game can be played with the controller as well as the computer's keyboard.
 
-    The Dependencies file contains references to all game files used. This includes external libraries, sounds, graphics, fonts and all of the game's Lua files as well.
+The Dependencies file contains references to all game files used. This includes external libraries, sounds, graphics, fonts and all of the game's Lua files as well.
 
 ***
 ## Util and Main
-    The Main file is required to run a game in Love2D. It defines the game's dimensions and sets up, runs the game's state machine and allows for keyboard input.  This is just a basic game set up and as such, is mostly borrowed from class projects.
+The Main file is required to run a game in Love2D. It defines the game's dimensions and sets up, runs the game's state machine and allows for keyboard input.  This is just a basic game set up and as such, is mostly borrowed from class projects.
 
-    The Util file contains just one function, GenerateQuads, which allows the graphics for the game to be easily divided into individual sprites.
+The Util file contains just one function, GenerateQuads, which allows the graphics for the game to be easily divided into individual sprites.
 
 ***
 ***
-### Thanks So Much for Looking!
+### Thanks So Much for Looking! 
+#### Now go Steal some Candy from some Babies (Balloons too)!!
