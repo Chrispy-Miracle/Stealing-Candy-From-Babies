@@ -1,9 +1,10 @@
 # Stealing Candy from Babies!
 ## A Final Project for Harvard University's CS50G-Intro to Game Development
-### Created by Chris Patchett 2024
+### Created by Chris Patchett - 2024
 
 ## Overview
-Stealing Candy from Babies is a retro styled video game built with the Lua programming language with the Love2d game framework.  In what appears at first to be a simple side scroller, the player must
+Stealing Candy from Babies is a retro style video game built with the Lua programming language with the Love2d game framework.  
+In what appears at first to be a simple side scroller, the player must
 continue stealing candy from babies in order to maintain their sugar rush.
 If the player's sugar rush, like health in many games, reaches zero, the game is over.
 
@@ -24,10 +25,32 @@ as well as enough candy to keep that sugar rush going.
 Without enough balloons to float and a diminishing sugar rush, falling all the way to the ground may well 
 be the player's demise, damage being relative to the number of balloons held, or lack thereof.
 
-However, if the player can keep up their sugar rush whilst dodging plane moms and avoiding the stork's beaks popping their balloons, after floating up enough screens, the player is taken away.... TO THE MOON! 
+However, if the player can keep up their sugar rush whilst dodging plane moms and avoiding the stork's beaks popping their balloons, after floating up enough screens, the player is taken away......***TO THE MOON!***
+
 In the game's current state, if the player can navigate to the end of the second level successfully, 
-the game is won.  Good Luck! 
+the game is won. <br>
+Did I even mention Space Storks?!
+
+Good Luck and Have Fun!
 ***
+
+***
+## How to Play:
+### Using Keyboard:
+    Press 'Enter' or 'Return' to transfer out of Start, Game Over, Level Up and Won Game states as well.
+
+    Move using the keyboard's directional arrows or the 'w', 'a', 's' and 'd' keys. 
+    (note: You cannot move up or down when falling!)
+
+    Steal candy or balloons by pressing 'Space bar' while player's hand is near game object.
+
+### Using Generic SNES Controller:
+    Press 'Start' to transfer out of Start, Game Over, Level Up and Won Game states as well.
+
+    Move using the direction pad arrows. (note: You cannot move up or down when falling!)
+
+    Steal candy or balloons by pressing 'B' while player's hand is near game object.
+
 
 ***
 ## Fonts, Graphics, Sounds, Libraries
@@ -36,7 +59,7 @@ the game is won.  Good Luck!
     * Font, which was borrowed from CS50G's Pokemon project
 
 ### Graphics:
-    I personally made all the graphics/spritesheets for this game using GIMP (Hooray for open source!)
+    I personally made all the graphics/spritesheets for this game using [GIMP](www.gimp.org) (Hooray for open source!)
 
 ### Sounds:
     The game sounds were all created using BFXR or downloaded for free from <pixabay.com>
@@ -62,8 +85,9 @@ the game is won.  Good Luck!
 
 ***
 ## Game States:
+***Stealing Candy from Babies*** features 5 game states and 5 player states
 ### Base State/State Machine:
-    These are both borrowed directly from class. Base State is used as a base for all other states, whether game or player states.  State Machine allows transfer from one state to another, whether game states or player states
+    These are both borrowed directly from class projects. Base State is used as a base for all other states, whether game or player states.  State Machine allows transfer from one state to another, whether game states or player states
 ### Start State: 
     This is the title screen, which includes an animation of a man stealing a balloon from a baby, mostly accomplished by leveraging the knife.timer library
 ### Play State:
@@ -96,13 +120,21 @@ the game is won.  Good Luck!
 
 ***
 ## Animation and HitBoxes
+    The Animation class is used to animate game entities and game objects, it is borrowed directly from class projects.
+    
+    The HitBox class is somewhat more robust than those seen in class projects.  It features a collision detection function as well as a debug/show hitboxes mode which a developer could use to easily toggle hitbox display. This was used for debugging collision detection.
 
 ***
 ## Constants and Dependencies
+    The Constants file contains exactly that.  In addition toi game window and virtual widths, many object/entity offset values are defined here in order to properly display game objects when they are held by different game entities.  Also defined here is a controller mapping for a generic Super Nintendo controller I have, so that the game can be played with the controller as well as the computer's keyboard.
+
+    The Dependencies file contains references to all game files used. This includes external libraries, sounds, graphics, fonts and all of the game's Lua files as well.
 
 ***
 ## Util and Main
+    The Main file is required to run a game in Love2D. It defines the game's dimensions and sets up, runs the game's state machine and allows for keyboard input.  This is just a basic game set up and as such, is mostly borrowed from class projects.
 
+    The Util file contains just one function, GenerateQuads, which allows the graphics for the game to be easily divided into individual sprites.
 
 ***
 ***
