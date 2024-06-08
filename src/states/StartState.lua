@@ -6,7 +6,7 @@ function StartState:init()
         type = 'baby',
         entity_def = ENTITY_DEFS[1]['baby'],
         x = VIRTUAL_WIDTH - 10,
-        y = VIRTUAL_HEIGHT - 32,
+        y = VIRTUAL_HEIGHT - 36,
         level = 1
     }
 
@@ -15,7 +15,7 @@ function StartState:init()
         type = 'player',
         entity_def = ENTITY_DEFS[1]['player'],
         x = -32,
-        y = VIRTUAL_HEIGHT - 64,
+        y = VIRTUAL_HEIGHT - 68,
         level = 1
     }
 
@@ -183,5 +183,10 @@ function StartState:render()
     
     -- draw man
     self.man:render()
+
+    love.graphics.setFont(gFonts['xsmall'])
+    love.graphics.setColor(0, 170/255, 255/255, 1)
+    love.graphics.printf('Created by Chris Patchett 2024, All rights reserved', 0, VIRTUAL_HEIGHT - 8, VIRTUAL_WIDTH, 'center')
+    love.graphics.setColor(255, 255, 255, 255)
 
 end

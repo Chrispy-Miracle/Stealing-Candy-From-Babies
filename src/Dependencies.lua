@@ -41,6 +41,8 @@ require 'src/Hitbox'
 
 
 gFonts = {
+
+    ['xsmall'] = love.graphics.newFont('fonts/font.ttf', 8),
     ['small'] = love.graphics.newFont('fonts/ArcadeAlternate.ttf', 10),
     ['small-title'] = love.graphics.newFont('fonts/ArcadeAlternate.ttf', 16),
     ['title'] = love.graphics.newFont('fonts/ArcadeAlternate.ttf', 32)
