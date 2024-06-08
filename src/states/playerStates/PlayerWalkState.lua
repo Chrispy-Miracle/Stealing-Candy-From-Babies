@@ -21,22 +21,25 @@ function PlayerWalkState:update(dt)
         self.player:changeAnimation('walk-' .. self.player.direction)
 
         -- if player is at right edge of screen scroll all things back to left
-        if self.player.x > VIRTUAL_WIDTH - self.player.width * 2 then
+        if self.player.x > VIRTUAL_WIDTH - self.player.width then
             -- scroll player and background left
+            local playerX = self.player.x
             Timer.tween(1.5, {
                 [self.player] = {x = 16},
                 [self.playState] = {backgroundScrollX = BACKGROUND_X_LOOP_POINT}
             })
             -- scroll babies left
             for k, entity in pairs(self.playState.babies) do
+                local newEntityX = entity.x >= playerX and 16 + (entity.x - playerX) or 16- (playerX - entity.x)
                 Timer.tween(1.5, {
-                    [entity] = {x = entity.x - BACKGROUND_X_LOOP_POINT + 16 + entity.walkSpeed * dt}
+                    [entity] = {x = newEntityX} --entity.x - BACKGROUND_X_LOOP_POINT + 16 + entity.walkSpeed * dt}
                 })
             end 
             -- scroll moms left
             for k, entity in pairs(self.playState.moms) do
+                local newEntityX = entity.x >= playerX and 16 + (entity.x - playerX) or 16- (playerX - entity.x)
                 Timer.tween(1.5, {
-                    [entity] = {x = entity.x - BACKGROUND_X_LOOP_POINT + 16 + entity.walkSpeed * dt}
+                    [entity] = {x = newEntityX} --entity.x - BACKGROUND_X_LOOP_POINT + 16 + entity.walkSpeed * dt}
                 })
             end
         else        

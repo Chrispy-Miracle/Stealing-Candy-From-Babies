@@ -57,6 +57,7 @@ function StartState:init()
             -- make it look like he grabbed it
             self.man:changeAnimation('idle-right')
             gSounds['steal']:play()
+            gSounds['baby-cry-3']:play()
 
             -- slide balloon up to man's hand
             Timer.tween(.6, {

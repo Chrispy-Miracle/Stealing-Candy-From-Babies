@@ -129,6 +129,7 @@ function Player:render()
     self.footHitBox:render()
 end
 
+
 function Player:LevelUp()
     self.level = self.level + 1
     self.isFloating = false
@@ -155,6 +156,7 @@ function Player:LevelUp()
     })
 end
 
+
 -- check for storks colliding with balloons, pop em if so--math.random(4, 16)
 function Player:tryBalloonPop(popper, balloon, itemKey)
     -- random color (for now) for particle system
@@ -174,9 +176,10 @@ function Player:tryBalloonPop(popper, balloon, itemKey)
 end
 
 
-function Player:stealItem(prevOwner, item, itemKey)
-                    
+function Player:stealItem(prevOwner, item, itemKey)             
     gSounds['steal']:play()
+    gSounds['baby-cry-' .. tostring(math.random(3))]:play()
+    Timer.after(.7, function () gSounds['mad-mom-' .. tostring(math.random(6))]:play() end)
 
     if item.type == 'balloon' then
         item.carrier_offset_x = PLAYER_BALLOON_OFFSET_X

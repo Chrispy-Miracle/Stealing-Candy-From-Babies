@@ -1,12 +1,15 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:enter(params)
+    
     -- player
     if params.player then
         self.player = params.player 
         self.player.playState = self
+        gSounds['game-music-' .. tostring(self.player.level)]:stop()
         self.player:LevelUp()
     else 
+        
         self.player = Player {
             type = 'player',
             playState = self,
@@ -24,20 +27,14 @@ function PlayState:enter(params)
 
     self.level = self.player.level
 
-    -- if self.player.level == 1 then
-    --     -- mountain background
-    --     self.backgroundName = 'background'
-    -- elseif self.player.level == 2 then
-    --     -- space background
-    --     self.backgroundName = 'space-background'
-    -- end
-
+    gSounds['game-music-' .. tostring(self.player.level)]:setLooping(true)
+    gSounds['game-music-' .. tostring(self.player.level)]:setVolume(.7)
+    Timer.after(1, function () gSounds['game-music-' .. tostring(self.player.level)]:play() end )
 
     self.background = 1 -- can be changed for extra backgrounds
     self.backgroundScrollX = 0
     self.backgroundScrollY = 0
         
-     
     -- player's state machine
     self.player.stateMachine = StateMachine{
         ['idle'] = function () return PlayerIdleState(self.player) end,
@@ -74,7 +71,7 @@ function PlayState:spawnBabies()  --(or storks!)
         local baby
         if not self.player.isFloating then
             -- every second, 1 in 3 odds to spawn baby
-            if math.random(3) == 1 then
+            if math.random(2) == 1 then
                 -- make baby
                 baby = Baby {
                     type = 'baby',
@@ -113,6 +110,7 @@ function PlayState:update(dt)
     -- if no health, game over
     if self.player.health <= 0 then
         self.player.levelEnded = true
+        gSounds['walking']:stop()
         gStateMachine:change('game-over', {
             gameStats = self.player.scoreDetails,
             level = self.player.level

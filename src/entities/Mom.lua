@@ -33,8 +33,9 @@ function Mom:init(def)
         }
     end
 
+    self.attackSpeed = self.player.level == 1 and 1 or .5
     -- race mom over to player
-    Timer.tween(1, {
+    Timer.tween(self.attackSpeed, {
         [self] ={x = self.player.x + self.player.width, y = self.player.y}
     })
     

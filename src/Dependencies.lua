@@ -120,7 +120,7 @@ gFrames = {
     }
 }
 
-
+-- wavs were made with bfxr, mp3s are from pixabay.com
 gSounds = {
     ['bonus'] = love.audio.newSource('sounds/bonus.wav', 'static'),
     ['falling'] = love.audio.newSource('sounds/falling.wav', 'static'),
@@ -129,7 +129,7 @@ gSounds = {
     ['hit-ground'] = love.audio.newSource('sounds/hit-ground.wav', 'static'),
     ['jump'] = love.audio.newSource('sounds/jump.wav', 'static'), 
     ['steal'] = love.audio.newSource('sounds/steal.wav', 'static'), 
-    ['walking'] = love.audio.newSource('sounds/walking.wav', 'static'),
+    ['walking'] = love.audio.newSource('sounds/walking.mp3', 'static'),
     ['beam-up'] = love.audio.newSource('sounds/beam-up.wav', 'static'),
     ['beam-up2'] = love.audio.newSource('sounds/beam-up2.wav', 'static'),
     ['beam-up3'] = love.audio.newSource('sounds/beam-up3.wav', 'static'),
@@ -140,6 +140,17 @@ gSounds = {
     ['steal2'] = love.audio.newSource('sounds/steal2.wav', 'static'),
     ['ufo'] = love.audio.newSource('sounds/ufo.wav', 'static'),
     ['zap'] = love.audio.newSource('sounds/zap.wav', 'static'),
+    ['baby-cry-1'] = love.audio.newSource('sounds/baby-cry-1.mp3', 'static'),
+    ['baby-cry-2'] = love.audio.newSource('sounds/baby-cry-2.mp3', 'static'),
+    ['baby-cry-3'] = love.audio.newSource('sounds/baby-cry-3.mp3', 'static'),
+    ['mad-mom-1'] = love.audio.newSource('sounds/mad-mom-1.mp3', 'static'),
+    ['mad-mom-2'] = love.audio.newSource('sounds/mad-mom-2.mp3', 'static'),
+    ['mad-mom-3'] = love.audio.newSource('sounds/mad-mom-3.mp3', 'static'),
+    ['mad-mom-4'] = love.audio.newSource('sounds/mad-mom-4.mp3', 'static'),
+    ['mad-mom-5'] = love.audio.newSource('sounds/mad-mom-5.mp3', 'static'),
+    ['mad-mom-6'] = love.audio.newSource('sounds/mad-mom-6.mp3', 'static'),
+    ['game-music-1'] = love.audio.newSource('sounds/game-music-1.mp3', 'static'),
+    ['game-music-2'] = love.audio.newSource('sounds/game-music-2.mp3', 'static'),
 }
 
 

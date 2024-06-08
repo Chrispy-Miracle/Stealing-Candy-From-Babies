@@ -4,6 +4,8 @@ function GameOverState:enter(params)
     self.level = params.level
     self.gameStats = params.gameStats
 
+    gSounds['walking']:stop()
+
     self.gameStatTotals = {
         ['Candies Stolen'] = 0,
         ['Balloons Stolen'] = 0,
@@ -22,6 +24,7 @@ end
 
 function GameOverState:update()
     if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') or is_joystick and joystick:isDown({SNES_MAP.start}) then
+        gSounds['game-music-' .. tostring(self.level)]:stop()
         gStateMachine:change('start')
     end
 end
