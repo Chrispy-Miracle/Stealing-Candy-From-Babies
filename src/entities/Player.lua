@@ -89,6 +89,13 @@ function Player:update(dt)
     self.pSystem:update(dt)
     self.hitBox:update(dt)
 
+    -- momentary change to steal animation 
+    if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) then
+        self:changeAnimation('steal-' .. self.direction)
+        gSounds['steal']:play()
+        Timer.after(.2, function () self:changeAnimation('idle-' .. self.direction) end)
+    end
+
     -- update hand position hitbox for player's direction 
     if self.direction == 'right' then
         self.handHitBox.item.x = self.x + self.width / 2
@@ -187,9 +194,10 @@ end
 
 function Player:stealItem(prevOwner, item, itemKey)
     -- play sounds             
-    gSounds['steal']:play()
     gSounds['baby-cry-' .. tostring(math.random(3))]:play()
-    Timer.after(.7, function () gSounds['mad-mom-' .. tostring(math.random(6))]:play() end)
+    Timer.after(.7, function () 
+        gSounds['mad-mom-' .. tostring(math.random(6))]:play()
+    end)
 
     if item.type == 'balloon' then
         -- align with player position
@@ -248,6 +256,7 @@ function Player:crashDown()
 
     }):finish(function()
         self.isFloating =  false
+        self.isFalling = false
         gSounds['hit-ground']:play()
 
         --damage player

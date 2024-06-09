@@ -60,7 +60,7 @@ gTextures = {
         ['ufo'] = love.graphics.newImage('graphics/ufo.png'),
         -- entities
         ['bad-baby'] = love.graphics.newImage('graphics/Bad-Baby2.png'),
-        ['bad-man'] = love.graphics.newImage('graphics/bad-man6.png'),
+        ['bad-man'] = love.graphics.newImage('graphics/bad-man-8.png'),
         ['bad-mom'] = love.graphics.newImage('graphics/Bad-Mom.png'),
         ['bad-stork'] = love.graphics.newImage('graphics/bad-stork.png'),
         ['bad-plane-mom'] = love.graphics.newImage('graphics/bad-plane-mom.png'),
@@ -78,7 +78,7 @@ gTextures = {
         ['ufo'] = love.graphics.newImage('graphics/ufo.png'),
         -- entities
         ['space-baby'] = love.graphics.newImage('graphics/space-baby.png'),
-        ['space-man'] = love.graphics.newImage('graphics/space-man.png'),
+        ['space-man'] = love.graphics.newImage('graphics/space-man-8.png'),
         ['space-mom'] = love.graphics.newImage('graphics/space-mom.png'),
         ['space-stork'] = love.graphics.newImage('graphics/space-stork.png'),
         ['space-plane-mom'] = love.graphics.newImage('graphics/space-plane-mom.png'),

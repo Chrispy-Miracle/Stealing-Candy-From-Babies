@@ -52,6 +52,16 @@ function PlayerWalkState:update(dt)
             self.player.x = self.player.x + self.player.walkSpeed * dt
             -- scroll background accordingly
             self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
+
+            -- check for baby bumps
+            for k, baby in pairs(self.playState.babies) do
+                if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
+                    gSounds['hit-wall']:play()
+                    --move player back
+                    self.player.x = self.player.x - PLAYER_BONK_DISTANCE
+                    baby.timesSteppedOn = baby.timesSteppedOn + 1
+                end
+            end
         end
     end
 
@@ -60,6 +70,16 @@ function PlayerWalkState:update(dt)
         self.player.direction = 'left'
         self.player:changeAnimation('walk-' .. self.player.direction)
         self.player.x = self.player.x - self.player.walkSpeed * dt
+
+        -- check for baby bumps
+        for k, baby in pairs(self.playState.babies) do
+            if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
+                gSounds['hit-wall']:play()
+                --move player back
+                self.player.x = self.player.x + PLAYER_BONK_DISTANCE
+                baby.timesSteppedOn = baby.timesSteppedOn + 1
+            end
+        end
 
         -- scroll background accordingly
         self.playState.backgroundScrollX = (self.playState.backgroundScrollX - BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
@@ -81,7 +101,19 @@ function PlayerWalkState:update(dt)
         --move player while confining y-axis movement
         if self.player.y > VIRTUAL_HEIGHT / 3 then
             self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
+
+            -- check for baby bumps
+            for k, baby in pairs(self.playState.babies) do
+                if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
+                    gSounds['hit-wall']:play()
+                    --move player back
+                    self.player.y = self.player.y + PLAYER_BONK_DISTANCE
+                    baby.timesSteppedOn = baby.timesSteppedOn + 1
+                end
+            end
         end
+
+
     end
 
     -- move player down
@@ -89,6 +121,16 @@ function PlayerWalkState:update(dt)
         --move player while confining y-axis movement
         if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
             self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
+
+            -- check for baby bumps
+            for k, baby in pairs(self.playState.babies) do
+                if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
+                    gSounds['hit-wall']:play()
+                    --move player back
+                    self.player.y = self.player.y - PLAYER_BONK_DISTANCE
+                    baby.timesSteppedOn = baby.timesSteppedOn + 1
+                end
+            end
         end
     end
 

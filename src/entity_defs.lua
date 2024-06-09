@@ -16,18 +16,28 @@ ENTITY_DEFS = {
                 },
                 ['walk-right'] = {
                     frames = {1, 2},
-                    interval = 0.3,
+                    interval = 0.5,
+                    texture = 'bad-man'
+                },
+                ['steal-right'] = {
+                    frames = {4},
+                    interval = 0.2,
                     texture = 'bad-man'
                 },
                 ['idle-left'] = {
-                    frames = {4},
+                    frames = {5},
                     texture = 'bad-man'
                 },
                 ['walk-left'] = {
-                    frames = {6, 5},
-                    interval = 0.3,
+                    frames = {6, 7},
+                    interval = 0.5,
                     texture = 'bad-man'
                 },
+                ['steal-left'] = {
+                    frames = {8},
+                    interval = 0.2,
+                    texture = 'bad-man'
+                }
             }
         },
         ['baby'] = {
@@ -115,15 +125,25 @@ ENTITY_DEFS = {
                     interval = 0.5,
                     texture = 'space-man'
                 },
-                ['idle-left'] = {
+                ['steal-right'] = {
                     frames = {4},
+                    interval = 0.2,
+                    texture = 'space-man'
+                },
+                ['idle-left'] = {
+                    frames = {5},
                     texture = 'space-man'
                 },
                 ['walk-left'] = {
-                    frames = {6, 5},
+                    frames = {6, 7},
                     interval = 0.5,
                     texture = 'space-man'
                 },
+                ['steal-left'] = {
+                    frames = {8},
+                    interval = 0.2,
+                    texture = 'space-man'
+                }
             }
         },
         ['baby'] = {

@@ -21,6 +21,7 @@ end
 function PlayerFallState:update(dt)
     -- check for grabbed balloons
     if self.player.balloonsCarried > 3 then
+        self.player.isFalling = false
         self.player.stateMachine:change('float-state')
     end
 

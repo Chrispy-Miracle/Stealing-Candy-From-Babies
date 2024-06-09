@@ -6,6 +6,7 @@ function Baby:init(def)
     self.level = def.level
 
     self.momSpawned = false 
+    self.timesSteppedOn = 0
 
     -- hitbox for baby getting stepped on 
     self.hitBox = HitBox{
@@ -72,6 +73,7 @@ function Baby:update(dt)
         -- update baby's items, unless the item gets stolen!
         for k, item in pairs(self.items) do
             if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) then
+
                 if self.player.handHitBox:didCollide(item.hitBox) then
                     -- steal the item
                     self.player:stealItem(self, item, k)
