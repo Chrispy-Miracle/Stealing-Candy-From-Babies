@@ -224,7 +224,7 @@ function PlayState:renderByYValue(entities)
     end
     
     -- babies carry items behind themselves
-    if currEntity.type == 'baby' then
+    if currEntity.type == 'baby' or 'stork' then
         for k, item in pairs(currEntity.items) do
             item:render()
         end
