@@ -276,10 +276,10 @@ function PlayState:renderHealthBar()
     
     if self.player.hasLollipop then
         -- make bar flash if gaining health
-        love.graphics.setColor(math.random(1, 255)/255, math.random(1, 255)/255, math.random(1, 255)/255, 255)
+        love.graphics.setColor(math.random(255)/255, math.random(255)/255, math.random(255)/255, 255)
     elseif self.player.health < 20 then
         -- make bar red if low health
-        love.graphics.setColor(255, 0, 0, 255)
+        love.graphics.setColor(1, 0, 0, 1)
     end 
 
     -- draw health bar

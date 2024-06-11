@@ -61,6 +61,7 @@ function PlayerWalkState:update(dt)
                     --move player back
                     self.player.x = self.player.x - PLAYER_BONK_DISTANCE
                     baby.timesSteppedOn = baby.timesSteppedOn + 1
+                    baby.x = baby.x + BABY_BONK_DISTANCE
                 end
             end
         end
@@ -79,6 +80,7 @@ function PlayerWalkState:update(dt)
                 --move player back
                 self.player.x = self.player.x + PLAYER_BONK_DISTANCE
                 baby.timesSteppedOn = baby.timesSteppedOn + 1
+                baby.x = baby.x - BABY_BONK_DISTANCE
             end
         end
 
@@ -110,6 +112,7 @@ function PlayerWalkState:update(dt)
                     --move player back
                     self.player.y = self.player.y + PLAYER_BONK_DISTANCE
                     baby.timesSteppedOn = baby.timesSteppedOn + 1
+                    baby.y = baby.y - BABY_BONK_DISTANCE
                 end
             end
         end
@@ -130,6 +133,7 @@ function PlayerWalkState:update(dt)
                     --move player back
                     self.player.y = self.player.y - PLAYER_BONK_DISTANCE
                     baby.timesSteppedOn = baby.timesSteppedOn + 1
+                    baby.y = baby.y + BABY_BONK_DISTANCE
                 end
             end
         end

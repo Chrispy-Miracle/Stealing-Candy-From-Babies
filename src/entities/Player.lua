@@ -33,6 +33,7 @@ function Player:init(def)
         }
     }
 
+    self.hasLollipop = false
     -- constantly crashing from sugar buzz!
     if self.type == 'player' then
         Timer.every(1, function () 
@@ -223,12 +224,13 @@ function Player:stealItem(prevOwner, item, itemKey)
         self.scoreDetails[self.level]['Balloons Stolen'] = self.scoreDetails[self.level]['Balloons Stolen'] + 1
         
     elseif item.type == 'lollipop' then
+        self.hasLollipop = true
         -- lick lollipop sound
         Timer.after(.4, function () 
             gSounds['lollipop']:setVolume(.5) 
             gSounds['lollipop']:play() 
         end)
-        -- align with player position
+
         item.carrier_offset_x = PLAYER_LOLLIPOP_OFFSET_X
         item.carrier_offset_y = PLAYER_LOLLIPOP_OFFSET_Y
 
@@ -249,6 +251,7 @@ function Player:stealItem(prevOwner, item, itemKey)
         :finish(function () 
             -- remove lollipop from items after "eating" it
             table.remove(self.items['lollipops']) 
+            self.hasLollipop = false
         end)
     end 
 end

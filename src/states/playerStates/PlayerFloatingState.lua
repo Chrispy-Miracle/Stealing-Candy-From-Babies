@@ -52,7 +52,7 @@ function PlayerFloatingState:update(dt)
     end
 
     -- change background to sky after you cant see the ground
-    if self.player.y < -self.player.height then
+    if self.player.y < -self.player.height / 2 then
         self.playState.background = 2 
     end
 
