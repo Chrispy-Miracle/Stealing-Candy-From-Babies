@@ -89,6 +89,15 @@ function Player:update(dt)
     self.pSystem:update(dt)
     self.hitBox:update(dt)
 
+    -- change to float state (while preventing going to float until it is done!)
+    if self.balloonsCarried > 3 and not self.isFloating then
+        if self.playState.isScrollingBack then
+            self.y =  self.y - (self.balloonsCarried * 5) * dt
+        else
+            self.stateMachine:change('float-state')
+        end
+    end
+
     -- momentary change to steal animation 
     if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) then
         self:changeAnimation('steal-' .. self.direction)

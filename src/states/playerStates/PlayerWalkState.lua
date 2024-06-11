@@ -26,15 +26,16 @@ function PlayerWalkState:update(dt)
         -- if player is at right edge of screen scroll all things back to left
         if self.player.x > VIRTUAL_WIDTH - self.player.width then
             -- scroll player and background left
-            local playerX = self.player.x
+            self.playState.isScrollingBack = true
             Timer.tween(1.5, {
                 [self.player] = {x = 16},
                 [self.playState] = {backgroundScrollX = BACKGROUND_X_LOOP_POINT}
             })
+            :finish(function () self.playState.isScrollingBack = false end)
 
             -- scroll babies left
             for k, entity in pairs(self.playState.babies) do
-                local newEntityX = entity.x >= playerX and 16 + (entity.x - playerX) or 16- (playerX - entity.x)
+                local newEntityX = entity.x >= self.player.x and 16 + (entity.x - self.player.x) or 16- (self.player.x - entity.x)
                 Timer.tween(1.5, {
                     [entity] = {x = newEntityX} 
                 })
@@ -42,7 +43,7 @@ function PlayerWalkState:update(dt)
 
             -- scroll moms left
             for k, entity in pairs(self.playState.moms) do
-                local newEntityX = entity.x >= playerX and 16 + (entity.x - playerX) or 16- (playerX - entity.x)
+                local newEntityX = entity.x >= self.player.x and 16 + (entity.x - self.player.x) or 16- (self.player.x - entity.x)
                 Timer.tween(1.5, {
                     [entity] = {x = newEntityX} 
                 })
@@ -132,11 +133,6 @@ function PlayerWalkState:update(dt)
                 end
             end
         end
-    end
-
-    --change to floating state
-    if self.player.balloonsCarried > 3 then
-        self.player.stateMachine:change('float-state')
     end
 
     -- return to idle state if no direction buttons pushed

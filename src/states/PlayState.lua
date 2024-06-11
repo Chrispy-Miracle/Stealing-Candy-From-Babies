@@ -35,7 +35,7 @@ function PlayState:enter(params)
         
     -- player's state machine
     self.player.stateMachine = StateMachine{
-        ['idle'] = function () return PlayerIdleState(self.player) end,
+        ['idle'] = function () return PlayerIdleState(self) end,
         ['walk-state'] = function () return PlayerWalkState(self) end,
         ['float-state'] = function () return PlayerFloatingState(self) end,
         ['fall-state'] = function () return PlayerFallState(self) end,
@@ -62,6 +62,9 @@ function PlayState:enter(params)
     -- table for spawned babies
     self.babies = {}
     self:spawnBabies()
+
+    -- to prevent strangeness when scrolling  and are in transition to floating state
+    self.isScrollingBack = false
 end
 
 
@@ -148,7 +151,6 @@ function PlayState:update(dt)
             table.remove(self.moms, k)
         end
     end
-
 end
 
 
@@ -158,14 +160,10 @@ function PlayState:render()
     -- draw health bar
     self:renderHealthBar()
     
-    -- used to render NPCs behind or in front of player
-    -- local playerY = self.player.y + self.player.height
-
-
     -- draw moms
     for k, mom in pairs(self.moms) do
         local momY = mom.y + mom.height
-        if  momY < self.player.y + self.player.height then 
+        if  momY < self.player.y + self.player.height / 2 then 
             -- draw moms behind player
             mom:render()            
             
@@ -173,14 +171,13 @@ function PlayState:render()
             for k, item in pairs(mom.items) do
                 item:render()
             end
-
         end
     end
 
     -- draw babies
     for k, baby in pairs(self.babies) do
         local babyY = baby.y + baby.height
-        if  babyY < self.player.y + self.player.height then 
+        if  babyY < self.player.y + self.player.height / 2 then 
             -- draw babies items behind player
             for k, item in pairs(baby.items) do
                 item:render()
@@ -189,6 +186,13 @@ function PlayState:render()
             baby:render()
         end
     end
+
+
+    -- for each baby
+        
+
+
+
     
     -- draw player's balloons behind player
     for k, item in pairs(self.player.items['balloons']) do
@@ -206,7 +210,7 @@ function PlayState:render()
    -- babies
     for k, baby in pairs(self.babies) do
         -- draw babies' items in front of player
-        if baby.y + baby.height >= self.player.y + self.player.height then 
+        if baby.y + baby.height >= self.player.y + self.player.height / 2 then 
             for k, item in pairs(baby.items) do
                 item:render()
             end
@@ -218,7 +222,7 @@ function PlayState:render()
     -- moms  
     for k, mom in pairs(self.moms) do
         -- moms in front of player
-        if mom.y + mom.height >= self.player.y + self.player.height then
+        if mom.y + mom.height >= self.player.y + self.player.height / 2 then
             mom:render()
             -- mom's items
             for k, item in pairs(mom.items) do
@@ -226,7 +230,6 @@ function PlayState:render()
             end
         end
     end
-
 
 end
 

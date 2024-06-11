@@ -1,7 +1,8 @@
 PlayerIdleState = Class{__includes = BaseState}
 
-function PlayerIdleState:init(player)
-    self.player = player
+function PlayerIdleState:init(playstate)
+    self.playState = playstate
+    self.player = playstate.player
 
     -- stop walk sound and set animation to idle
     gSounds['walking']:stop()
@@ -9,10 +10,6 @@ function PlayerIdleState:init(player)
 end
 
 function PlayerIdleState:update(dt)
-    --change to floating state
-    if self.player.balloonsCarried > 3 then
-        self.player.stateMachine:change('float-state')
-    end
     
     -- change to walk state if arrow buttons pushed
     if is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1
