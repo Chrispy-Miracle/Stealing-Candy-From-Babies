@@ -34,6 +34,9 @@ Did I even mention *Space Storks*?!
 Good Luck and Have Fun!
 ***
 
+## Distinctiveness and Complexity
+***Stealing Candy from Babies!*** is easily distinguishable from and as complex as other games presented in CS50-G.  At the start of the game, it could be misconstrued that the game dynamics are similar to and potentially as simple as a side-scroller such as Mario. However, upon the moment in which stolen balloons lessen gravity's effect on the player and the floating and falling game states emerge, this game is clearly different.  While the assignment's requirement for game state complexity was a total of three game states,  ***Stealing Candy from Babies!*** has five game states and five player states.  Additionally, non-player entities in the game do not all have the same qualities, demonstrating both distinctiveness and complexity.  For instance, different types of moms attack in different ways and different babies can influence the player in different ways as well.  Although the current implementation of the game is a minimum viable product with two levels, and certainly there is much room for (and plans to carry out) the expansion of the game, I believe what I have built to meet and exceed that which was asked for the assignment.
+
 ***
 ## How to Play
 ### Using Keyboard:

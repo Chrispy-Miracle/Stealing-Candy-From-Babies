@@ -232,7 +232,7 @@ function PlayState:renderByYValue(entities)
     
     currEntity:render()
     
-    -- moms carry items in front of them
+    -- moms carry items in front of them (plane moms don't have items)
     if currEntity.type == 'mom' then
         for k, item in pairs(currEntity.items) do
             item:render()
