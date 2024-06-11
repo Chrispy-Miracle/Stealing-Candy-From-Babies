@@ -63,6 +63,10 @@ function PlayState:enter(params)
     self.babies = {}
     self:spawnBabies()
 
+    self.entitiesBehindPlayer = {}
+    self.entitiesOverPlayer = {}
+
+
     -- to prevent strangeness when scrolling  and are in transition to floating state
     self.isScrollingBack = false
 end
@@ -151,6 +155,27 @@ function PlayState:update(dt)
             table.remove(self.moms, k)
         end
     end
+
+
+    -- sort moms relative to player, behind or in front (y-axis)
+    for k, mom in pairs(self.moms) do
+        local momY = mom.y + mom.height
+        if  momY < self.player.footHitBox.y + self.player.footHitBox.height / 2 then 
+            table.insert(self.entitiesBehindPlayer, mom)
+        else 
+            table.insert(self.entitiesOverPlayer, mom)
+        end
+    end
+
+    -- sort y axis relative to player
+    for k, baby in pairs(self.babies) do
+        local babyY = baby.hitBox.y + baby.hitBox.height
+        if  babyY < self.player.footHitBox.y + self.player.footHitBox.height / 2 then 
+            table.insert(self.entitiesBehindPlayer, baby)
+        else
+             table.insert(self.entitiesOverPlayer, baby)
+        end
+    end
 end
 
 
@@ -159,41 +184,12 @@ function PlayState:render()
     self:renderBackground()
     -- draw health bar
     self:renderHealthBar()
-    
-    -- draw moms
-    for k, mom in pairs(self.moms) do
-        local momY = mom.y + mom.height
-        if  momY < self.player.y + self.player.height / 2 then 
-            -- draw moms behind player
-            mom:render()            
-            
-            -- draw moms items behind player
-            for k, item in pairs(mom.items) do
-                item:render()
-            end
-        end
+
+    -- render each baby and each mom behind player
+    if #self.entitiesBehindPlayer > 0 then
+        self:renderByYValue(self.entitiesBehindPlayer)
     end
 
-    -- draw babies
-    for k, baby in pairs(self.babies) do
-        local babyY = baby.y + baby.height
-        if  babyY < self.player.y + self.player.height / 2 then 
-            -- draw babies items behind player
-            for k, item in pairs(baby.items) do
-                item:render()
-            end
-            -- draw babies behind player
-            baby:render()
-        end
-    end
-
-
-    -- for each baby
-        
-
-
-
-    
     -- draw player's balloons behind player
     for k, item in pairs(self.player.items['balloons']) do
         item:render()
@@ -207,32 +203,49 @@ function PlayState:render()
         item:render()
     end
 
-   -- babies
-    for k, baby in pairs(self.babies) do
-        -- draw babies' items in front of player
-        if baby.y + baby.height >= self.player.y + self.player.height / 2 then 
-            for k, item in pairs(baby.items) do
-                item:render()
-            end
-            -- draw babies in front of player
-            baby:render()
-        end
+    -- render each baby and each mom in front of player
+    if #self.entitiesOverPlayer > 0 then
+        self:renderByYValue(self.entitiesOverPlayer)
     end
-
-    -- moms  
-    for k, mom in pairs(self.moms) do
-        -- moms in front of player
-        if mom.y + mom.height >= self.player.y + self.player.height / 2 then
-            mom:render()
-            -- mom's items
-            for k, item in pairs(mom.items) do
-                item:render()
-            end
-        end
-    end
-
 end
 
+
+function PlayState:renderByYValue(entities)
+    local lowestYValue = VIRTUAL_HEIGHT
+    local currEntity = entities[1]
+    local lowestIndex = 1
+
+    for k, entity in pairs(entities) do
+        if entity.y + entity.height <= lowestYValue then
+            lowestYValue = entity.y + entity.height
+            currEntity = entity
+            lowestIndex = k
+        end
+    end
+    
+    -- babies carry items behind themselves
+    if currEntity.type == 'baby' then
+        for k, item in pairs(currEntity.items) do
+            item:render()
+        end
+    end
+    
+    currEntity:render()
+    
+    -- moms carry items in front of them
+    if currEntity.type == 'mom' then
+        for k, item in pairs(currEntity.items) do
+            item:render()
+        end
+    end
+
+    -- remove this entity from table 
+    table.remove(entities, lowestIndex)
+    -- and recursively render all entities in order :)
+    if #entities > 0 then
+        self:renderByYValue(entities)
+    end
+end
 
 function PlayState:renderBackground()
     -- this is the normal centered scrollable background
