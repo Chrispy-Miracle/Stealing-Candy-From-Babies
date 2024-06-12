@@ -25,16 +25,16 @@ ENTITY_DEFS = {
                     texture = 'bad-man'
                 },
                 ['idle-left'] = {
-                    frames = {5},
+                    frames = {6},
                     texture = 'bad-man'
                 },
                 ['walk-left'] = {
-                    frames = {6, 7},
+                    frames = {8, 7},
                     interval = 0.5,
                     texture = 'bad-man'
                 },
                 ['steal-left'] = {
-                    frames = {8},
+                    frames = {5},
                     interval = 0.2,
                     texture = 'bad-man'
                 }

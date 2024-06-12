@@ -25,13 +25,7 @@ function GameObject:init(def)
     if self.isCarried then
         self.carrier = def.carrier
         self.carrier_offset_y = def.carrier_offset_y
-
-        -- set offset for carrier's direction
-        if self.carrier.direction == 'right' then
-            self.carrier_offset_x = def.carrier_offset_x
-        elseif self.carrier.direction == 'left' then
-            self.carrier_offset_x = -def.carrier_offset_x
-        end
+        self.carrier_offset_x = def.carrier_offset_x
 
         -- set x and y
         self.x = self.carrier.x + self.carrier_offset_x
@@ -71,7 +65,7 @@ function GameObject:update(dt)
     -- update object position in relation to carrier
     if self.isCarried then
         -- udpate x for carrier direction offset
-        if self.carrier.direction == 'right' then
+        if self.carrier.direction == 'right' or self.type =='lollipop' and self.carrier.type == 'player' then
             self.x = self.carrier.x + self.carrier_offset_x
         elseif self.carrier.direction == 'left' then
             self.x = self.carrier.x - self.carrier_offset_x
@@ -90,6 +84,7 @@ function GameObject:update(dt)
         self.hitBox.x = self.x + self.width / 2 + self.angledXY.x  
         self.hitBox.y = self.y + self.angledXY.y  
         self.hitBox.height = self.height / 2
+
     elseif self.type == 'bad-bag' then
         --mom's purses
         self.hitBox.item = {

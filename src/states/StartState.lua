@@ -25,7 +25,7 @@ function StartState:init()
 
     --balloon
     self.balloonPosition = {
-        x = self.baby.x + BABY_BALLOON_OFFSET_X, 
+        x = self.baby.x - BABY_BALLOON_OFFSET_X, 
         y = self.baby.y + BABY_BALLOON_OFFSET_Y
     }
 
@@ -39,7 +39,7 @@ function StartState:init()
     -- Move baby and balloon to left (towards man)
     Timer.tween(5, {
         [self.baby] = {x = VIRTUAL_WIDTH / 3},
-        [self.balloonPosition] = {x = VIRTUAL_WIDTH / 3 + BABY_BALLOON_OFFSET_X}        
+        [self.balloonPosition] = {x = VIRTUAL_WIDTH / 3 - BABY_BALLOON_OFFSET_X}        
     })
     :finish(function () self.baby.walkSpeed = 0 end)
 
@@ -61,15 +61,15 @@ function StartState:init()
 
             -- slide balloon up to man's hand
             Timer.tween(.6, {
-                [self.balloonPosition] = {y = self.balloonPosition.y - 16}
+                [self.balloonPosition] = {y = self.balloonPosition.y - 18}
             })
 
             :finish(function () 
                 -- man jumps over baby with balloon
                 gSounds['jump']:play()
                 Timer.tween(1.5, {
-                    [self.man] = {x = VIRTUAL_WIDTH / 2 - 36, y = 16},
-                    [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 - 16, y = 24}
+                    [self.man] = {x = VIRTUAL_WIDTH / 2 - 39, y = 16},
+                    [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 - 18, y = 18}
                 }) 
 
                 -- man walks aways on fading title with balloon
@@ -79,18 +79,18 @@ function StartState:init()
                     gSounds['walking']:play()
                     
                     -- -- shift balloon to stay with man
-                    Timer.every(.4, function ()
-                        if self.man.currentAnimation:getCurrentFrame() == 1 then
-                            self.balloonPosition.x = self.balloonPosition.x + 3
-                        else
-                            self.balloonPosition.x = self.balloonPosition.x - 3
-                        end
-                    end)
+                    -- Timer.every(.4, function ()
+                    --     if self.man.currentAnimation:getCurrentFrame() == 1 then
+                    --         self.balloonPosition.x = self.balloonPosition.x + 3
+                    --     else
+                    --         self.balloonPosition.x = self.balloonPosition.x - 3
+                    --     end
+                    -- end)
 
                     -- tween man and balloon position to right of screen
                     Timer.tween(3, {
                         [self.man] = {x = VIRTUAL_WIDTH},
-                        [self.balloonPosition] = {x = VIRTUAL_WIDTH + 20}
+                        [self.balloonPosition] = {x = VIRTUAL_WIDTH + 22}
                     })
 
                     -- fade in "Press Enter to Play" title
@@ -159,18 +159,18 @@ function StartState:render()
     love.graphics.setFont(gFonts['title'])
     love.graphics.setColor(0, 170/255, 255/255, self.titleOpacity.valA)
     love.graphics.printf('Stealing Candy from Babies!', 0, 20, VIRTUAL_WIDTH, 'center')
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(1,1,1,1)
 
     love.graphics.setFont(gFonts['small-title'])
     love.graphics.setColor(184/255, 149/255, 208/255, self.titleOpacity.valB)
     love.graphics.printf('(Balloons Too!!)', 48, VIRTUAL_HEIGHT / 2 + 10, VIRTUAL_WIDTH, 'center')
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(1,1,1,1)
 
     if self.animationComplete then
         love.graphics.setFont(gFonts['title'])
         love.graphics.setColor(0, 170/255, 255/255, self.titleOpacity.valC)
         love.graphics.printf('Press Enter\nto Play!', 0, 20, VIRTUAL_WIDTH, 'center')
-        love.graphics.setColor(255, 255, 255, 255)
+        love.graphics.setColor(1,1,1,1)
     end
 
     -- draw balloon
@@ -188,6 +188,6 @@ function StartState:render()
     love.graphics.setFont(gFonts['xsmall'])
     love.graphics.setColor(0, 170/255, 255/255, 1)
     love.graphics.printf('Created by Chris Patchett 2024, All rights reserved', 0, VIRTUAL_HEIGHT - 8, VIRTUAL_WIDTH, 'center')
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(1, 1, 1, 1)
 
 end
