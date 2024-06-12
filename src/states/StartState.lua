@@ -77,15 +77,6 @@ function StartState:init()
                     -- animate man walking with balloon
                     self.man:changeAnimation('walk-right')
                     gSounds['walking']:play()
-                    
-                    -- -- shift balloon to stay with man
-                    -- Timer.every(.4, function ()
-                    --     if self.man.currentAnimation:getCurrentFrame() == 1 then
-                    --         self.balloonPosition.x = self.balloonPosition.x + 3
-                    --     else
-                    --         self.balloonPosition.x = self.balloonPosition.x - 3
-                    --     end
-                    -- end)
 
                     -- tween man and balloon position to right of screen
                     Timer.tween(3, {
@@ -106,7 +97,6 @@ function StartState:init()
         end)
     end)
 
-    
     -- Fade in titles
     Timer.tween(2, {
         [self.titleOpacity] = {valA = 1, valB = 1}
@@ -174,7 +164,7 @@ function StartState:render()
     end
 
     -- draw balloon
-    love.graphics.draw(gTextures[1]['balloons'], gFrames[1]['balloons'][math.random(#OBJECT_DEFS['balloon'].frames)], 
+    love.graphics.draw(gTextures['balloons'], gFrames['balloons'][math.random(#OBJECT_DEFS['balloon'].frames)], 
         self.balloonPosition.x, 
         self.balloonPosition.y)
     

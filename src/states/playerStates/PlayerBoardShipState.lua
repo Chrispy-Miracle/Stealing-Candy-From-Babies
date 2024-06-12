@@ -27,7 +27,7 @@ function PlayerBoardShipState:init(playState)
     :finish(function () 
         -- start tractor beam
         self.startBeam = true
-        gSounds['beam-up3']:play()
+        gSounds['beam-up']:play()
     end)
 end
 
