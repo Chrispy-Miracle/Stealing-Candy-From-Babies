@@ -73,7 +73,7 @@ function PlayerFloatingState:update(dt)
     end
 
     -- float to right
-    if love.keyboard.isDown('right') or love.keyboard.isDown('d') or is_joystick and joystick:getAxis(SNES_MAP.xDir) ==  1 then
+    if wasRightPressed() then
         self.player.direction = 'right'
         self.player:changeAnimation('idle-' .. self.player.direction)
         self.player.x = self.player.x + self.player.walkSpeed * dt
@@ -85,7 +85,7 @@ function PlayerFloatingState:update(dt)
     end
     
     -- float to left
-    if love.keyboard.isDown('left') or love.keyboard.isDown('a') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1 then
+    if wasLeftPressed() then
         self.player.direction = 'left'
         self.player:changeAnimation('idle-' .. self.player.direction)
         self.player.x = self.player.x - self.player.walkSpeed * dt
@@ -97,12 +97,12 @@ function PlayerFloatingState:update(dt)
     end
 
     -- float up
-    if love.keyboard.isDown('up') or love.keyboard.isDown('w') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == -1 then
+    if wasUpPressed() then
         self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
     end
 
     -- float down (more like slow down)
-    if love.keyboard.isDown('down') or love.keyboard.isDown('s') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == 1 then
+    if wasDownPressed() then
         self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
     end
 

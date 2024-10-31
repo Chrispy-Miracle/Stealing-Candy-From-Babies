@@ -100,7 +100,7 @@ function Player:update(dt)
     end
 
     -- momentary change to steal animation 
-    if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) then
+    if wasSpaceOrBPressed() then
         self:changeAnimation('steal-' .. self.direction)
         gSounds['steal']:play()
         Timer.after(.2, function () self:changeAnimation('idle-' .. self.direction) end)

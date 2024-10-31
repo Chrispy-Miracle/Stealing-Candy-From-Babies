@@ -19,7 +19,7 @@ function PlayerWalkState:update(dt)
     -- check each direction button, and update player position if pressed
 
     -- move player right
-    if love.keyboard.isDown('right') or love.keyboard.isDown('d') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == 1 then            
+    if wasRightPressed() then            
         self.player.direction = 'right'
         self.player:changeAnimation('walk-' .. self.player.direction)
 
@@ -68,7 +68,7 @@ function PlayerWalkState:update(dt)
     end
 
     --move player left
-    if love.keyboard.isDown('left') or love.keyboard.isDown('a') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1 then
+    if wasLeftPressed() then
         self.player.direction = 'left'
         self.player:changeAnimation('walk-' .. self.player.direction)
         self.player.x = self.player.x - self.player.walkSpeed * dt
@@ -100,7 +100,7 @@ function PlayerWalkState:update(dt)
     end
 
     -- move player up
-    if love.keyboard.isDown('up') or love.keyboard.isDown('w') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == -1 then
+    if wasUpPressed() then
         --move player while confining y-axis movement
         if self.player.y > VIRTUAL_HEIGHT / 3 then
             self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
@@ -121,7 +121,7 @@ function PlayerWalkState:update(dt)
     end
 
     -- move player down
-    if love.keyboard.isDown('down') or love.keyboard.isDown('s') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == 1 then
+    if wasDownPressed() then
         --move player while confining y-axis movement
         if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
             self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
@@ -140,10 +140,7 @@ function PlayerWalkState:update(dt)
     end
 
     -- return to idle state if no direction buttons pushed
-    if not love.keyboard.isDown('right') and not love.keyboard.isDown('left') 
-    and not love.keyboard.isDown('up') and not love.keyboard.isDown('down') 
-    and not love.keyboard.isDown('d') and not love.keyboard.isDown('a') 
-    and not love.keyboard.isDown('w') and not love.keyboard.isDown('s') then
+    if not wasUpPressed() and not wasDownPressed() and not wasLeftPressed() and not wasRightPressed() then
         if is_joystick and joystick:getAxis(SNES_MAP.xDir) == 0 
         and joystick:getAxis(SNES_MAP.yDir) == 0 
         or not is_joystick then

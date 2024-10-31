@@ -56,3 +56,29 @@ function love.draw()
     gStateMachine:render()
     push:finish()
 end
+
+
+-- to simplify player controls
+function wasEnterPressed()
+    return love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') or is_joystick and joystick:isDown({SNES_MAP.start})
+end
+
+function wasSpaceOrBPressed()
+    return love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b})
+end
+
+function wasRightPressed()
+    return love.keyboard.isDown('right') or love.keyboard.isDown('d') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == 1
+end
+
+function wasLeftPressed()
+    return love.keyboard.isDown('left') or love.keyboard.isDown('a') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1
+end
+
+function wasUpPressed()
+    return love.keyboard.isDown('up') or love.keyboard.isDown('w') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == -1
+end
+
+function wasDownPressed()
+    return love.keyboard.isDown('down') or love.keyboard.isDown('s') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == 1
+end

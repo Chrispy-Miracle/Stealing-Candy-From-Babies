@@ -24,7 +24,7 @@ end
 
 function GameOverState:update()
     -- restart game
-    if love.keyboard.wasPressed('return') or love.keyboard.wasPressed('enter') or is_joystick and joystick:isDown({SNES_MAP.start}) then
+    if wasEnterPressed() then
         gSounds['game-music-' .. tostring(self.level)]:stop()
         gStateMachine:change('start')
     end

@@ -72,7 +72,7 @@ function Baby:update(dt)
 
         -- update baby's items, unless the item gets stolen!
         for k, item in pairs(self.items) do
-            if love.keyboard.wasPressed('space') or is_joystick and joystick:isDown({SNES_MAP.b}) then
+            if wasSpaceOrBPressed() then
 
                 if self.player.handHitBox:didCollide(item.hitBox) then
                     -- steal the item

@@ -59,7 +59,7 @@ function PlayerFallState:update(dt)
     
     -- allow for movement (no up or down in fall state)
     -- fall right
-    if love.keyboard.isDown('right') or love.keyboard.isDown('d') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == 1 then
+    if wasRightPressed() then
         self.player.direction = 'right'
         self.player:changeAnimation('idle-' .. self.player.direction)
         self.player.x = self.player.x + self.player.walkSpeed * dt
@@ -71,7 +71,7 @@ function PlayerFallState:update(dt)
     end
 
     -- fall left
-    if love.keyboard.isDown('left') or love.keyboard.isDown('a') or is_joystick and joystick:getAxis(SNES_MAP.xDir) == -1 then
+    if wasLeftPressed() then
         self.player.direction = 'left'
         self.player:changeAnimation('idle-' .. self.player.direction)
         self.player.x = self.player.x - self.player.walkSpeed * dt
