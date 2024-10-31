@@ -5,6 +5,7 @@ function Mom:init(def)
     --reference to player
     self.player = def.playState.player
     self.didHitPlayer = false
+    self.attackSpeed = self.player.level == 1 and 1 or .5  -- level 2 moms attack quicker
 
     -- moms on the ground get purses to attack with
     if self.type == 'mom' then
@@ -34,8 +35,6 @@ function Mom:init(def)
         }
     end
     
-    self.attackSpeed = self.player.level == 1 and 1 or .5  -- level 2 moms attack quicker
-
     -- race mom over to player
     Timer.tween(self.attackSpeed, {
         [self] ={x = self.player.x + self.player.width, y = self.player.y}
@@ -43,7 +42,45 @@ function Mom:init(def)
     :finish(function () self:attackWithPurse() end)
 end
 
+
 function Mom:update(dt)
+    self:handlePlaneMomCollisions()
+    Entity.update(self, dt)
+end
+
+
+function Mom:attackWithPurse()
+    -- mom swings purse twice at player
+    if not self.player.isFloating and not self.player.isFalling then
+        Timer.every(.3, function () self:purseSwing() end)
+        :limit(4)-- this limit makes the full purse animation happen twice
+    end
+end
+
+
+function Mom:purseSwing()
+    if self.items[1] then
+        -- mom's purse is animated to swing at player
+        if self.items[1].frame == 1 then
+            self.items[1].frame = 2 
+            self:handlePurseCollision()
+        else
+            self.items[1].frame = 1 
+        end
+    end
+end
+
+
+function Mom:handlePurseCollision()  -- deal damage if mom's purse hits player
+    if self.items[1].hitBox:didCollide(self.player.hitBox) then
+        gSounds['hit']:play()
+        self.player.health =  self.player.health - 5
+        self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
+    end
+end
+
+
+function Mom:handlePlaneMomCollisions()
     -- only plane moms have hitboxes
     if self.hitBox then
         self.hitBox:update(dt)
@@ -58,37 +95,6 @@ function Mom:update(dt)
             self.didHitPlayer = true
         end
     end
-
-    Entity.update(self, dt)
-end
-
-
-function Mom:attackWithPurse()
-    -- mom swings purse twice at player
-    if not self.player.isFloating and not self.player.isFalling then
-        Timer.every(.3, function () self:purseSwing() end)
-        :limit(4)-- this limit makes the full purse animation happen twice
-    end
-end
-
-function Mom:purseSwing()
-    if self.items[1] then
-        -- mom's purse is animated to swing at player
-        if self.items[1].frame == 1 then
-            self.items[1].frame = 2 
-            self:handlePurseCollision()
-        else
-            self.items[1].frame = 1 
-        end
-    end
-end
-
-function Mom:handlePurseCollision()  -- deal damage if mom's purse hits player
-    if self.items[1].hitBox:didCollide(self.player.hitBox) then
-        gSounds['hit']:play()
-        self.player.health =  self.player.health - 5
-        self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
-    end
 end
 
 
@@ -98,5 +104,4 @@ function Mom:render()
     if self.type == 'plane-mom' then
         self.hitBox:render()
     end
-
 end

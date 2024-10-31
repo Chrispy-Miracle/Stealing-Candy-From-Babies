@@ -80,11 +80,11 @@ function PlayerWalkState:scrollBackground(direction, dt)
 end
 
 
-function PlayerWalkState:handleBoundary(direction)
+function PlayerWalkState:handleBoundary(direction, dt)
     if direction == "right" then
         self:handleRightBoundary()
     elseif direction == "left" then
-        self:handleLeftBoundary()
+        self:handleLeftBoundary(dt)
     end
 end
 
@@ -125,7 +125,7 @@ function PlayerWalkState:handleLeftBoundary(dt)
         self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
         -- move player back
         self.player.x = self.player.x + self.player.width / 2
-        scrollBackground("right", dt)
+        self:scrollBackground("right", dt)
     end
 end
 
