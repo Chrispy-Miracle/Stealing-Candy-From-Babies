@@ -30,8 +30,8 @@ function StartState:init()
     self.animationComplete = false
 
     -- play animations
-    playIntroAnimation(self)
-    playTitleAnimation(self)
+    self:playIntroAnimation()
+    self:playTitleAnimation()
 end
 
 
@@ -101,17 +101,17 @@ function StartState:render()
 end
 
 
-function playIntroAnimation(self) 
+function StartState:playIntroAnimation() 
     -- start animations
     self.baby:changeAnimation('crawl-left')
     self.man:changeAnimation('walk-right')
 
-    playBabyAnimation(self)
-    playManAnimation(self)
+    self:playBabyAnimation()
+    self:playManAnimation()
 end
 
 
-function playBabyAnimation(self)
+function StartState:playBabyAnimation()
     -- Move baby and balloon to left (towards man)
     Timer.tween(5, {
         [self.baby] = {x = VIRTUAL_WIDTH / 3},
@@ -121,7 +121,7 @@ function playBabyAnimation(self)
 end
 
 
-function playManAnimation(self)
+function StartState:playManAnimation()
     -- start sound
     gSounds['walking']:setLooping(true)
     gSounds['walking']:play()
@@ -131,18 +131,18 @@ function playManAnimation(self)
         [self.man] = {x = VIRTUAL_WIDTH / 3 - 29}
     })
     --once the man and baby meet in middle
-    :finish(function () playStealBalloonAnimation(self) end)
+    :finish(function () self:playStealBalloonAnimation() end)
 end
 
 
-function playStealBalloonAnimation(self) 
+function StartState:playStealBalloonAnimation() 
     gSounds['walking']:stop()
     -- wait a sec then man steals balloon from baby
-    Timer.after(1, function () playGrabAnimation(self) end)
+    Timer.after(1, function () self:playGrabAnimation() end)
 end
 
 
-function playGrabAnimation(self)
+function StartState:playGrabAnimation()
     self.man:changeAnimation('idle-right')
     gSounds['steal']:play()
     gSounds['baby-cry-3']:play()
@@ -151,11 +151,11 @@ function playGrabAnimation(self)
     Timer.tween(.6, {
         [self.balloonPosition] = {y = self.balloonPosition.y - 18}
     })
-    :finish(function () playJumpAndWalkAnimation(self) end)
+    :finish(function () self:playJumpAndWalkAnimation() end)
 end
 
 
-function playJumpAndWalkAnimation(self)
+function StartState:playJumpAndWalkAnimation()
     -- man jumps over baby with balloon
     gSounds['jump']:play()
     Timer.tween(1.5, {
@@ -163,11 +163,11 @@ function playJumpAndWalkAnimation(self)
         [self.balloonPosition] = {x = VIRTUAL_WIDTH / 2 - 18, y = 18}
     }) 
     -- man walks aways on fading title with balloon
-    :finish(function () playManWalksAwayAnimation(self) end)
+    :finish(function () self:playManWalksAwayAnimation() end)
 end
 
 
-function playManWalksAwayAnimation(self)
+function StartState:playManWalksAwayAnimation()
     -- animate man walking with balloon
     self.man:changeAnimation('walk-right')
     gSounds['walking']:play()
@@ -177,11 +177,11 @@ function playManWalksAwayAnimation(self)
         [self.man] = {x = VIRTUAL_WIDTH},
         [self.balloonPosition] = {x = VIRTUAL_WIDTH + 22}
     })
-    :finish(function() fadeInPressEnterTitle(self) end)
+    :finish(function() self:fadeInPressEnterTitle() end)
 end
 
 
-function fadeInPressEnterTitle(self)
+function StartState:fadeInPressEnterTitle()
     self.animationComplete = true
     Timer.tween(2, {
         [self.titleOpacity] = {valC = 1}
@@ -190,7 +190,7 @@ function fadeInPressEnterTitle(self)
 end
 
 
-function playTitleAnimation(self)
+function StartState:playTitleAnimation()
     -- Fade in titles
     Timer.tween(2, {
         [self.titleOpacity] = {valA = 1, valB = 1}

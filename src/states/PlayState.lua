@@ -2,9 +2,9 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:enter(params)
     if params.player then  -- player already exists (level 2+)
-        getPreExistingPlayer(self, params) 
+        self:getPreExistingPlayer(params) 
     else 
-        createNewPlayer(self) 
+        self:createNewPlayer() 
     end
     
     self.player.levelEnded = false   -- this restarts the play timer
@@ -28,7 +28,7 @@ function PlayState:enter(params)
         ['board-ship'] = function () return PlayerBoardShipState(self) end
     }
     
-    playWalkToStartAnimation(self)  -- this animation walks player onto scene
+    self:playWalkToStartAnimation()  -- this animation walks player onto scene
 
     -- table for spawned moms
     self.moms = {}
@@ -45,7 +45,7 @@ function PlayState:enter(params)
 end
 
 
-function getPreExistingPlayer(self, params)
+function PlayState:getPreExistingPlayer(params)
     self.player = params.player 
     self.player.playState = self
     gSounds['game-music-' .. tostring(self.player.level)]:stop()
@@ -53,7 +53,7 @@ function getPreExistingPlayer(self, params)
 end
 
 
-function createNewPlayer(self)
+function PlayState:createNewPlayer()
     self.player = Player {
         type = 'player',
         playState = self,
@@ -66,7 +66,7 @@ function createNewPlayer(self)
 end
 
 
-function playWalkToStartAnimation(self)
+function PlayState:playWalkToStartAnimation()
     self.player.stateMachine:change('idle')
     self.player:changeAnimation('walk-' .. self.player.direction)
     gSounds['walking']:play()
@@ -86,18 +86,18 @@ function PlayState:spawnBabies()  -- 50/50 chance every second
     Timer.every(1, function ()
         if not self.player.isFloating then
             if math.random(2) == 1 then
-                spawnBaby(self)
+                self:spawnBaby()
             end
         elseif self.player.isFloating then -- (storks if floating!)
             if math.random(2) == 1 then
-                spawnStork(self)
+                self:spawnStork()
             end
         end
     end)
 end
 
 
-function spawnBaby(self)
+function PlayState:spawnBaby()
     local baby
     baby = Baby {
         type = 'baby',
@@ -113,7 +113,7 @@ function spawnBaby(self)
 end
 
 
-function spawnStork(self)
+function PlayState:spawnStork()
     local stork
     stork = Baby {
         type = 'stork',
@@ -131,29 +131,29 @@ end
 
 function PlayState:update(dt)
     -- if no health, game over
-    checkForGameOver(self)
+    self:checkForGameOver()
 
     self.player.stateMachine:update(dt)
     
-    updateEntities(self.babies, dt)
-    updatePlayerItems(self.player.items)
-    updateEntities(self.moms, dt)
+    self:updateEntities(self.babies, dt)
+    self:updatePlayerItems(self.player.items)
+    self:updateEntities(self.moms, dt)
 
     -- sort moms relative to player, behind or in front (y-axis)
     for k, mom in pairs(self.moms) do
         local momY = mom.y + mom.height
-        sortOnYAxis(mom, momY, self)
+        self:sortOnYAxis(mom, momY)
     end
 
     -- sort y axis relative to player
     for k, baby in pairs(self.babies) do
         local babyY = baby.hitBox.y + baby.hitBox.height
-        sortOnYAxis(baby, babyY, self)
+        self:sortOnYAxis(baby, babyY)
     end
 end
 
 
-function checkForGameOver(self)
+function PlayState:checkForGameOver()
     if self.player.health <= 0 then
         self.player.levelEnded = true
         gSounds['walking']:stop()
@@ -165,7 +165,7 @@ function checkForGameOver(self)
 end
 
 
-function updateEntities(entities, dt)
+function PlayState:updateEntities(entities, dt)
     for k, entity in pairs(entities) do
         -- if the entity is still on screen
         if not entity.dead then
@@ -177,7 +177,7 @@ function updateEntities(entities, dt)
 end
 
 
-function updatePlayerItems(items)
+function PlayState:updatePlayerItems(items)
     for k, item in pairs(items['balloons']) do
         item:update(dt)
     end
@@ -187,7 +187,7 @@ function updatePlayerItems(items)
 end
 
 
-function sortOnYAxis(entity, entityYAxis, self)
+function PlayState:sortOnYAxis(entity, entityYAxis)
     if  entityYAxis < self.player.footHitBox.y + self.player.footHitBox.height / 2 then 
         table.insert(self.entitiesBehindPlayer, entity)
     else 
@@ -208,9 +208,9 @@ function PlayState:render()
     end
 
     -- draw player and their items
-    renderItems(self.player.items['balloons']) -- drawn behind player
+    self:renderItems(self.player.items['balloons']) -- drawn behind player
     self.player.stateMachine:render() 
-    renderItems(self.player.items['lollipops']) -- drawn in front of player
+    self:renderItems(self.player.items['lollipops']) -- drawn in front of player
 
     -- render each baby and each mom in front of player
     if #self.entitiesOverPlayer > 0 then
@@ -219,7 +219,7 @@ function PlayState:render()
 end
 
 
-function renderItems(items)
+function PlayState:renderItems(items)
     for k, item in pairs(items) do
         item:render()
     end 
@@ -240,7 +240,7 @@ function PlayState:renderByYValue(entities)
     end
     
     -- render entity with it's items
-    renderEntityWithItems(currEntity)
+    self:renderEntityWithItems(currEntity)
 
     -- remove this entity from table 
     table.remove(entities, lowestIndex)
@@ -251,15 +251,15 @@ function PlayState:renderByYValue(entities)
 end
 
 
-function renderEntityWithItems(currEntity)
+function PlayState:renderEntityWithItems(currEntity)
     if currEntity.type == 'baby' or 'stork' then -- babies carry items behind themselves
-        renderItems(currEntity.items)
+        self:renderItems(currEntity.items)
     end
 
     currEntity:render() -- entity itself
     
     if currEntity.type == 'mom' then -- moms carry items in front of them 
-        renderItems(currEntity.items)
+        self:renderItems(currEntity.items)
     end
 end
 
