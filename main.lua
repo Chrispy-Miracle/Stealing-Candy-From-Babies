@@ -82,3 +82,12 @@ end
 function wasDownPressed()
     return love.keyboard.isDown('down') or love.keyboard.isDown('s') or is_joystick and joystick:getAxis(SNES_MAP.yDir) == 1
 end
+
+function noDirectionPressed()
+    return not wasUpPressed() and not wasDownPressed() and not wasLeftPressed() and not wasRightPressed()
+end
+
+function anyDirectionPressed()
+    return wasUpPressed() or wasDownPressed() or wasLeftPressed() or wasRightPressed()
+end
+
