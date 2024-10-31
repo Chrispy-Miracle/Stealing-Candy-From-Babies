@@ -12,13 +12,7 @@ function GameOverState:enter(params)
         ['Time'] =  0
     }
 
-    -- compile whole game stats from level stats
-    for l, levelStats in pairs(self.gameStats) do 
-        for k, gameStat in pairs(levelStats) do
-            self.gameStatTotals[k] = self.gameStatTotals[k] + gameStat
-        end
-    end
-                
+    compileGameStats(self)      
 end
 
 
@@ -36,12 +30,9 @@ function GameOverState:render()
     love.graphics.printf("GAME OVER!", 0, 10, VIRTUAL_WIDTH, 'center')
 
     -- Player level stats, small letters
-    love.graphics.setFont(gFonts['small'])
-    local keyNum = 1
-    for k, item in pairs(self.gameStatTotals) do 
-        love.graphics.printf(tostring(k) .. ':  ' .. tostring(item), 0, VIRTUAL_HEIGHT / 4 + keyNum * 15, VIRTUAL_WIDTH, 'center')
-        keyNum = keyNum + 1
-    end
+    renderGameStats(self.gameStatTotals)
 
     love.graphics.setColor(1,1,1,1)
 end
+
+

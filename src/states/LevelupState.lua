@@ -40,12 +40,7 @@ function LevelUpState:render()
     love.graphics.printf('Level ' .. tostring(self.player.level) .. ' Clear!', 0, 10, VIRTUAL_WIDTH, 'center')
 
     -- Player level stats, small letters
-    love.graphics.setFont(gFonts['small'])
-    local keyNum = 1
-    for k, item in pairs(self.player.scoreDetails[self.player.level]) do 
-        love.graphics.printf(tostring(k) .. ':  ' .. tostring(item), 0, VIRTUAL_HEIGHT / 4 + keyNum * 15, VIRTUAL_WIDTH, 'center')
-        keyNum = keyNum + 1
-    end
+    renderGameStats(self.player.scoreDetails[self.player.level])
 
     -- display "press enter" once input is allowed
     if self.timerDone then
