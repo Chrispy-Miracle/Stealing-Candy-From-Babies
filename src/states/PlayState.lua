@@ -207,23 +207,22 @@ function PlayState:render()
         self:renderByYValue(self.entitiesBehindPlayer)
     end
 
-    -- draw player's balloons behind player
-    for k, item in pairs(self.player.items['balloons']) do
-        item:render()
-    end 
-
-    -- draw player
-    self.player.stateMachine:render()
-
-    -- draw player's lollipops in front of player
-    for k, item in pairs(self.player.items['lollipops']) do
-        item:render()
-    end
+    -- draw player and their items
+    renderItems(self.player.items['balloons']) -- drawn behind player
+    self.player.stateMachine:render() 
+    renderItems(self.player.items['lollipops']) -- drawn in front of player
 
     -- render each baby and each mom in front of player
     if #self.entitiesOverPlayer > 0 then
         self:renderByYValue(self.entitiesOverPlayer)
     end
+end
+
+
+function renderItems(items)
+    for k, item in pairs(items) do
+        item:render()
+    end 
 end
 
 
@@ -240,27 +239,27 @@ function PlayState:renderByYValue(entities)
         end
     end
     
-    -- babies carry items behind themselves
-    if currEntity.type == 'baby' or 'stork' then
-        for k, item in pairs(currEntity.items) do
-            item:render()
-        end
-    end
-    
-    currEntity:render()
-    
-    -- moms carry items in front of them (plane moms don't have items)
-    if currEntity.type == 'mom' then
-        for k, item in pairs(currEntity.items) do
-            item:render()
-        end
-    end
+    -- render entity with it's items
+    renderEntityWithItems(currEntity)
 
     -- remove this entity from table 
     table.remove(entities, lowestIndex)
     -- and recursively render all entities in order :)
     if #entities > 0 then
         self:renderByYValue(entities)
+    end
+end
+
+
+function renderEntityWithItems(currEntity)
+    if currEntity.type == 'baby' or 'stork' then -- babies carry items behind themselves
+        renderItems(currEntity.items)
+    end
+
+    currEntity:render() -- entity itself
+    
+    if currEntity.type == 'mom' then -- moms carry items in front of them 
+        renderItems(currEntity.items)
     end
 end
 
