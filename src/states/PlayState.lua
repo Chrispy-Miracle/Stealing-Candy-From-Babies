@@ -1,27 +1,13 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:enter(params)
-    -- player from previous level 
-    if params.player then
-        self.player = params.player 
-        self.player.playState = self
-        gSounds['game-music-' .. tostring(self.player.level)]:stop()
-        self.player:LevelUp()
+    if params.player then  -- player already exists (level 2+)
+        getPreExistingPlayer(self, params) 
     else 
-        -- otherwise begin new player (level 1)
-        self.player = Player {
-            type = 'player',
-            playState = self,
-            entity_def = ENTITY_DEFS[1]['player'],
-            x = - 16,
-            y = VIRTUAL_HEIGHT - 70,
-            direction = 'right',
-            level = 1
-        }
+        createNewPlayer(self) 
     end
-
-    -- this restarts the play timer
-    self.player.levelEnded = false
+    
+    self.player.levelEnded = false   -- this restarts the play timer
 
     self.level = self.player.level
 
@@ -41,20 +27,8 @@ function PlayState:enter(params)
         ['fall-state'] = function () return PlayerFallState(self) end,
         ['board-ship'] = function () return PlayerBoardShipState(self) end
     }
-    self.player.stateMachine:change('idle')
-
-    -- this animation walks player onto scene
-    self.player:changeAnimation('walk-' .. self.player.direction)
-    gSounds['walking']:play()
-    Timer.tween(1, {
-        [self.player] = {x = 16}
-    })
-    -- stop player (Ready to Play!)
-    :finish(function() 
-        -- change to idlestate and start music
-        self.player.stateMachine:change('idle')
-        gSounds['game-music-' .. tostring(self.player.level)]:play()
-    end)
+    
+    playWalkToStartAnimation(self)  -- this animation walks player onto scene
 
     -- table for spawned moms
     self.moms = {}
@@ -66,57 +40,120 @@ function PlayState:enter(params)
     self.entitiesBehindPlayer = {}
     self.entitiesOverPlayer = {}
 
-
-    -- to prevent strangeness when scrolling  and are in transition to floating state
+    -- to prevent strangeness when scrolling and are in transition to floating state
     self.isScrollingBack = false
 end
 
 
-function PlayState:spawnBabies()  --(or storks if floating!)
-    Timer.every(1, function ()
-        
-        if not self.player.isFloating then
-            -- every second, 1 in 2 odds to spawn baby
-            if math.random(2) == 1 then
-                -- make a baby
-                local baby
-                baby = Baby {
-                    type = 'baby',
-                    playState = self,
-                    entity_def = ENTITY_DEFS[self.level]['baby'],
-                    x = VIRTUAL_WIDTH - 10,
-                    y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
-                    direction = 'left',
-                    level = self.level
-                }
-                table.insert(self.babies, baby)
-                baby:changeAnimation('crawl-left')
-            end
+function getPreExistingPlayer(self, params)
+    self.player = params.player 
+    self.player.playState = self
+    gSounds['game-music-' .. tostring(self.player.level)]:stop()
+    self.player:LevelUp()
+end
 
-        -- if player is floating try to make a stork baby
-        elseif self.player.isFloating then
-            -- 1 in 2 chance
+
+function createNewPlayer(self)
+    self.player = Player {
+        type = 'player',
+        playState = self,
+        entity_def = ENTITY_DEFS[1]['player'],
+        x = - 16,
+        y = VIRTUAL_HEIGHT - 70,
+        direction = 'right',
+        level = 1
+    }
+end
+
+
+function playWalkToStartAnimation(self)
+    self.player.stateMachine:change('idle')
+    self.player:changeAnimation('walk-' .. self.player.direction)
+    gSounds['walking']:play()
+
+    Timer.tween(1, {
+        [self.player] = {x = 16}
+    })
+    :finish(function() 
+        -- change to idlestate and start music
+        self.player.stateMachine:change('idle')
+        gSounds['game-music-' .. tostring(self.player.level)]:play()
+    end)
+end
+
+
+function PlayState:spawnBabies()  -- 50/50 chance every second
+    Timer.every(1, function ()
+        if not self.player.isFloating then
             if math.random(2) == 1 then
-                local stork
-                stork = Baby {
-                    type = 'stork',
-                    playState = self,
-                    entity_def = ENTITY_DEFS[self.level]['stork'],
-                    x = VIRTUAL_WIDTH,
-                    y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS[self.level]['stork'].height),
-                    direction = 'left',
-                    level = self.level
-                }
-                table.insert(self.babies, stork)
-                stork:changeAnimation('fly-left')
+                spawnBaby(self)
+            end
+        elseif self.player.isFloating then -- (storks if floating!)
+            if math.random(2) == 1 then
+                spawnStork(self)
             end
         end
     end)
 end
 
 
+function spawnBaby(self)
+    local baby
+    baby = Baby {
+        type = 'baby',
+        playState = self,
+        entity_def = ENTITY_DEFS[self.level]['baby'],
+        x = VIRTUAL_WIDTH - 10,
+        y = math.random(VIRTUAL_HEIGHT - 32, VIRTUAL_HEIGHT / 2+ 16),
+        direction = 'left',
+        level = self.level
+    }
+    table.insert(self.babies, baby)
+    baby:changeAnimation('crawl-left')
+end
+
+
+function spawnStork(self)
+    local stork
+    stork = Baby {
+        type = 'stork',
+        playState = self,
+        entity_def = ENTITY_DEFS[self.level]['stork'],
+        x = VIRTUAL_WIDTH,
+        y = math.random(0, VIRTUAL_HEIGHT - ENTITY_DEFS[self.level]['stork'].height),
+        direction = 'left',
+        level = self.level
+    }
+    table.insert(self.babies, stork)
+    stork:changeAnimation('fly-left')
+end
+
+
 function PlayState:update(dt)
     -- if no health, game over
+    checkForGameOver(self)
+
+    self.player.stateMachine:update(dt)
+    
+    updateEntities(self.babies, dt)
+    updatePlayerItems(self.player.items)
+    updateEntities(self.moms, dt)
+
+    -- sort moms relative to player, behind or in front (y-axis)
+    for k, mom in pairs(self.moms) do
+        local momY = mom.y + mom.height
+        sortOnYAxis(mom, momY, self)
+    end
+
+    -- sort y axis relative to player
+    for k, baby in pairs(self.babies) do
+        local babyY = baby.hitBox.y + baby.hitBox.height
+        sortOnYAxis(baby, babyY, self)
+    end
+end
+
+
+function checkForGameOver(self)
     if self.player.health <= 0 then
         self.player.levelEnded = true
         gSounds['walking']:stop()
@@ -125,56 +162,36 @@ function PlayState:update(dt)
             level = self.player.level
         })
     end
+end
 
-    -- update player state machine
-    self.player.stateMachine:update(dt)
-    
-    -- update babies
-    for k, baby in pairs(self.babies) do
-        -- if the baby is still on screen
-        if not baby.dead then
-            baby:update(dt)
+
+function updateEntities(entities, dt)
+    for k, entity in pairs(entities) do
+        -- if the entity is still on screen
+        if not entity.dead then
+            entity:update(dt)
         else
-            table.remove(self.babies, k)
+            table.remove(entities, k)
         end
     end
-    
-    -- update player's items
-    for k, item in pairs(self.player.items['balloons']) do
+end
+
+
+function updatePlayerItems(items)
+    for k, item in pairs(items['balloons']) do
         item:update(dt)
     end
-    for k, item in pairs(self.player.items['lollipops']) do
+    for k, item in pairs(items['lollipops']) do
         item:update(dt)
     end
-
-    -- update moms
-    for k, mom in pairs(self.moms) do
-        if not mom.dead then
-                mom:update(dt)
-        else
-            table.remove(self.moms, k)
-        end
-    end
+end
 
 
-    -- sort moms relative to player, behind or in front (y-axis)
-    for k, mom in pairs(self.moms) do
-        local momY = mom.y + mom.height
-        if  momY < self.player.footHitBox.y + self.player.footHitBox.height / 2 then 
-            table.insert(self.entitiesBehindPlayer, mom)
-        else 
-            table.insert(self.entitiesOverPlayer, mom)
-        end
-    end
-
-    -- sort y axis relative to player
-    for k, baby in pairs(self.babies) do
-        local babyY = baby.hitBox.y + baby.hitBox.height
-        if  babyY < self.player.footHitBox.y + self.player.footHitBox.height / 2 then 
-            table.insert(self.entitiesBehindPlayer, baby)
-        else
-             table.insert(self.entitiesOverPlayer, baby)
-        end
+function sortOnYAxis(entity, entityYAxis, self)
+    if  entityYAxis < self.player.footHitBox.y + self.player.footHitBox.height / 2 then 
+        table.insert(self.entitiesBehindPlayer, entity)
+    else 
+        table.insert(self.entitiesOverPlayer, entity)
     end
 end
 
@@ -247,6 +264,7 @@ function PlayState:renderByYValue(entities)
     end
 end
 
+
 function PlayState:renderBackground()
     -- this is the normal centered scrollable background
     love.graphics.draw(gTextures[self.level]['background'], gFrames[self.level]['background'][self.background], 
@@ -273,7 +291,6 @@ function PlayState:renderHealthBar()
     love.graphics.rectangle('fill', 63, 3, self.player.maxHealth + 2, 8)
     love.graphics.setColor(255, 255, 255, 255)
 
-    
     if self.player.hasLollipop then
         -- make bar flash if gaining health
         love.graphics.setColor(math.random(255)/255, math.random(255)/255, math.random(255)/255, 255)
