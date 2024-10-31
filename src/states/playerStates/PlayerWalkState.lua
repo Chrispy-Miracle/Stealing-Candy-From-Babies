@@ -16,140 +16,142 @@ end
 
 
 function PlayerWalkState:update(dt)
-    -- check each direction button, and update player position if pressed
-
-    -- move player right
-    if wasRightPressed() then            
-        self.player.direction = 'right'
-        self.player:changeAnimation('walk-' .. self.player.direction)
-
-        -- if player is at right edge of screen scroll all things back to left
-        if self.player.x > VIRTUAL_WIDTH - self.player.width then
-            -- scroll player and background left
-            self.playState.isScrollingBack = true
-            Timer.tween(1.5, {
-                [self.player] = {x = 16},
-                [self.playState] = {backgroundScrollX = BACKGROUND_X_LOOP_POINT}
-            })
-            :finish(function () self.playState.isScrollingBack = false end)
-
-            -- scroll babies left
-            for k, entity in pairs(self.playState.babies) do
-                local newEntityX = entity.x >= self.player.x and 16 + (entity.x - self.player.x) or 16- (self.player.x - entity.x)
-                Timer.tween(1.5, {
-                    [entity] = {x = newEntityX} 
-                })
-            end 
-
-            -- scroll moms left
-            for k, entity in pairs(self.playState.moms) do
-                local newEntityX = entity.x >= self.player.x and 16 + (entity.x - self.player.x) or 16- (self.player.x - entity.x)
-                Timer.tween(1.5, {
-                    [entity] = {x = newEntityX} 
-                })
-            end
-        else        
-            --move player normally to right
-            self.player.x = self.player.x + self.player.walkSpeed * dt
-            -- scroll background accordingly
-            self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-
-            -- check for baby bumps
-            for k, baby in pairs(self.playState.babies) do
-                if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
-                    gSounds['hit-wall']:play()
-                    --move player back
-                    self.player.x = self.player.x - PLAYER_BONK_DISTANCE
-                    baby.timesSteppedOn = baby.timesSteppedOn + 1
-                    baby.x = baby.x + BABY_BONK_DISTANCE
-                end
-            end
-        end
-    end
-
-    --move player left
-    if wasLeftPressed() then
-        self.player.direction = 'left'
-        self.player:changeAnimation('walk-' .. self.player.direction)
-        self.player.x = self.player.x - self.player.walkSpeed * dt
-
-        -- check for baby bumps
-        for k, baby in pairs(self.playState.babies) do
-            if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
-                gSounds['hit-wall']:play()
-                --move player back
-                self.player.x = self.player.x + PLAYER_BONK_DISTANCE
-                baby.timesSteppedOn = baby.timesSteppedOn + 1
-                baby.x = baby.x - BABY_BONK_DISTANCE
-            end
-        end
-
-        -- scroll background accordingly
-        self.playState.backgroundScrollX = (self.playState.backgroundScrollX - BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-
-        -- if player hits left wall, do a bit of damage
-        if self.player.x < -self.player.width / 2 then
-            gSounds['hit-wall']:play()
-            self.player.health = self.player.health - 2
-            self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
-            -- move player back
-            self.player.x = self.player.x + self.player.width / 2
-            -- scroll background accordingly
-            self.playState.backgroundScrollX = (self.playState.backgroundScrollX + BACKGROUND_X_SCROLL_SPEED * dt) % BACKGROUND_X_LOOP_POINT
-        end
-    end
-
-    -- move player up
-    if wasUpPressed() then
-        --move player while confining y-axis movement
-        if self.player.y > VIRTUAL_HEIGHT / 3 then
-            self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
-
-            -- check for baby bumps
-            for k, baby in pairs(self.playState.babies) do
-                if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
-                    gSounds['hit-wall']:play()
-                    --move player back
-                    self.player.y = self.player.y + PLAYER_BONK_DISTANCE
-                    baby.timesSteppedOn = baby.timesSteppedOn + 1
-                    baby.y = baby.y - BABY_BONK_DISTANCE
-                end
-            end
-        end
-
-
-    end
-
-    -- move player down
-    if wasDownPressed() then
-        --move player while confining y-axis movement
-        if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
-            self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
-
-            -- check for baby bumps
-            for k, baby in pairs(self.playState.babies) do
-                if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
-                    gSounds['hit-wall']:play()
-                    --move player back
-                    self.player.y = self.player.y - PLAYER_BONK_DISTANCE
-                    baby.timesSteppedOn = baby.timesSteppedOn + 1
-                    baby.y = baby.y + BABY_BONK_DISTANCE
-                end
-            end
-        end
-    end
-
-    -- return to idle state if no direction buttons pushed
-    if not wasUpPressed() and not wasDownPressed() and not wasLeftPressed() and not wasRightPressed() then
-        if is_joystick and joystick:getAxis(SNES_MAP.xDir) == 0 
-        and joystick:getAxis(SNES_MAP.yDir) == 0 
-        or not is_joystick then
-            gSounds['walking']:stop()
-            self.player.stateMachine:change('idle')
-        end
+    self:handlePlayerMovement(dt)
+    
+    if noDirectionPressed() then  -- return to idle state 
+        gSounds['walking']:stop()
+        self.player.stateMachine:change('idle')
+    else
+        self:handleBabyCollision()
     end
 
     self.player:update(dt)
+end
+
+
+function PlayerWalkState:handlePlayerMovement(dt)
+    if wasRightPressed() then   
+        self:movePlayerHorizontal("right", dt)
+
+    elseif wasLeftPressed() then
+        self:movePlayerHorizontal("left", dt)
+
+    elseif wasUpPressed() then
+        --move player while confining y-axis movement
+        if self.player.y > VIRTUAL_HEIGHT / 3 then
+            self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
+        end
+
+    elseif wasDownPressed() then
+        --move player while confining y-axis movement
+        if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
+            self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
+        end
+    end
+end
+
+
+function PlayerWalkState:movePlayerHorizontal(direction, dt)
+    self:changePlayerDirection(direction)
+    if direction == "right" then 
+        self.player.x = self.player.x + self.player.walkSpeed * dt
+    elseif direction =="left" then
+        self.player.x = self.player.x - self.player.walkSpeed * dt
+    end
+    self:scrollBackground(direction, dt)
+    self:handleBoundary(direction, dt)
+end
+
+
+function PlayerWalkState:changePlayerDirection(direction)
+    self.player.direction = direction
+    self.player:changeAnimation('walk-' .. self.player.direction)
+end
+
+
+function PlayerWalkState:scrollBackground(direction, dt)
+    local scroll
+    if direction == "right" then
+        scroll = BACKGROUND_X_SCROLL_SPEED
+    elseif direction == "left" then
+        scroll = -BACKGROUND_X_SCROLL_SPEED
+    end
+    self.playState.backgroundScrollX = (self.playState.backgroundScrollX + scroll * dt) % BACKGROUND_X_LOOP_POINT
+end
+
+
+function PlayerWalkState:handleBoundary(direction)
+    if direction == "right" then
+        self:handleRightBoundary()
+    elseif direction == "left" then
+        self:handleLeftBoundary()
+    end
+end
+
+function PlayerWalkState:handleRightBoundary()
+    -- if player is at right edge of screen scroll all things back to left
+    if self.player.x > VIRTUAL_WIDTH - self.player.width then
+        self.playState.isScrollingBack = true
+        self:scrollPlayerAndBackgroundLeft()
+        self:scrollEntitiesLeft(self.playState.babies)
+        self:scrollEntitiesLeft(self.playState.moms)
+    end
+end    
+
+
+function PlayerWalkState:scrollPlayerAndBackgroundLeft()
+    Timer.tween(1.5, {
+        [self.player] = {x = 16},
+        [self.playState] = {backgroundScrollX = BACKGROUND_X_LOOP_POINT}
+    })
+    :finish(function () self.playState.isScrollingBack = false end)
+end
+
+function PlayerWalkState:scrollEntitiesLeft(entities)
+    for k, entity in pairs(entities) do
+        local newEntityX = entity.x >= self.player.x and 16 + (entity.x - self.player.x) or 16- (self.player.x - entity.x)
+        Timer.tween(1.5, {
+            [entity] = {x = newEntityX} 
+        })
+    end 
+end
+
+
+function PlayerWalkState:handleLeftBoundary(dt)
+    -- if player hits left wall, do a bit of damage
+    if self.player.x < -self.player.width / 2 then
+        gSounds['hit-wall']:play()
+        self.player.health = self.player.health - 2
+        self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + 5
+        -- move player back
+        self.player.x = self.player.x + self.player.width / 2
+        scrollBackground("right", dt)
+    end
+end
+
+
+function PlayerWalkState:handleBabyCollision()
+    for k, baby in pairs(self.playState.babies) do
+        if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
+            gSounds['hit-wall']:play()
+            baby.timesSteppedOn = baby.timesSteppedOn + 1
+
+            -- bonk player and baby
+            if wasLeftPressed() then
+                self.player.x =  self.player.x + PLAYER_BONK_DISTANCE
+                baby.x = baby.x - BABY_BONK_DISTANCE
+            elseif wasRightPressed() then
+                self.player.x =  self.player.x - PLAYER_BONK_DISTANCE
+                baby.x = baby.x + BABY_BONK_DISTANCE
+            elseif wasDownPressed() then
+                self.player.y = self.player.y - PLAYER_BONK_DISTANCE
+                baby.y = baby.y + BABY_BONK_DISTANCE
+            elseif wasUpPressed() then
+                self.player.y = self.player.y + PLAYER_BONK_DISTANCE
+                baby.y = baby.y - BABY_BONK_DISTANCE
+            end
+        end
+    end
 end
 
 
