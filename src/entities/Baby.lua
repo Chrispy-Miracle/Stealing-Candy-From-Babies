@@ -51,38 +51,9 @@ end
 
 function Baby:handleGotSteppedOn()
     if self.hitBox:didCollide(self.player.footHitBox) and not self.momSpawned and not self.player.isFloating then
-        self:spawnMom('mom')
+        Mom:spawnMom('mom', self)
         gSounds['baby-cry-' .. tostring(math.random(3))]:play()
     end
-end
-
-function Baby:spawnGameObject(objType, offsetX, offsetY)
-    local object = GameObject {
-        object_def = OBJECT_DEFS[objType],
-        x = self.x + offsetX,
-        y = self.y + offsetY,
-        isCarried = true,
-        carrier = self,
-        carrier_offset_x = offsetX,
-        carrier_offset_y = offsetY,
-        level = self.level
-    }
-    table.insert(self.items, object)
-end
-
-function Baby:spawnMom(momType)
-    local mom
-    mom = Mom {
-        type = momType,
-        entity_def = ENTITY_DEFS[self.level][momType],
-        x = VIRTUAL_WIDTH,
-        y = math.random(VIRTUAL_HEIGHT / 3, VIRTUAL_HEIGHT / 2 + 8),
-        playState = self.playState,
-        direction = 'left',
-        level = self.level
-    }
-    table.insert(self.playState.moms, mom)
-    self.momSpawned = true
 end
 
 function Baby:handleItemStealAttempt(key, item)
@@ -92,8 +63,8 @@ function Baby:handleItemStealAttempt(key, item)
         -- spawn a mom 
         if not self.momSpawned then -- ensure 1 mom per baby!
             if self.player.isFloating then
-               self:spawnMom('plane-mom')
-            else self:spawnMom('mom') 
+               Mom:spawnMom('plane-mom', self)
+            else Mom:spawnMom('mom', self) 
             end
         end
     end
