@@ -49,7 +49,6 @@ function Player:render()
     self.footHitBox:render()
 end
 
-
 function Player:handleChangeToFloatState()
     if self.balloonsCarried > 3 and not self.isFloating then
         if self.playState.isScrollingBack then -- simulate state change if scrolling 

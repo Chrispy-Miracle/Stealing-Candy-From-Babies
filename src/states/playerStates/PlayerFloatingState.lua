@@ -26,64 +26,28 @@ end
 
 function PlayerFloatingState:update(dt)
     self:checkForLevelComplete()
-
     -- set player gravity and background scroll according to number of balloons
     self.player.gravity = self.player.balloonsCarried * 10
     self.playState.backgroundScrollY = (self.playState.backgroundScrollY - self.player.gravity * dt) % BACKGROUND_Y_LOOP_POINT
 
-    self:handlePlayerFloat(dt)
+    self:handlePlayerFloat(dt)    
+    self:handlePlayerMovement(dt)
+    self.player:update(dt)  
 
     -- change background to sky after you cant see the ground
     if self.player.y < -self.player.height / 2 then
         self.playState.background = 2 
     end
-
-    -- check items for balloon pops 
     self.player:checkForBalloonPops()
-
     -- change to falling state if not enough balloons to float
     if self.player.balloonsCarried <= 3 then
         self.player.stateMachine:change('fall-state')
     end
-
-    -- float to right
-    if wasRightPressed() then
-        self.player.direction = 'right'
-        self.player:changeAnimation('idle-' .. self.player.direction)
-        self.player.x = self.player.x + self.player.walkSpeed * dt
-
-        -- player to left side of screen if they float off right
-        if self.player.x > VIRTUAL_WIDTH - 2 then
-            self.player.x = -self.player.width - 2
-        end
-    end
-    
-    -- float to left
-    if wasLeftPressed() then
-        self.player.direction = 'left'
-        self.player:changeAnimation('idle-' .. self.player.direction)
-        self.player.x = self.player.x - self.player.walkSpeed * dt
-
-        -- player to right side of screen if they float off left
-        if self.player.x < -self.player.width - 2 then
-            self.player.x = VIRTUAL_WIDTH - 2
-        end
-    end
-
-    -- float up
-    if wasUpPressed() then
-        self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
-    end
-
-    -- float down (more like slow down)
-    if wasDownPressed() then
-        self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
-    end
-
-    -- update player
-    self.player:update(dt)  
 end
 
+function PlayerFloatingState:render()
+    self.player:render()
+end
 
 function PlayerFloatingState:checkForLevelComplete()
     -- check for level ending 
@@ -108,6 +72,36 @@ function PlayerFloatingState:handlePlayerFloat(dt)
     end
 end
 
-function PlayerFloatingState:render()
-    self.player:render()
+
+function PlayerFloatingState:handlePlayerMovement(dt)
+    -- float to right
+    if wasRightPressed() then
+        self.player.direction = 'right'
+        self.player:changeAnimation('idle-' .. self.player.direction)
+        self.player.x = self.player.x + self.player.walkSpeed * dt
+
+        -- player to left side of screen if they float off right
+        if self.player.x > VIRTUAL_WIDTH - 2 then
+            self.player.x = -self.player.width - 2
+        end
+    end
+    -- float to left
+    if wasLeftPressed() then
+        self.player.direction = 'left'
+        self.player:changeAnimation('idle-' .. self.player.direction)
+        self.player.x = self.player.x - self.player.walkSpeed * dt
+
+        -- player to right side of screen if they float off left
+        if self.player.x < -self.player.width - 2 then
+            self.player.x = VIRTUAL_WIDTH - 2
+        end
+    end
+    -- float up
+    if wasUpPressed() then
+        self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
+    end
+    -- float down (more like slow down)
+    if wasDownPressed() then
+        self.player.y = self.player.y + (self.player.walkSpeed / 2) * dt
+    end
 end

@@ -32,10 +32,8 @@ end
 function PlayerWalkState:handlePlayerMovement(dt)
     if wasRightPressed() then   
         self:movePlayerHorizontal("right", dt)
-
     elseif wasLeftPressed() then
         self:movePlayerHorizontal("left", dt)
-
     elseif wasUpPressed() then
         --move player while confining y-axis movement
         if self.player.y > VIRTUAL_HEIGHT / 3 then
@@ -50,24 +48,19 @@ function PlayerWalkState:handlePlayerMovement(dt)
     end
 end
 
-
 function PlayerWalkState:movePlayerHorizontal(direction, dt)
-    self:changePlayerDirection(direction)
+    self.player.direction = direction
+    self.player:changeAnimation('walk-' .. self.player.direction)
+    
     if direction == "right" then 
         self.player.x = self.player.x + self.player.walkSpeed * dt
     elseif direction =="left" then
         self.player.x = self.player.x - self.player.walkSpeed * dt
     end
+
     self:scrollBackground(direction, dt)
     self:handleBoundary(direction, dt)
 end
-
-
-function PlayerWalkState:changePlayerDirection(direction)
-    self.player.direction = direction
-    self.player:changeAnimation('walk-' .. self.player.direction)
-end
-
 
 function PlayerWalkState:scrollBackground(direction, dt)
     local scroll
@@ -78,7 +71,6 @@ function PlayerWalkState:scrollBackground(direction, dt)
     end
     self.playState.backgroundScrollX = (self.playState.backgroundScrollX + scroll * dt) % BACKGROUND_X_LOOP_POINT
 end
-
 
 function PlayerWalkState:handleBoundary(direction, dt)
     if direction == "right" then
