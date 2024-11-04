@@ -3,17 +3,13 @@ PlayerWalkState = Class{__includes = BaseState}
 function PlayerWalkState:init(playState)
     self.playState = playState
     self.player = playState.player
-
     self.player.isFalling =  false
     self.player.isFloating = false
-
     self.playState.backgroundScrollY = 0
-
     -- start walking sound and animation
     gSounds['walking']:play()
     self.player:changeAnimation('walk-' .. self.player.direction)
 end
-
 
 function PlayerWalkState:update(dt)
     self:handlePlayerMovement(dt)
@@ -24,8 +20,11 @@ function PlayerWalkState:update(dt)
     else
         self:handleBabyCollision()
     end
-
     self.player:update(dt)
+end
+
+function PlayerWalkState:render()
+    self.player:render()
 end
 
 
@@ -39,7 +38,6 @@ function PlayerWalkState:handlePlayerMovement(dt)
         if self.player.y > VIRTUAL_HEIGHT / 3 then
             self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
         end
-
     elseif wasDownPressed() then
         --move player while confining y-axis movement
         if self.player.y < VIRTUAL_HEIGHT / 2 + 8 then
@@ -51,13 +49,12 @@ end
 function PlayerWalkState:movePlayerHorizontal(direction, dt)
     self.player.direction = direction
     self.player:changeAnimation('walk-' .. self.player.direction)
-    
+
     if direction == "right" then 
         self.player.x = self.player.x + self.player.walkSpeed * dt
     elseif direction =="left" then
         self.player.x = self.player.x - self.player.walkSpeed * dt
     end
-
     self:scrollBackground(direction, dt)
     self:handleBoundary(direction, dt)
 end
@@ -101,13 +98,12 @@ end
 
 function PlayerWalkState:scrollEntitiesLeft(entities)
     for k, entity in pairs(entities) do
-        local newEntityX = entity.x >= self.player.x and 16 + (entity.x - self.player.x) or 16- (self.player.x - entity.x)
+        local newEntityX = entity.x >= self.player.x and 16 + (entity.x - self.player.x) or 16 - (self.player.x - entity.x)
         Timer.tween(1.5, {
             [entity] = {x = newEntityX} 
         })
     end 
 end
-
 
 function PlayerWalkState:handleLeftBoundary(dt)
     -- if player hits left wall, do a bit of damage
@@ -120,7 +116,6 @@ function PlayerWalkState:handleLeftBoundary(dt)
         self:scrollBackground("right", dt)
     end
 end
-
 
 function PlayerWalkState:handleBabyCollision()
     for k, baby in pairs(self.playState.babies) do
@@ -147,6 +142,3 @@ function PlayerWalkState:handleBabyCollision()
 end
 
 
-function PlayerWalkState:render()
-    self.player:render()
-end

@@ -33,7 +33,7 @@ end
 function Player:update(dt)
     Entity.update(self, dt)
     self.pSystem:update(dt)
-    self:handleChangeToFloatState()
+    self:handleChangeToFloatState(dt)
     self:handleStealAttemptAnimationAndSound()
     self:updateHitboxes(dt)
     self:updatePlayerBalloons(dt)
@@ -49,7 +49,7 @@ function Player:render()
     self.footHitBox:render()
 end
 
-function Player:handleChangeToFloatState()
+function Player:handleChangeToFloatState(dt)
     if self.balloonsCarried > 3 and not self.isFloating then
         if self.playState.isScrollingBack then -- simulate state change if scrolling 
             self.y =  self.y - (self.balloonsCarried * 5) * dt

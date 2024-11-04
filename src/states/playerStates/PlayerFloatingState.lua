@@ -16,14 +16,6 @@ function PlayerFloatingState:init(playState)
     self:tweenEntitiesToLowerBound(self.playState.moms)
 end
 
-function PlayerFloatingState:tweenEntitiesToLowerBound(entities)
-    for k, entity in pairs(entities) do
-        Timer.tween(2, {
-            [entity] = {y = VIRTUAL_HEIGHT}
-        })
-    end
-end
-
 function PlayerFloatingState:update(dt)
     self:checkForLevelComplete()
     -- set player gravity and background scroll according to number of balloons
@@ -49,6 +41,15 @@ function PlayerFloatingState:render()
     self.player:render()
 end
 
+
+function PlayerFloatingState:tweenEntitiesToLowerBound(entities)
+    for k, entity in pairs(entities) do
+        Timer.tween(2, {
+            [entity] = {y = VIRTUAL_HEIGHT}
+        })
+    end
+end
+
 function PlayerFloatingState:checkForLevelComplete()
     -- check for level ending 
     if self.player.level == 1 and self.player.screensFloatedUp == 10 then
@@ -57,7 +58,6 @@ function PlayerFloatingState:checkForLevelComplete()
         self.player.stateMachine:change('board-ship')
     end
 end
-
 
 function PlayerFloatingState:handlePlayerFloat(dt)
     -- if player on screen, they float up
@@ -71,7 +71,6 @@ function PlayerFloatingState:handlePlayerFloat(dt)
         self.player.screensFloatedUp = self.player.screensFloatedUp + 1
     end
 end
-
 
 function PlayerFloatingState:handlePlayerMovement(dt)
     -- float to right

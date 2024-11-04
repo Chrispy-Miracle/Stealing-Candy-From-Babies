@@ -46,41 +46,14 @@ function PlayerBoardShipState:update(dt)
 
         Timer.after(.2, function ()
             -- "beam up" players items 
-            for k, item in pairs(self.player.items['balloons']) do
-                if item.y > 0 then
-                    Timer.tween(.5, { 
-                        [item] = {y = -item.height}
-                    })
-                end
-            end
-
-            for k, item in pairs(self.player.items['lollipops']) do
-                if item.y > 0 then
-                    Timer.tween(.5, { 
-                        [item] = {y = -item.height}
-                    })
-                end
-            end
+            self:beamUpItems(self.player.items['balloons'])
+            self:beamUpItems(self.player.items['lollipops'])
 
             -- "beam up" player
             Timer.tween(1.5, {
                 [self.player] = {y = -self.player.height - 16}
             })        
-            :finish(function()
-                self.startBeam = false
-                gSounds['ufo']:play()
-
-                -- after that, zip ufo off screen
-                Timer.tween(1.5, {
-                    [self.ufo] = { x = VIRTUAL_WIDTH, y = -self.ufo.height}
-                })
-
-                -- swtich to player level up screen
-                :finish(function() 
-                    self.player.stateMachine:change('idle')
-                    gStateMachine:change("level-up", {player = self.player}) 
-                end)
-            end)
+            :finish(function() self:ufoZipsAway() end)
         end)
     end
 end
@@ -99,3 +72,29 @@ function PlayerBoardShipState:render()
     self.ufo:render()
 end
 
+
+function PlayerBoardShipState:beamUpItems(items)
+    for k, item in pairs(items) do
+        if item.y > 0 then
+            Timer.tween(.5, { 
+                [item] = {y = -item.height}
+            })
+        end
+    end
+end
+
+function PlayerBoardShipState:ufoZipsAway()
+    self.startBeam = false
+    gSounds['ufo']:play()
+
+    -- after that, zip ufo off screen
+    Timer.tween(1.5, {
+        [self.ufo] = { x = VIRTUAL_WIDTH, y = -self.ufo.height}
+    })
+
+    -- swtich to player level up screen
+    :finish(function() 
+        self.player.stateMachine:change('idle')
+        gStateMachine:change("level-up", {player = self.player}) 
+    end)
+end
