@@ -188,21 +188,27 @@ end
 
 
 -- BALLOON FUNCTIONS
-function Player:tryBalloonPop(popper, balloon, itemKey) -- check for storks colliding with balloons, pop them if so
-    -- random color (for now) for particle system
-    local r, g, b = math.random(255) / 255, math.random(255) / 255, math.random(255) / 255
+function Player:checkForBalloonPops() -- check for storks colliding with balloons, pop them if so
+    for k, item in pairs(self.items['balloons']) do
+        -- check playState storks
+        for j, stork in pairs(self.playState.babies) do 
+            -- baby is a stork in this instance
+            if stork.type == 'stork' then
+                if item.hitBox:didCollide(stork.beakHitBox) then
+                    table.remove(self.items['balloons'], k)
+                    gSounds['hit']:play()
 
-    if balloon:didCollide(popper) then
-        table.remove(self.items['balloons'], itemKey)
-        gSounds['hit']:play()
+                    -- particle system
+                    local r, g, b = math.random(255) / 255, math.random(255) / 255, math.random(255) / 255
+                    self.pSystem:setColors(r, g, b, 1, r, g, b, 0)
+                    self.pSystem:emit(32)
 
-        -- particle system
-        self.pSystem:setColors(r, g, b, 1, r, g, b, 0)
-        self.pSystem:emit(32)
-
-        -- this will affect gravity
-        self.balloonsCarried = self.balloonsCarried - 1
-    end 
+                    -- this will affect gravity
+                    self.balloonsCarried = self.balloonsCarried - 1
+                end 
+            end
+        end
+    end
 end
 
 function Player:updatePlayerBalloons()

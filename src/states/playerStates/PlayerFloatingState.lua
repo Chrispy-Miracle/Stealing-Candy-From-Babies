@@ -3,53 +3,35 @@ PlayerFloatingState = Class{__includes = BaseState}
 function PlayerFloatingState:init(playState)
     self.playState = playState
     self.player = playState.player
-
     self.player.isFloating = true
+    self.playState.backgroundScrollX = 0
     self.player:changeAnimation('idle-' .. self.player.direction)
 
     -- play/stop sounds
     gSounds['walking']:stop()
     gSounds['fly-away']:play()
     
-    self.playState.backgroundScrollX = 0
-
     -- make onground moms and babies go away with the ground
-    for k, baby in pairs(self.playState.babies) do
-        Timer.tween(2, {
-            [baby] = {y = VIRTUAL_HEIGHT}
-        })
-    end
+    self:tweenEntitiesToLowerBound(self.playState.babies)
+    self:tweenEntitiesToLowerBound(self.playState.moms)
+end
 
-    for k, mom in pairs(self.playState.moms) do
+function PlayerFloatingState:tweenEntitiesToLowerBound(entities)
+    for k, entity in pairs(entities) do
         Timer.tween(2, {
-            [mom] = {y = VIRTUAL_HEIGHT}
+            [entity] = {y = VIRTUAL_HEIGHT}
         })
     end
 end
 
-
 function PlayerFloatingState:update(dt)
-    -- check for level ending 
-    if self.player.level == 1 and self.player.screensFloatedUp == 10 then
-        self.player.stateMachine:change('board-ship')
-    elseif self.player.level == 2 and self.player.screensFloatedUp == 15 then
-        self.player.stateMachine:change('board-ship')
-    end
+    self:checkForLevelComplete()
 
     -- set player gravity and background scroll according to number of balloons
     self.player.gravity = self.player.balloonsCarried * 10
     self.playState.backgroundScrollY = (self.playState.backgroundScrollY - self.player.gravity * dt) % BACKGROUND_Y_LOOP_POINT
 
-    -- if player on screen, they float up
-    if self.player.y > -self.player.height then
-        self.player.y = self.player.y - self.player.gravity * dt
-    else 
-        -- wrap player back to bottom of sceen if they floated past top
-        self.player.y = VIRTUAL_HEIGHT
-        self.player.gravity = 0
-        --increase # of screens floated up
-        self.player.screensFloatedUp = self.player.screensFloatedUp + 1
-    end
+    self:handlePlayerFloat(dt)
 
     -- change background to sky after you cant see the ground
     if self.player.y < -self.player.height / 2 then
@@ -57,15 +39,7 @@ function PlayerFloatingState:update(dt)
     end
 
     -- check items for balloon pops 
-    for k, item in pairs(self.player.items['balloons']) do 
-        -- check playState storks
-        for j, stork in pairs(self.playState.babies) do 
-            -- baby is a stork in this instance
-            if stork.type == 'stork' then
-                self.player:tryBalloonPop(stork.beakHitBox, item.hitBox, k)
-            end
-        end
-    end
+    self.player:checkForBalloonPops()
 
     -- change to falling state if not enough balloons to float
     if self.player.balloonsCarried <= 3 then
@@ -110,6 +84,29 @@ function PlayerFloatingState:update(dt)
     self.player:update(dt)  
 end
 
+
+function PlayerFloatingState:checkForLevelComplete()
+    -- check for level ending 
+    if self.player.level == 1 and self.player.screensFloatedUp == 10 then
+        self.player.stateMachine:change('board-ship')
+    elseif self.player.level == 2 and self.player.screensFloatedUp == 15 then
+        self.player.stateMachine:change('board-ship')
+    end
+end
+
+
+function PlayerFloatingState:handlePlayerFloat(dt)
+    -- if player on screen, they float up
+    if self.player.y > -self.player.height then
+        self.player.y = self.player.y - self.player.gravity * dt
+    else 
+        -- wrap player back to bottom of sceen if they floated past top
+        self.player.y = VIRTUAL_HEIGHT
+        self.player.gravity = 0
+        --increase # of screens floated up
+        self.player.screensFloatedUp = self.player.screensFloatedUp + 1
+    end
+end
 
 function PlayerFloatingState:render()
     self.player:render()

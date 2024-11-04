@@ -26,16 +26,7 @@ function PlayerFallState:update(dt)
     end
 
     -- check items for balloon pops 
-    for k, item in pairs(self.player.items['balloons']) do
-        -- check playState storks
-        for j, stork in pairs(self.playState.babies) do 
-            -- baby is a stork in this instance
-            if stork.type == 'stork' then
-                self.player:tryBalloonPop(stork.beakHitBox, item.hitBox, k)
-            end
-        end
-    end
-
+    self.player:checkForBalloonPops()
     -- player falls
     self.player.y = self.player.y + self.player.gravity * dt 
 
