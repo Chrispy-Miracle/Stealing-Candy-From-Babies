@@ -59,29 +59,6 @@ function Player:handleChangeToFloatState(dt)
     end
 end
 
--- function Player:crashDown()  -- when player is falling and about to hit the ground
---     self.playState.background = 1
---     self.playState.backgroundScrollY = BACKGROUND_Y_LOOP_POINT / 2
-
---     -- scoot player and background such that player is back on the ground
---     Timer.tween(1, {
---         [self] = {y = VIRTUAL_HEIGHT / 2},
---         [self.playState] = {backgroundScrollY = BACKGROUND_Y_LOOP_POINT}
-
---     }):finish(function()
---         self.isFloating =  false
---         self.isFalling = false
---         gSounds['hit-ground']:play()
-
---         --damage player
---         self.health = self.health - (30 - (self.balloonsCarried * 10))
---         self.scoreDetails[self.level]['Damage Taken'] = self.scoreDetails[self.level]['Damage Taken'] + (30 - (self.balloonsCarried * 10))
-        
---         -- go back to player idle state
---         self.stateMachine:change('idle')            
---     end)
--- end
-
 function Player:handleStealAttemptAnimationAndSound()
     -- momentary change to steal animation, then back 
     if wasSpaceOrBPressed() then

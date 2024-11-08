@@ -3,9 +3,7 @@ PlayerWalkState = Class{__includes = BaseState}
 function PlayerWalkState:init(playState)
     self.playState = playState
     self.player = playState.player
-    self.player.isFalling =  false
-    self.player.isFloating = false
-    self.playState.backgroundScrollY = 0
+
     -- start walking sound and animation
     gSounds['walking']:play()
     self.player:changeAnimation('walk-' .. self.player.direction)

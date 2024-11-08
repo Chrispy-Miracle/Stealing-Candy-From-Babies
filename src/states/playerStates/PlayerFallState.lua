@@ -42,9 +42,7 @@ function PlayerFallState:handlePlayerFalling(dt)
     -- player falls
     self.player.y = self.player.y + self.player.gravity * dt 
 
-    -- player wraps to top of screen if falls below bottom 
     if self.player.y > VIRTUAL_HEIGHT then
-
         -- if player is nearing the ground, they crash down
         if self.player.screensFloatedUp < 1 then
             self.player.y = -self.player.height

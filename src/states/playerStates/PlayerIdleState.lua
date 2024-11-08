@@ -4,6 +4,9 @@ PlayerIdleState = Class{__includes = BaseState}
 function PlayerIdleState:init(playstate)
     self.playState = playstate
     self.player = playstate.player
+    self.player.isFalling =  false
+    self.player.isFloating = false
+    self.playState.backgroundScrollY = 0
 
     -- stop walk sound and set animation to idle
     gSounds['walking']:stop()
