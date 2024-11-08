@@ -64,10 +64,8 @@ function PlayerFloatingState:handlePlayerFloat(dt)
     if self.player.y > -self.player.height then
         self.player.y = self.player.y - self.player.gravity * dt
     else 
-        -- wrap player back to bottom of sceen if they floated past top
+        -- wrap player to bottom of sceen if floated past top
         self.player.y = VIRTUAL_HEIGHT
-        self.player.gravity = 0
-        --increase # of screens floated up
         self.player.screensFloatedUp = self.player.screensFloatedUp + 1
     end
 end

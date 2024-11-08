@@ -10,7 +10,7 @@ function PlayerFallState:init(playState)
     gSounds['falling']:play()
     -- if player is already near ground, crash them down
     if self.player.screensFloatedUp < 1 then
-        self.player:crashDown()
+        self:crashDown()
     end
 end
 
@@ -48,7 +48,7 @@ function PlayerFallState:handlePlayerFalling(dt)
         -- if player is nearing the ground, they crash down
         if self.player.screensFloatedUp < 1 then
             self.player.y = -self.player.height
-            self.player:crashDown()
+            self:crashDown()
         else 
             -- wrap player back to top if fell past bottom of screen
             self.player.y = -self.player.height
@@ -60,6 +60,33 @@ function PlayerFallState:handlePlayerFalling(dt)
     self.player.gravity = 100 - self.player.balloonsCarried * 20
     self.playState.backgroundScrollY = (self.player.gravity * dt + self.playState.backgroundScrollY) % BACKGROUND_Y_LOOP_POINT
 end
+
+
+function PlayerFallState:crashDown()  -- when player is falling and about to hit the ground
+    self.playState.background = 1
+    self.playState.backgroundScrollY = BACKGROUND_Y_LOOP_POINT / 2
+
+    -- scoot player and background such that player is back on the ground
+    Timer.tween(1, {
+        [self.player] = {y = VIRTUAL_HEIGHT / 2},
+        [self.playState] = {backgroundScrollY = BACKGROUND_Y_LOOP_POINT}
+
+    }):finish(function()
+        self.player.isFloating =  false
+        self.player.isFalling = false
+        gSounds['hit-ground']:play()
+
+        --damage player
+        self.player.health = self.player.health - (30 - (self.player.balloonsCarried * 10))
+        self.player.scoreDetails[self.player.level]['Damage Taken'] = self.player.scoreDetails[self.player.level]['Damage Taken'] + (30 - (self.player.balloonsCarried * 10))
+        
+        -- go back to player idle state
+        self.player.stateMachine:change('idle')            
+    end)
+end
+
+
+
 
 function PlayerFallState:movePlayerHorizontal(direction, dt)
     self.player.direction = direction
