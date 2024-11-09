@@ -95,6 +95,31 @@ function Player:stealItem(prevOwner, item, itemKey)
     end 
 end
 
+function Player:handleBabyCollision()
+    for k, baby in pairs(self.playState.babies) do
+        if self.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
+            gSounds['hit-wall']:play()
+            baby.timesSteppedOn = baby.timesSteppedOn + 1
+
+            -- bonk player and baby
+            if wasDownPressed() then
+                self.y = self.y - PLAYER_BONK_DISTANCE
+                baby.y = baby.y + BABY_BONK_DISTANCE
+            elseif wasUpPressed() then
+                self.y = self.y + PLAYER_BONK_DISTANCE
+                baby.y = baby.y - BABY_BONK_DISTANCE
+            elseif wasLeftPressed() then
+                self.x =  self.x + PLAYER_BONK_DISTANCE
+                baby.x = baby.x - BABY_BONK_DISTANCE
+            else
+                self.x =  self.x - PLAYER_BONK_DISTANCE
+                baby.x = baby.x + BABY_BONK_DISTANCE
+            end
+        end
+    end
+end
+
+
 function Player:LevelUp()
     self.level = self.level + 1
     self.isFloating = false

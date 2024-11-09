@@ -15,9 +15,8 @@ function PlayerWalkState:update(dt)
     if noDirectionPressed() then  -- return to idle state 
         gSounds['walking']:stop()
         self.player.stateMachine:change('idle')
-    else
-        self:handleBabyCollision()
     end
+    self.player:handleBabyCollision()
     self.player:update(dt)
 end
 
@@ -112,30 +111,6 @@ function PlayerWalkState:handleLeftBoundary(dt)
         -- move player back
         self.player.x = self.player.x + self.player.width / 2
         self:scrollBackground("right", dt)
-    end
-end
-
-function PlayerWalkState:handleBabyCollision()
-    for k, baby in pairs(self.playState.babies) do
-        if self.player.footHitBox:didCollide(baby.hitBox) and baby.timesSteppedOn < 1 then
-            gSounds['hit-wall']:play()
-            baby.timesSteppedOn = baby.timesSteppedOn + 1
-
-            -- bonk player and baby
-            if wasLeftPressed() then
-                self.player.x =  self.player.x + PLAYER_BONK_DISTANCE
-                baby.x = baby.x - BABY_BONK_DISTANCE
-            elseif wasRightPressed() then
-                self.player.x =  self.player.x - PLAYER_BONK_DISTANCE
-                baby.x = baby.x + BABY_BONK_DISTANCE
-            elseif wasDownPressed() then
-                self.player.y = self.player.y - PLAYER_BONK_DISTANCE
-                baby.y = baby.y + BABY_BONK_DISTANCE
-            elseif wasUpPressed() then
-                self.player.y = self.player.y + PLAYER_BONK_DISTANCE
-                baby.y = baby.y - BABY_BONK_DISTANCE
-            end
-        end
     end
 end
 

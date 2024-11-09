@@ -19,7 +19,7 @@ function PlayerIdleState:update(dt)
     if anyDirectionPressed() then
         self.player.stateMachine:change('walk-state')
     end
-
+    self.player:handleBabyCollision()
     self.player:update(dt)
 end
 
