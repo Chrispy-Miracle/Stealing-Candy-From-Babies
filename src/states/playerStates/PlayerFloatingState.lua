@@ -93,7 +93,7 @@ function PlayerFloatingState:handlePlayerMovement(dt)
             self.player.x = VIRTUAL_WIDTH - 2
         end
     end
-    -- float up
+    -- float up faster
     if wasUpPressed() then
         self.player.y = self.player.y - (self.player.walkSpeed / 2) * dt
     end

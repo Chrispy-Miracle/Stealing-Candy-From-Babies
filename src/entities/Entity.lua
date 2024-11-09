@@ -69,18 +69,3 @@ function Entity:render()
     love.graphics.draw(gTextures[self.level][anim.texture], 
         gFrames[self.level][anim.texture][anim:getCurrentFrame()], self.x, self.y)
 end
-
-
-function Entity:spawnGameObject(objType, offsetX, offsetY)
-    local object = GameObject {
-        object_def = OBJECT_DEFS[objType],
-        x = self.x + offsetX,
-        y = self.y + offsetY,
-        isCarried = true,
-        carrier = self,
-        carrier_offset_x = offsetX,
-        carrier_offset_y = offsetY,
-        level = self.level
-    }
-    table.insert(self.items, object)
-end

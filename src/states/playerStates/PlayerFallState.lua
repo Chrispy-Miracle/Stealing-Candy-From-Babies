@@ -83,9 +83,6 @@ function PlayerFallState:crashDown()  -- when player is falling and about to hit
     end)
 end
 
-
-
-
 function PlayerFallState:movePlayerHorizontal(direction, dt)
     self.player.direction = direction
     self.player:changeAnimation('idle-' .. direction)

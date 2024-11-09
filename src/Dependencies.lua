@@ -4,8 +4,8 @@ Class = require 'lib/class'
 Timer = require 'lib/knife.timer'
 
 -- global
-require 'src/entity_defs'
-require 'src/game_object_defs'
+require 'src/entities/entity_defs'
+require 'src/gameObjects/game_object_defs'
 require 'src/constants'
 require 'src/Util'
 
@@ -33,7 +33,10 @@ require 'src/entities/Baby'
 require 'src/entities/Mom'
 
 -- objects
-require 'src/GameObject'
+require 'src/gameObjects/GameObject'
+require 'src/gameObjects/Purse'
+require 'src/gameObjects/Balloon'
+require 'src/gameObjects/Lollipop'
 
 -- helper classes
 require 'src/Animation'

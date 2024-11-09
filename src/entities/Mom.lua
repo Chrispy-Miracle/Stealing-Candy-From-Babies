@@ -5,11 +5,11 @@ function Mom:init(def)
     --reference to player
     self.player = def.playState.player
     self.didHitPlayer = false
-    self.attackSpeed = self.player.level == 1 and 1 or .5  -- level 2 moms attack quicker
+    self.attackSeconds = def.entity_def.attackSeconds  -- level 2 moms attack quicker
 
     -- moms on the ground get purses to attack with
     if self.type == 'mom' then
-        self:spawnGameObject('bad-bag', MOM_BAG_OFFSET_X, MOM_BAG_OFFSET_Y)
+        Purse:new(self)
         self:changeAnimation('walk-left')
         
     elseif self.type == 'plane-mom' then
@@ -60,7 +60,7 @@ function Mom:attackPlayer()
     -- play sound
     Timer.after(.7, function () gSounds['mad-mom-' .. tostring(math.random(6))]:play() end)
     -- race mom over to player
-    Timer.tween(self.attackSpeed, {
+    Timer.tween(self.attackSeconds, {
         [self] ={x = self.player.x + self.player.width, y = self.player.y}
     })
     :finish(function () 

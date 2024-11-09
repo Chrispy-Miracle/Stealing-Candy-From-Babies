@@ -31,9 +31,9 @@ end
 function Baby:equipBaby()
     -- potentially give baby balloon or lollipop
     if math.random(3) == 1 then
-        self:spawnGameObject('balloon', BABY_BALLOON_OFFSET_X, BABY_BALLOON_OFFSET_Y)
+        Balloon:new(self)
     elseif math.random(3) == 1 then
-        self:spawnGameObject('lollipop', BABY_LOLLIPOP_OFFSET_X, BABY_LOLLIPOP_OFFSET_Y)
+        Lollipop:new(self)
     end 
 end
 
